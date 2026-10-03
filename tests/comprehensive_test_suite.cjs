@@ -83,6 +83,12 @@ const analogicalTransfer = require('../backend/services/brahmaAnalogicalTransfer
 const repEPlasticity = require('../backend/services/brahmaRepEPlasticityEngine');
 const grammarDiscovery = require('../backend/services/brahmaGrammarSymbolicDiscovery');
 const selfPlayArena = require('../backend/services/brahmaSelfPlayArenaEngine');
+const rlsfEngine = require('../backend/services/brahmaRlsfSelfRewardingEngine');
+const jepaEngine = require('../backend/services/brahmaJepaWorldModelEngine');
+const titansMemory = require('../backend/services/brahmaTitansNeuralMemoryEngine');
+const zkMlAttestation = require('../backend/services/brahmaZkMlAttestationEngine');
+const diffusionPlanner = require('../backend/services/brahmaDiffusionPlanningEngine');
+const nashMarket = require('../backend/services/brahmaNashMarketResourceEngine');
 const goalCompiler = require('../backend/services/brahmaGoalCompilerEngine');
 const skillLibrary = require('../backend/services/brahmaSkillLibraryService');
 const crossExperimenter = require('../backend/services/brahmaCrossDomainExperimenter');
@@ -206,6 +212,32 @@ async function runAllTests() {
   // Test 1.7: VoxCPM Real-Time Streaming Audio Synthesis (<80ms first-chunk cadence)
   const voiceStream = await voxEngine.synthesizeStreamingSpeech({ text: 'నమస్కారం బ్రహ్మ సిస్టమ్ సిద్ధంగా ఉంది', deity: 'brahma', language: 'te' });
   assertTest('unit', 'VoxCPM Real-Time Streaming Speech Synthesis', voiceStream.success === true && voiceStream.firstChunkLatencyMs <= 80 && voiceStream.chunks.length > 0, `First-chunk latency: ${voiceStream.firstChunkLatencyMs}ms across ${voiceStream.totalChunks} chunks`);
+
+  // Test 1.8: RLSF Self-Rewarding Engine (Meta FAIR / AlphaCode 2 Sandbox Test Synthesis)
+  const rlsfRes = rlsfEngine.evaluateAndSelfReward({ task: 'Solve Quadratic roots' });
+  assertTest('unit', 'RLSF Self-Rewarding & Automated Test Synthesis', rlsfRes.success === true && rlsfRes.selfRewardScore >= 0.8, `Self-reward score: ${(rlsfRes.selfRewardScore * 100).toFixed(1)}%`);
+
+  // Test 1.9: JEPA Latent World Model (Yann LeCun Joint Embedding Mental Simulation)
+  const jepaRes = jepaEngine.simulateMentalTrajectories({});
+  assertTest('unit', 'JEPA Latent World Model & Mental Simulation', jepaRes.success === true && jepaRes.optimalPlan && jepaRes.optimalPlan.isViable === true, `Optimal plan: ${jepaRes.optimalPlan.actionName} (Energy: ${jepaRes.optimalPlan.meanLatentEnergy})`);
+
+  // Test 1.10: Titans Neural Associative Memory (Google Research Test-Time Memory)
+  titansMemory.memorizeAtTestTime({ key: 'Decentralized Architecture Invariant 4.2', value: 'Zero Route Orphans in Express', surpriseMetric: 0.95 });
+  const titansRecall = titansMemory.recallAssociativeMemory({ query: 'Zero Route Orphans' });
+  assertTest('unit', 'Titans Neural Test-Time Associative Memory', titansRecall.success === true && titansRecall.resultsCount > 0, `Recalled ${titansRecall.resultsCount} slot in ${titansRecall.retrievalLatencyMs}ms`);
+
+  // Test 1.11: zkML Cryptographic AI Attestation (Stanford / EZKL zk-SNARK Witness)
+  const zkRes = zkMlAttestation.generateZkProofAttestation({});
+  const zkVerify = zkMlAttestation.verifyZkProof({ proofId: zkRes.proofId, inputHash: zkRes.proofPayload.publicSignals.inputHash, outputData: { action: 'ROUTE_THROUGH_DARK_POOL', profitUsd: 1420.50, riskVaR: 0.012 } });
+  assertTest('unit', 'zkML Zero-Knowledge Cryptographic AI Attestation', zkRes.success === true && zkVerify.valid === true, `zk-SNARK proof verified: ${zkRes.proofPayload.protocol}`);
+
+  // Test 1.12: Diffusion Planning Engine (Berkeley BAIR Multi-Agent Score-Based Denoising)
+  const diffPlan = diffusionPlanner.synthesizeDiffusionPlan({});
+  assertTest('unit', 'Diffusion Trajectory & Parallel Spatial Planning', diffPlan.success === true && diffPlan.waypoints.length === 6 && diffPlan.meetsConstraints === true, `Global trajectory synthesized across ${diffPlan.waypoints.length} hubs in ${diffPlan.planningDurationMs}ms`);
+
+  // Test 1.13: Nash-Equilibrium VCG Compute Resource Market (CMU / Harvard Incentive Compatibility)
+  const vcgRes = nashMarket.allocateComputeResources({});
+  assertTest('unit', 'Nash-Equilibrium VCG Micro-Auction Resource Market', vcgRes.success === true && vcgRes.auctionResult.utilizedCapacity > 0, `Allocated ${vcgRes.auctionResult.utilizedCapacity}/${vcgRes.auctionResult.totalCapacity} units across ${vcgRes.auctionResult.allocations.length} councils`);
 
   // ═════════════════════════════════════════════════════════════════════════════
   // 2. WHITEBOX TESTING (AST Invariants, Code Paths & Branch Coverage)
