@@ -5,6 +5,7 @@
 
 export const SKILL_CATEGORIES = [
   'All Skills',
+  'Enterprise Councils & Autonomous Systems',
   'Enterprise Integrations & OSINT (Nango, Flowsint, Agentic Inbox)',
   'Voice Cloning & Video Generation (VoxCPM & MoneyPrinterTurbo)',
   'Claude Code & Agent Skills (Addy Osmani)',
@@ -465,5 +466,58 @@ export const INITIAL_SKILLS = [
     description: 'Parses code into AST nodes, executes structural semantic refactoring, and emits idempotent idiomatic code.',
     enabled: true,
     meta: { version: '2.3.0', usageCount: 1540, verifiedBy: 'Shiva Transpiler' }
+  },
+
+  // ── 8. Sovereign Enterprise Intelligence Councils ──
+  {
+    id: 'dhanvantari-clinical-research',
+    name: 'Dhanvantari Clinical Decision Support & Pharmacovigilance',
+    category: 'Enterprise Councils & Autonomous Systems',
+    identityOwner: 'dhanvantari',
+    githubRepo: 'brahma-ai/dhanvantari-clinical-core',
+    description: 'Autonomous biomedical research, differential diagnosis hypothesis generation, and pharmacological contraindication safety gating.',
+    enabled: true,
+    meta: { version: '4.0.0', usageCount: 3420, verifiedBy: 'Dhanvantari Council' }
+  },
+  {
+    id: 'chanakya-contract-risk',
+    name: 'Chanakya Enterprise Legal Governance & Contract Risk Auditor',
+    category: 'Enterprise Councils & Autonomous Systems',
+    identityOwner: 'chanakya',
+    githubRepo: 'brahma-ai/chanakya-governance-engine',
+    description: 'Multi-jurisdictional contract clause extraction, liability cap auditing, regulatory compliance (GDPR/DPDP/HIPAA), and autonomous protective redlining.',
+    enabled: true,
+    meta: { version: '3.5.0', usageCount: 2980, verifiedBy: 'Chanakya Council' }
+  },
+  {
+    id: 'vishwakarma-supply-logistics',
+    name: 'Vishwakarma Industrial Operations & Supply Chain Telemetry',
+    category: 'Enterprise Councils & Autonomous Systems',
+    identityOwner: 'vishwakarma',
+    githubRepo: 'brahma-ai/vishwakarma-operations-telemetry',
+    description: 'Multi-echelon inventory optimization, lead-time variance analysis, EOQ calculations, and bottleneck mitigation.',
+    enabled: true,
+    meta: { version: '3.1.0', usageCount: 2150, verifiedBy: 'Vishwakarma Council' }
+  },
+  {
+    id: 'indra-autonomous-secops',
+    name: 'Indra Shield Autonomous SecOps & Threat Hunting',
+    category: 'Enterprise Councils & Autonomous Systems',
+    identityOwner: 'indra',
+    githubRepo: 'brahma-ai/indra-secops-shield',
+    description: 'Real-time telemetry log anomaly correlation, CVE vulnerability matching, zero-trust policy enforcement, and autonomous containment.',
+    enabled: true,
+    meta: { version: '4.2.0', usageCount: 4890, verifiedBy: 'Indra Council' }
+  },
+  {
+    id: 'saraswati-cognitive-graph',
+    name: 'Saraswati Adaptive Cognitive Knowledge Graphs & Pedagogical Scaffolding',
+    category: 'Enterprise Councils & Autonomous Systems',
+    identityOwner: 'saraswati',
+    githubRepo: 'brahma-ai/saraswati-cognitive-dag',
+    description: 'Deconstructs complex subjects into topological DAGs, tracks prerequisite dependencies, evaluates Bloom taxonomy depth, and generates diagnostic mastery assessments.',
+    enabled: true,
+    meta: { version: '3.8.0', usageCount: 3760, verifiedBy: 'Saraswati Council' }
   }
 ];
+

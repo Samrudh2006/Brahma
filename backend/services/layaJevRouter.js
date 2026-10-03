@@ -29,11 +29,32 @@ class LayaJevRouter {
       kali: { id: 'kali', name: 'Kali', domain: 'Adversarial Red-Teaming, Penetration Testing & Invariant Audits', preferredModel: 'deepseek-r1' },
       durga: { id: 'durga', name: 'Durga', domain: 'Defensive Security, Shielding & Cryptography', preferredModel: 'bitnet-b1-58' },
       agni: { id: 'agni', name: 'Agni', domain: 'Performance Turbocharging, Assembly & Kernel Tuning', preferredModel: 'groq-llama-3-3-70b' },
-      varuna: { id: 'varuna', name: 'Varuna', domain: 'Oceanic Data, Analytics & SQLite/Postgres Lakes', preferredModel: 'phi-4' }
+      varuna: { id: 'varuna', name: 'Varuna', domain: 'Oceanic Data, Analytics & SQLite/Postgres Lakes', preferredModel: 'phi-4' },
+      dhanvantari: { id: 'dhanvantari', name: 'Dhanvantari', domain: 'Biomedical Intelligence, Clinical Triage & Pharmacovigilance', preferredModel: 'deepseek-r1' },
+      chanakya: { id: 'chanakya', name: 'Chanakya', domain: 'Legal Governance, Contract Risk & Regulatory Autonomy', preferredModel: 'claude-3-7-sonnet' },
+      vishwakarma: { id: 'vishwakarma', name: 'Vishwakarma', domain: 'Industrial Operations, Supply Chain & Hardware Architecture', preferredModel: 'llama-3-3-70b' }
     };
 
     // Keyword & Semantic Pattern Clusters for <30ms Single-Pass Intent Routing
     this.patterns = [
+      {
+        intent: 'clinical_biomedical_triage',
+        council: 'dhanvantari',
+        tier: 'L3_deep_reasoner',
+        regex: /(symptom|clinical|patient|diagnosis|medication|drug|pharmacology|contraindication|biomedical|disease|treatment|dosage|pathology|lab result|troponin)/i
+      },
+      {
+        intent: 'legal_contract_governance',
+        council: 'chanakya',
+        tier: 'L3_deep_reasoner',
+        regex: /(contract|clause|indemnif|liability|legal|agreement|nda|compliance|gdpr|dpdp|hipaa|statute|lawyer|arbitration|redline|governing law)/i
+      },
+      {
+        intent: 'supply_industrial_logistics',
+        council: 'vishwakarma',
+        tier: 'L2_balanced',
+        regex: /(supply chain|inventory|stockout|lead time|warehouse|logistics|eoq|reorder point|procurement|vendor sla|factory|manufacturing|transit)/i
+      },
       {
         intent: 'code_synthesis_architecture',
         council: 'saraswati',
