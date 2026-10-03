@@ -62,6 +62,21 @@ const sweRefactor = require('../backend/services/brahmaSweRefactorEngine');
 const zkProof = require('../backend/services/brahmaZkProofEngine');
 const digitalTwin = require('../backend/services/vishwakarmaDigitalTwin');
 const metaOrchestrator = require('../backend/services/brahmaMetaOrchestrator');
+const pqcCrypto = require('../backend/services/brahmaPqcCryptoEngine');
+const smartContracts = require('../backend/services/brahmaSmartContractEngine');
+const cboOptimizer = require('../backend/services/brahmaCboQueryOptimizer');
+const neuromorphicCompute = require('../backend/services/brahmaNeuromorphicComputeEngine');
+const spatialSlam = require('../backend/services/brahmaSpatialSlamEngine');
+const dhanvantariGenomics = require('../backend/services/dhanvantariGenomicsEngine');
+const scientificDiscovery = require('../backend/services/brahmaScientificDiscoveryEngine');
+const macroDsge = require('../backend/services/kuveraMacroDsgeEngine');
+const disasterRadar = require('../backend/services/brahmaDisasterRadarEngine');
+const smartGridOpf = require('../backend/services/brahmaSmartGridOpfEngine');
+const neuroSymbolic = require('../backend/services/brahmaNeuroSymbolicEngine');
+const maritimeAis = require('../backend/services/brahmaMaritimeAisEngine');
+const siliconRtl = require('../backend/services/brahmaSiliconRtlEngine');
+const gameTheory = require('../backend/services/brahmaGameTheoryEngine');
+const planetaryConstitution = require('../backend/services/brahmaPlanetaryConstitutionEngine');
 
 const testResults = {
   total: 0,
@@ -1895,6 +1910,305 @@ async function runAllTests() {
     );
   } catch (err) {
     assertTest('integration', 'Grand Sovereign Singularity Meta-Orchestrator & Borda Count Consensus', false, err.message);
+  }
+
+  // Test 4.70: Post-Quantum Cryptography (ML-KEM-768 & Hybrid Encapsulation)
+  try {
+    const keyPair = pqcCrypto.generateMLKEMKeyPair('test_node_01');
+    const encaps = pqcCrypto.encapsulateSecret(keyPair.publicKey.vectorFingerprint);
+    const hybridEnv = pqcCrypto.createHybridQuantumEnvelope({ message: 'SOVEREIGN_TOP_SECRET' }, keyPair.publicKey.vectorFingerprint);
+
+    const isPqcValid = keyPair.quantumResistanceTier === 'POST_QUANTUM_RESISTANT' &&
+      encaps.sharedSecret.length === 64 &&
+      hybridEnv.quantumImmunityVerified === true;
+
+    assertTest(
+      'integration',
+      'Brahma Post-Quantum Cryptography (NIST FIPS 203 ML-KEM-768 & Hybrid Envelope)',
+      Boolean(isPqcValid),
+      `Generated ML-KEM-768 keypair (${keyPair.securityLevel}); encapsulated 256-bit shared secret; hybrid X25519/ML-KEM envelope sealed`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Post-Quantum Cryptography (NIST FIPS 203 ML-KEM-768 & Hybrid Envelope)', false, err.message);
+  }
+
+  // Test 4.71: Formally Verified Smart Contracts & ERC-4626 Share Invariants
+  try {
+    const vulnerableSolidity = `
+      function withdraw(uint256 amount) public {
+        (bool s, ) = msg.sender.call{value: amount}("");
+        require(s);
+        balances[msg.sender] -= amount;
+      }
+    `;
+    const auditRes = smartContracts.auditContractCode({ sourceCode: vulnerableSolidity });
+    const vaultRes = smartContracts.verifyVaultInvariant({ totalAssets: 1000000, totalSupplyShares: 1000000, depositAmount: 50000 });
+
+    const isContractValid = auditRes.invariants.checksEffectsInteractionsVerified === false &&
+      auditRes.findings.some(f => f.id === 'SC-VULN-01') &&
+      vaultRes.invariantSatisfied === true;
+
+    assertTest(
+      'integration',
+      'Brahma Smart Contract Formal Verification (Reentrancy CEI & ERC-4626 Invariant)',
+      Boolean(isContractValid),
+      `Intercepted critical CEI reentrancy vulnerability; ERC-4626 vault share dilution invariant verified (${vaultRes.formalStatus})`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Smart Contract Formal Verification (Reentrancy CEI & ERC-4626 Invariant)', false, err.message);
+  }
+
+  // Test 4.72: Cost-Based Database Query Optimizer & HyperLogLog Cardinality
+  try {
+    const samples = ['user_1', 'user_2', 'user_3', 'user_1', 'user_4', 'user_5', 'user_2'];
+    const hll = cboOptimizer.estimateHyperLogLogCardinality(samples);
+    const joinPlan = cboOptimizer.optimizeJoinOrder({});
+
+    const isCboValid = hll.estimatedDistinctCardinality > 0 &&
+      joinPlan.optimalPlan.planId === 'PLAN_LEFT_DEEP_HASH_JOIN' &&
+      joinPlan.costSavingsPercentage > 0;
+
+    assertTest(
+      'integration',
+      'Brahma Cost-Based Database Query Optimizer (Selinger DP Join & HyperLogLog Cardinality)',
+      Boolean(isCboValid),
+      `HLL distinct cardinality: ~${hll.estimatedDistinctCardinality}; Selinger DP selected ${joinPlan.optimalPlan.joinTree} with ${joinPlan.costSavingsPercentage}% cost reduction`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Cost-Based Database Query Optimizer (Selinger DP Join & HyperLogLog Cardinality)', false, err.message);
+  }
+
+  // Test 4.73: Neuromorphic & Carbon-Aware Sovereign Compute Energy Dispatcher
+  try {
+    const energyProfile = neuromorphicCompute.profileWorkloadEnergy({ parameterCountB: 70, tokensGenerated: 1000 });
+    const dispatch = neuromorphicCompute.dispatchCarbonOptimalCompute({});
+
+    const isComputeValid = energyProfile.workload.totalTeraFlops > 100 &&
+      energyProfile.sustainability.carbonEmissionsGrams > 0 &&
+      dispatch.selectedRegion === 'HYDRO_NORDIC' &&
+      dispatch.carbonReductionPercentage > 90;
+
+    assertTest(
+      'integration',
+      'Brahma Carbon-Aware Neuromorphic Compute (FLOPs/Joule Profiler & Clean Grid Dispatch)',
+      Boolean(isComputeValid),
+      `70B model: ${energyProfile.workload.totalTeraFlops} TFLOPs (${energyProfile.energyMetrics.totalEnergyKWh} kWh, ${energyProfile.sustainability.carbonEmissionsGrams}g CO2); dispatched to ${dispatch.selectedRegion} (-${dispatch.carbonReductionPercentage}% carbon)`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Carbon-Aware Neuromorphic Compute (FLOPs/Joule Profiler & Clean Grid Dispatch)', false, err.message);
+  }
+
+  // Test 4.74: Spatial AI, 3D LiDAR Point Cloud & SLAM Safe Corridor Engine
+  try {
+    const icp = spatialSlam.alignPointCloudsICP({});
+    const corridor = spatialSlam.evaluateSafeCorridor({
+      currentPose: { x: 0, y: 0, z: 2.0 },
+      velocityVector: { vx: 2.0, vy: 0, vz: 0 },
+      detectedObstacles: [{ x: 5.0, y: 0.1, z: 2.0, radiusM: 0.5 }]
+    });
+
+    const isSpatialValid = icp.alignmentMetrics.rootMeanSquaredErrorMeters < 0.05 &&
+      corridor.timeToClosestApproachSec > 0;
+
+    assertTest(
+      'integration',
+      'Brahma Spatial AI & 3D LiDAR SLAM (ICP Rigid Alignment & Obstacle Clearance)',
+      Boolean(isSpatialValid),
+      `ICP converged (RMSE: ${icp.alignmentMetrics.rootMeanSquaredErrorMeters}m); flight corridor cleared (clearance ${corridor.closestObstacleClearanceMeters}m, TCA ${corridor.timeToClosestApproachSec}s)`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Spatial AI & 3D LiDAR SLAM (ICP Rigid Alignment & Obstacle Clearance)', false, err.message);
+  }
+
+  // Test 4.75: Sovereign Clinical Genomics, Splicing AI & Polygenic Risk Score (PRS)
+  try {
+    const splice = dhanvantariGenomics.evaluateSpliceSiteImpact({
+      refSequence: 'CAG/GTAAGT',
+      altSequence: 'AAG/ATAAGT'
+    });
+    const prs = dhanvantariGenomics.calculatePolygenicRiskScore({});
+
+    const isGenomicsValid = splice.consequence.includes('ABERRANT_SPLICING') &&
+      prs.standardizedZScore > 0 &&
+      prs.populationPercentile > 0;
+
+    assertTest(
+      'integration',
+      'Dhanvantari Clinical Genomics (5\' Donor Splice Disruption & Polygenic Risk Score)',
+      Boolean(isGenomicsValid),
+      `MaxEntScan caught splice disruption (${splice.acmgClassification}, -${splice.maxEntScores.percentReduction}% score); CAD PRS ${prs.populationPercentile}th percentile (${prs.riskStratification})`
+    );
+  } catch (err) {
+    assertTest('integration', 'Dhanvantari Clinical Genomics (5\' Donor Splice Disruption & Polygenic Risk Score)', false, err.message);
+  }
+
+  // Test 4.76: Autonomous Scientific Discovery & Symbolic Regression Engine
+  try {
+    const discovery = scientificDiscovery.discoverSymbolicLaw({});
+
+    const isScienceValid = discovery.discoveredLaw.coefficientOfDeterminationR2 > 0.999 &&
+      discovery.discoveredLaw.canonicalScientificMatch === 'KEPLERS_HARMONIC_LAW_OF_PLANETARY_MOTION';
+
+    assertTest(
+      'integration',
+      'Brahma Autonomous Scientific Discovery (Pareto Symbolic Regression & Kepler\'s Law)',
+      Boolean(isScienceValid),
+      `Discovered governing equation: ${discovery.discoveredLaw.symbolicEquation} (R² = ${discovery.discoveredLaw.coefficientOfDeterminationR2}, AIC: ${discovery.discoveredLaw.akaikeInformationCriterion})`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Autonomous Scientific Discovery (Pareto Symbolic Regression & Kepler\'s Law)', false, err.message);
+  }
+
+  // Test 4.77: Global Macro-Economic Central Bank Model & DSGE Simulator
+  try {
+    const taylor = macroDsge.calculateTaylorRuleRate({ currentInflationRate: 4.0, targetInflationRate: 2.0 });
+    const dsa = macroDsge.simulateDebtSustainability({});
+
+    const isMacroValid = taylor.prescribedPolicyRatePercentage > 4.0 &&
+      taylor.policyStance === 'HAWKISH_RESTRICTIVE' &&
+      dsa.baselineTrajectory.length === 6;
+
+    assertTest(
+      'integration',
+      'Kuvera Global Macro DSGE (Taylor Rule Policy Reaction & Sovereign Debt Sustainability)',
+      Boolean(isMacroValid),
+      `Taylor Rule policy rate: ${taylor.prescribedPolicyRatePercentage}% (${taylor.policyStance}); 5-year debt trajectory: ${dsa.terminalDebtToGdp}% GDP (${dsa.fiscalHealthVerdict})`
+    );
+  } catch (err) {
+    assertTest('integration', 'Kuvera Global Macro DSGE (Taylor Rule Policy Reaction & Sovereign Debt Sustainability)', false, err.message);
+  }
+
+  // Test 4.78: Satellite Radar InSAR Ground Subsidence & Flood Hydrodynamics
+  try {
+    const insar = disasterRadar.calculateInSARDisplacement({ phaseDifferenceRad: 1.5, temporalBaselineDays: 24 });
+    const flood = disasterRadar.simulateFloodWaveFront({ channelLengthKm: 12.0 });
+
+    const isDisasterValid = Math.abs(insar.lineOfSightDisplacementMm) > 0 &&
+      flood.floodSimulation.wavePropagationSpeedMS > 0 &&
+      flood.floodSimulation.timeToDownstreamImpactMinutes > 0;
+
+    assertTest(
+      'integration',
+      'Brahma Disaster InSAR Radar & 1D Hydrodynamic Flood Wave Front Simulator',
+      Boolean(isDisasterValid),
+      `Sentinel-1 InSAR subsidence: ${insar.lineOfSightDisplacementMm}mm (${insar.annualizedVelocityMmPerYear} mm/yr, ${insar.geotechnicalSafetyStatus}); Flood surge: ${flood.floodSimulation.surgePeakDepthMeters}m depth (${flood.civilDefenseAdvisory})`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Disaster InSAR Radar & 1D Hydrodynamic Flood Wave Front Simulator', false, err.message);
+  }
+
+  // Test 4.79: Autonomous Clean-Energy Smart Grid & Optimal Power Flow (OPF)
+  try {
+    const powerFlow = smartGridOpf.solveACPowerFlow({});
+    const poa = smartGridOpf.calculateSolarTransposition({});
+
+    const isGridValid = powerFlow.powerFlowSummary.gridEfficiencyPercent > 90 &&
+      powerFlow.gridReliabilityRating.includes('IEEE') &&
+      poa.planeOfArrayIrradianceWm2 > 800;
+
+    assertTest(
+      'integration',
+      'Brahma Clean-Energy Smart Grid (ACOPF Phasor Balancer & Solar Transposition)',
+      Boolean(isGridValid),
+      `Newton-Raphson ACOPF converged (Loss: ${powerFlow.powerFlowSummary.systemTransmissionLossMW} MW, ${powerFlow.powerFlowSummary.gridEfficiencyPercent}% efficiency); Solar POA yield: ${poa.planeOfArrayIrradianceWm2} W/m² (+${poa.solarPanelYieldBoostPercent}% boost)`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Clean-Energy Smart Grid (ACOPF Phasor Balancer & Solar Transposition)', false, err.message);
+  }
+
+  // Test 4.80: Neuro-Symbolic Inductive Logic Programming (ILP) & Defeasible Reasoner
+  try {
+    const hornProof = neuroSymbolic.evaluatePredicateQuery('eligibleForSovereignGrant(company_alpha)');
+    const foil = neuroSymbolic.calculateFoilInformationGain({});
+
+    const isLogicValid = hornProof.isSatisfied === true &&
+      hornProof.justificationProofTree.length === 1 &&
+      foil.informationGainBits > 0;
+
+    assertTest(
+      'integration',
+      'Brahma Neuro-Symbolic Logic (Horn Clause Forward Chaining & FOIL Inductive Gain)',
+      Boolean(isLogicValid),
+      `Horn clause deduced ${hornProof.query} (${hornProof.derivationStatus}); FOIL inductive rule information gain: ${foil.informationGainBits} bits`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Neuro-Symbolic Logic (Horn Clause Forward Chaining & FOIL Inductive Gain)', false, err.message);
+  }
+
+  // Test 4.81: Geodesic Maritime AIS Routing & ICC Incoterms 2020 Compliance
+  try {
+    const voyage = maritimeAis.calculateGeodesicVoyage({});
+    const incoterm = maritimeAis.evaluateIncotermsAllocation({ incotermRule: 'CIF' });
+
+    const isMaritimeValid = voyage.voyage.geodesicDistanceNM > 3000 &&
+      voyage.bunkeringAndEmissions.estimatedBunkerFuelTonnes > 0 &&
+      incoterm.marineInsuranceMandatoryForSeller === true;
+
+    assertTest(
+      'integration',
+      'Brahma Geodesic Maritime AIS (Vincenty Great-Circle Navigation & Incoterms 2020)',
+      Boolean(isMaritimeValid),
+      `JNPT -> Rotterdam: ${voyage.voyage.geodesicDistanceNM} NM (${voyage.voyage.estimatedTransitDays} days, ${voyage.bunkeringAndEmissions.carbonEmissionsTonnesCO2}t CO2); Incoterms CIF risk transfers at: ${incoterm.riskTransferPoint}`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Geodesic Maritime AIS (Vincenty Great-Circle Navigation & Incoterms 2020)', false, err.message);
+  }
+
+  // Test 4.82: Silicon RTL Verilog Formal Synthesis & Static Timing Analysis (STA)
+  try {
+    const sta = siliconRtl.verifyStaticTimingSlack({});
+    const cdc = siliconRtl.evaluateCdcSynchronizer({});
+
+    const isRtlValid = sta.timingClosureStatus === 'TIMING_CONSTRAINTS_MET_CLEAN' &&
+      sta.timingPathSlacks.setupSlackNs > 0 &&
+      cdc.metastabilityRisk === 'NEGLIGIBLE_METASTABILITY_HAZARD';
+
+    assertTest(
+      'integration',
+      'Brahma Silicon RTL (Static Timing Analysis Setup/Hold Slack & CDC Metastability)',
+      Boolean(isRtlValid),
+      `STA 1 GHz closure: Setup slack +${sta.timingPathSlacks.setupSlackNs}ns, Hold slack +${sta.timingPathSlacks.holdSlackNs}ns (Max: ${sta.maxAchievableFrequencyGhz} GHz); 2-FF CDC MTBF: ${cdc.estimatedMTBFYears}`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Silicon RTL (Static Timing Analysis Setup/Hold Slack & CDC Metastability)', false, err.message);
+  }
+
+  // Test 4.83: Game-Theoretic VCG Combinatorial Auctions & PBFT Byzantine Quorum
+  try {
+    const vcg = gameTheory.solveVCGAuction({});
+    const pbft = gameTheory.verifyByzantineFaultTolerance({});
+
+    const isGameValid = vcg.properties.dominantStrategyIncentiveCompatible === true &&
+      vcg.allocations.length === 2 &&
+      pbft.consensusStatus.includes('FINALITY');
+
+    assertTest(
+      'integration',
+      'Brahma Game Theory (VCG Truthful Combinatorial Auction & PBFT Byzantine Quorum)',
+      Boolean(isGameValid),
+      `VCG auction allocated 2 items (Social Welfare: $${vcg.totalSocialWelfare}, Revenue: $${vcg.totalProtocolRevenue}); PBFT 13-node cluster satisfied 2f+1 quorum (${pbft.consensusStatus})`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Game Theory (VCG Truthful Combinatorial Auction & PBFT Byzantine Quorum)', false, err.message);
+  }
+
+  // Test 4.84: Planetary Singularity Constitution & Cross-Council Quadratic Voting
+  try {
+    const constAudit = planetaryConstitution.auditConstitutionalCompliance({});
+    const qv = planetaryConstitution.tallyQuadraticVote({});
+
+    const isConstValid = constAudit.proposalAudit.isCompliant === true &&
+      constAudit.governanceDisposition === 'CONSTITUTIONAL_SANCTION_GRANTED' &&
+      qv.tally.verdict === 'QUADRATIC_QUORUM_RATIFIED';
+
+    assertTest(
+      'integration',
+      'Brahma Planetary Singularity Constitution & Cross-Council Quadratic Voting',
+      Boolean(isConstValid),
+      `Constitutional compliance sealed (${constAudit.proposalAudit.signedCovenantId}); Quadratic vote ratified (${qv.tally.totalEffectiveVotes} effective votes, ${qv.tally.totalCreditsSpent} credits)`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Planetary Singularity Constitution & Cross-Council Quadratic Voting', false, err.message);
   }
 
   // ═════════════════════════════════════════════════════════════════════════════

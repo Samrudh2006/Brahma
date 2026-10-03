@@ -1006,4 +1006,168 @@ router.post('/meta/borda-consensus', (req, res) => {
   }
 });
 
+// ─── 29. Post-Quantum Cryptography & Smart Contract Security ─────────────────
+const pqcCrypto = require('../services/brahmaPqcCryptoEngine');
+const smartContracts = require('../services/brahmaSmartContractEngine');
+
+router.post('/pqc/generate-keypair', (req, res) => {
+  try {
+    const result = pqcCrypto.generateMLKEMKeyPair(req.body && req.body.keyId);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/smartcontract/audit', (req, res) => {
+  try {
+    const result = smartContracts.auditContractCode(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ─── 30. CBO Query Optimizer & Neuromorphic Energy Compute ───────────────────
+const cboOptimizer = require('../services/brahmaCboQueryOptimizer');
+const neuromorphicCompute = require('../services/brahmaNeuromorphicComputeEngine');
+
+router.post('/cbo/optimize-joins', (req, res) => {
+  try {
+    const result = cboOptimizer.optimizeJoinOrder(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/compute/carbon-profile', (req, res) => {
+  try {
+    const result = neuromorphicCompute.profileWorkloadEnergy(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ─── 31. Spatial LiDAR SLAM & Clinical Genomics Splicing ─────────────────────
+const spatialSlam = require('../services/brahmaSpatialSlamEngine');
+const dhanvantariGenomics = require('../services/dhanvantariGenomicsEngine');
+
+router.post('/spatial/icp-align', (req, res) => {
+  try {
+    const result = spatialSlam.alignPointCloudsICP(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/genomics/prs-score', (req, res) => {
+  try {
+    const result = dhanvantariGenomics.calculatePolygenicRiskScore(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ─── 32. Scientific Symbolic Discovery & Macro Central Bank DSGE ─────────────
+const scientificDiscovery = require('../services/brahmaScientificDiscoveryEngine');
+const macroDsge = require('../services/kuveraMacroDsgeEngine');
+
+router.post('/science/discover-law', (req, res) => {
+  try {
+    const result = scientificDiscovery.discoverSymbolicLaw(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/macro/taylor-rule', (req, res) => {
+  try {
+    const result = macroDsge.calculateTaylorRuleRate(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ─── 33. Radar InSAR Disasters & Clean-Energy Smart Grid OPF ──────────────────
+const disasterRadar = require('../services/brahmaDisasterRadarEngine');
+const smartGridOpf = require('../services/brahmaSmartGridOpfEngine');
+
+router.post('/radar/insar-displacement', (req, res) => {
+  try {
+    const result = disasterRadar.calculateInSARDisplacement(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/smartgrid/ac-powerflow', (req, res) => {
+  try {
+    const result = smartGridOpf.solveACPowerFlow(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ─── 34. Neuro-Symbolic Logic & Geodesic Maritime AIS ────────────────────────
+const neuroSymbolic = require('../services/brahmaNeuroSymbolicEngine');
+const maritimeAis = require('../services/brahmaMaritimeAisEngine');
+
+router.post('/neurosymbolic/query', (req, res) => {
+  try {
+    const result = neuroSymbolic.evaluatePredicateQuery(req.body && req.body.query);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/maritime/geodesic-voyage', (req, res) => {
+  try {
+    const result = maritimeAis.calculateGeodesicVoyage(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ─── 35. Silicon RTL Verilog, Game Theory VCG & Planetary Constitution ────────
+const siliconRtl = require('../services/brahmaSiliconRtlEngine');
+const gameTheory = require('../services/brahmaGameTheoryEngine');
+const planetaryConstitution = require('../services/brahmaPlanetaryConstitutionEngine');
+
+router.post('/silicon/static-timing', (req, res) => {
+  try {
+    const result = siliconRtl.verifyStaticTimingSlack(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/gametheory/vcg-auction', (req, res) => {
+  try {
+    const result = gameTheory.solveVCGAuction(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/constitution/audit-action', (req, res) => {
+  try {
+    const result = planetaryConstitution.auditConstitutionalCompliance(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 module.exports = router;
