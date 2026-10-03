@@ -23,16 +23,16 @@ async function captureAll() {
   // Pre-seed session storage to bypass splash screen directly to sovereign workspace
   await page.evaluateOnNewDocument(() => {
     sessionStorage.setItem('hasSeenBrahmaSplash', 'true');
-    localStorage.setItem('brahma-theme', 'obsidian');
+    localStorage.setItem('brahma-theme', 'surya');
   });
 
   console.log('🌐 Navigating to http://localhost:3000/...');
   await page.goto('http://localhost:3000/', { waitUntil: 'networkidle2', timeout: 30000 });
   await new Promise(r => setTimeout(r, 2000));
 
-  // 1. Capture Main Cosmic Gold / Obsidian Workspace
-  console.log('📸 1. Capturing Main Cosmic Gold Workspace...');
-  await page.screenshot({ path: path.join(SCREENSHOT_DIR, '01_cosmic_gold_workspace.png') });
+  // 1. Capture Main Sūrya Solarized Workspace (Default Theme)
+  console.log('📸 1. Capturing Main Sūrya Solarized Workspace...');
+  await page.screenshot({ path: path.join(SCREENSHOT_DIR, '01_surya_solarized_workspace.png') });
 
   // 2. Switch to Mayura Teal Theme
   console.log('📸 2. Capturing Mayūra Teal Theme...');

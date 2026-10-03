@@ -144,11 +144,9 @@ export default function App() {
 
   // ─── Theme Synchronization ───────────────────────────────────────────────
   useEffect(() => {
-    if (theme && theme !== 'obsidian') {
-      document.documentElement.setAttribute('data-theme', theme);
-    } else {
-      document.documentElement.removeAttribute('data-theme');
-    }
+    const activeTheme = (theme === 'obsidian' || !theme) ? 'surya' : theme;
+    document.documentElement.setAttribute('data-theme', activeTheme);
+    document.body.setAttribute('data-theme', activeTheme);
   }, [theme]);
 
   // ─── Seed notifications if empty ─────────────────────────────────────────

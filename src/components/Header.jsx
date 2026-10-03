@@ -8,10 +8,9 @@ import { toggleAmbientDrone, updateAmbientTheme, getDroneState, playTactileClick
 import { useAppStore } from '@store/index';
 
 const LUXURY_THEMES = [
-  { id: 'obsidian', name: '🌌 Cosmic Gold', color: '#fbbf24', desc: 'Obsidian & 432Hz Cosmic Pad', soundLabel: '🌌 Cosmic 432 Hz Warmth' },
+  { id: 'surya', name: '🌅 Sūrya Solarized', color: '#f59e0b', desc: 'Solar Om & Sacred Tanpura', soundLabel: '🌅 Sūrya 136.1 Hz Tanpura' },
   { id: 'teal', name: '🦚 Mayūra Teal', color: '#2bb6bd', desc: 'Peacock & 528Hz Solfeggio', soundLabel: '🦚 Mayūra 528 Hz Water' },
   { id: 'cyberpunk', name: '🌆 Cyberpunk Kashi', color: '#ec4899', desc: 'Neon Violet & Vangelis Synth', soundLabel: '🌆 Cyber Kashi Synth' },
-  { id: 'surya', name: '🌅 Sūrya Solarized', color: '#f59e0b', desc: 'Solar Om & Sacred Tanpura', soundLabel: '🌅 Sūrya 136.1 Hz Tanpura' },
   { id: 'zen', name: '❄️ Himālaya Zen', color: '#38bdf8', desc: 'Tibetan Bowl & Mountain Air', soundLabel: '❄️ Himālaya 396 Hz Bowl' }
 ];
 
@@ -30,7 +29,8 @@ export default function Header({
   const storeTheme = useAppStore(state => state.theme);
   const storeSetTheme = useAppStore(state => state.setTheme);
 
-  const theme = propTheme || storeTheme || 'obsidian';
+  const rawTheme = propTheme || storeTheme || 'surya';
+  const theme = rawTheme === 'obsidian' ? 'surya' : rawTheme;
   const setTheme = propSetTheme || storeSetTheme;
 
   const [showThemeMenu, setShowThemeMenu] = useState(false);
@@ -101,13 +101,8 @@ export default function Header({
 
     // 2. Direct DOM updates
     if (typeof document !== 'undefined') {
-      if (themeId === 'obsidian') {
-        document.documentElement.setAttribute('data-theme', 'obsidian');
-        document.body.setAttribute('data-theme', 'obsidian');
-      } else {
-        document.documentElement.setAttribute('data-theme', themeId);
-        document.body.setAttribute('data-theme', themeId);
-      }
+      document.documentElement.setAttribute('data-theme', themeId);
+      document.body.setAttribute('data-theme', themeId);
     }
 
     // 3. LocalStorage persistence

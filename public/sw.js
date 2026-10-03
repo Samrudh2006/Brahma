@@ -1,4 +1,4 @@
-const CACHE_NAME = 'brahma-pwa-v1';
+const CACHE_NAME = 'brahma-pwa-v2';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -32,8 +32,12 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   // Only cache GET requests
   if (event.request.method !== 'GET') return;
-  // Bypass API and backend requests
+  // Bypass API, backend, and localhost/dev requests
   if (event.request.url.includes('/api/')) return;
+  try {
+    const url = new URL(event.request.url);
+    if (url.hostname === 'localhost' || url.hostname === '127.0.0.1') return;
+  } catch (_) {}
 
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {

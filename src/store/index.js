@@ -13,18 +13,18 @@ export const useAppStore = create((set, get) => ({
   activePage: 'chat',
   setActivePage: (page) => set({ activePage: page }),
 
-  // Theme Engine (5 Luxury Sanskrit Themes)
-  theme: typeof window !== 'undefined' ? (localStorage.getItem('brahma-theme') || 'obsidian') : 'obsidian',
+  // Theme Engine (4 Luxury Themes: Sūrya, Mayūra, Cyberpunk, Himālaya)
+  theme: typeof window !== 'undefined'
+    ? ((localStorage.getItem('brahma-theme') === 'obsidian' ? 'surya' : localStorage.getItem('brahma-theme')) || 'surya')
+    : 'surya',
   setTheme: (theme) => {
+    const finalTheme = (theme === 'obsidian' || !theme) ? 'surya' : theme;
     if (typeof window !== 'undefined') {
-      localStorage.setItem('brahma-theme', theme);
-      if (theme === 'obsidian') {
-        document.documentElement.removeAttribute('data-theme');
-      } else {
-        document.documentElement.setAttribute('data-theme', theme);
-      }
+      localStorage.setItem('brahma-theme', finalTheme);
+      document.documentElement.setAttribute('data-theme', finalTheme);
+      document.body.setAttribute('data-theme', finalTheme);
     }
-    set({ theme });
+    set({ theme: finalTheme });
   },
 
   // Modals
