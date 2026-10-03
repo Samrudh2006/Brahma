@@ -1439,6 +1439,109 @@ router.post('/superintelligence/zero-code-transfer', (req, res) => {
   }
 });
 
+// ─── 39. Frontier Top 10 Transcendence Experiments Mesh ─────────────────────
+const rustWasmJit = require('../services/brahmaRustWasmJitEngine');
+const massiveMigration = require('../services/brahmaMassiveMigrationEngine');
+const embodiedRobotics = require('../services/brahmaEmbodiedRoboticsEngine');
+const academicPaper = require('../services/brahmaAcademicPaperEngine');
+const shardedPbft = require('../services/brahmaShardedPbftMesh');
+const quantumAnnealing = require('../services/brahmaQuantumAnnealingGridEngine');
+const molecularDocking = require('../services/brahmaMolecularDockingEngine');
+const miniF2FProver = require('../services/brahmaMiniF2FProofAssistant');
+const mempoolMev = require('../services/brahmaMempoolMevArbiter');
+const universalEpistemic = require('../services/brahmaUniversalEpistemicEngine');
+
+router.post('/experiments/rust-wasm-jit', (req, res) => {
+  try {
+    const result = rustWasmJit.compileRustToWasm(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/experiments/massive-migration', (req, res) => {
+  try {
+    const result = massiveMigration.executeMassiveMigration(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/experiments/robotics-forward-kinematics', (req, res) => {
+  try {
+    const result = embodiedRobotics.computeForwardKinematics(req.body && req.body.jointAnglesRad);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/experiments/academic-paper-generate', (req, res) => {
+  try {
+    const result = academicPaper.generateAcademicManuscript(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/experiments/sharded-pbft-consensus', (req, res) => {
+  try {
+    const result = shardedPbft.executeShardedConsensus(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/experiments/quantum-anneal-dispatch', (req, res) => {
+  try {
+    const result = quantumAnnealing.solveQuantumAnnealingDispatch(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/experiments/molecular-docking', (req, res) => {
+  try {
+    const result = molecularDocking.evaluateMolecularDocking(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/experiments/minif2f-prove', (req, res) => {
+  try {
+    const result = miniF2FProver.proveMiniF2FTheorem(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/experiments/mempool-mev-shield', (req, res) => {
+  try {
+    const result = mempoolMev.evaluateMempoolArbAndShield(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/experiments/universal-epistemic-solve', (req, res) => {
+  try {
+    const result = universalEpistemic.solveUnknownObjective(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 module.exports = router;
+
 
 

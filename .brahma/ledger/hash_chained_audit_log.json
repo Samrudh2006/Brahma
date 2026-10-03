@@ -984,5 +984,130 @@
     },
     "prevHash": "006e002699acde68c7c3b05266fdab950e4456f75e4bd7939884d2007dc289f0",
     "entryHash": "c3bd6ea8f5009349a2d2dbc9abc3815e94547206f84bf8dc27218e7fd5272860"
+  },
+  {
+    "index": 79,
+    "timestamp": "2026-10-03T13:43:59.957Z",
+    "councilId": "chanakya_legal",
+    "action": "CONTRACT_REDLINE_COMMITTED",
+    "payload": {
+      "contractId": "ctr_771",
+      "redlines": 3
+    },
+    "prevHash": "c3bd6ea8f5009349a2d2dbc9abc3815e94547206f84bf8dc27218e7fd5272860",
+    "entryHash": "47fd103d2196adb6d62ae7f84f744f739c7d28b2096eba2c6626ffd84d6788b3"
+  },
+  {
+    "index": 80,
+    "timestamp": "2026-10-03T13:43:59.959Z",
+    "councilId": "kuvera_quant",
+    "action": "PAPER_TRADE_EXECUTED",
+    "payload": {
+      "symbol": "NVDA",
+      "quantity": 10,
+      "notional": 1250
+    },
+    "prevHash": "47fd103d2196adb6d62ae7f84f744f739c7d28b2096eba2c6626ffd84d6788b3",
+    "entryHash": "061f1ac3cdfa7df8557e5e6acdba7deb0b6d043d6c19ae964f90c66a28915b11"
+  },
+  {
+    "index": 81,
+    "timestamp": "2026-10-03T13:44:44.794Z",
+    "councilId": "chanakya_legal",
+    "action": "CONTRACT_REDLINE_COMMITTED",
+    "payload": {
+      "contractId": "ctr_771",
+      "redlines": 3
+    },
+    "prevHash": "061f1ac3cdfa7df8557e5e6acdba7deb0b6d043d6c19ae964f90c66a28915b11",
+    "entryHash": "d0ba6615e037149e196d5c2844c9a348731f3ab3a9e6c6992db581031323d093"
+  },
+  {
+    "index": 82,
+    "timestamp": "2026-10-03T13:44:44.797Z",
+    "councilId": "kuvera_quant",
+    "action": "PAPER_TRADE_EXECUTED",
+    "payload": {
+      "symbol": "NVDA",
+      "quantity": 10,
+      "notional": 1250
+    },
+    "prevHash": "d0ba6615e037149e196d5c2844c9a348731f3ab3a9e6c6992db581031323d093",
+    "entryHash": "523e3079aad7f0392f057fc968453d5b5ef2636f0e3d6b7e4733acdc39ea5c1c"
+  },
+  {
+    "index": 83,
+    "timestamp": "2026-10-03T13:45:23.352Z",
+    "councilId": "chanakya_legal",
+    "action": "CONTRACT_REDLINE_COMMITTED",
+    "payload": {
+      "contractId": "ctr_771",
+      "redlines": 3
+    },
+    "prevHash": "523e3079aad7f0392f057fc968453d5b5ef2636f0e3d6b7e4733acdc39ea5c1c",
+    "entryHash": "7e344c945f82e1f26ebf1111c3211d1675850081541c05a63f69294908362cb7"
+  },
+  {
+    "index": 84,
+    "timestamp": "2026-10-03T13:45:23.355Z",
+    "councilId": "kuvera_quant",
+    "action": "PAPER_TRADE_EXECUTED",
+    "payload": {
+      "symbol": "NVDA",
+      "quantity": 10,
+      "notional": 1250
+    },
+    "prevHash": "7e344c945f82e1f26ebf1111c3211d1675850081541c05a63f69294908362cb7",
+    "entryHash": "dff685bad3884622d6d41968848dddb97c76a4897906ed00b530981587d6867d"
+  },
+  {
+    "index": 85,
+    "timestamp": "2026-10-03T13:46:09.861Z",
+    "councilId": "chanakya_legal",
+    "action": "CONTRACT_REDLINE_COMMITTED",
+    "payload": {
+      "contractId": "ctr_771",
+      "redlines": 3
+    },
+    "prevHash": "dff685bad3884622d6d41968848dddb97c76a4897906ed00b530981587d6867d",
+    "entryHash": "5b35309c89307343ae972364a53feb441c8f52d36362c6fbf0ad7314fdb690f4"
+  },
+  {
+    "index": 86,
+    "timestamp": "2026-10-03T13:46:09.863Z",
+    "councilId": "kuvera_quant",
+    "action": "PAPER_TRADE_EXECUTED",
+    "payload": {
+      "symbol": "NVDA",
+      "quantity": 10,
+      "notional": 1250
+    },
+    "prevHash": "5b35309c89307343ae972364a53feb441c8f52d36362c6fbf0ad7314fdb690f4",
+    "entryHash": "8a0105b6f5e8723353dd3f02c9f024ccfe31e11c312fa091dcb06cb3d31a5bef"
+  },
+  {
+    "index": 87,
+    "timestamp": "2026-10-03T13:46:25.129Z",
+    "councilId": "chanakya_legal",
+    "action": "CONTRACT_REDLINE_COMMITTED",
+    "payload": {
+      "contractId": "ctr_771",
+      "redlines": 3
+    },
+    "prevHash": "8a0105b6f5e8723353dd3f02c9f024ccfe31e11c312fa091dcb06cb3d31a5bef",
+    "entryHash": "f512985df0892a424c77bfda47cfe30215e609b64a69de83e78750d09d6579f9"
+  },
+  {
+    "index": 88,
+    "timestamp": "2026-10-03T13:46:25.132Z",
+    "councilId": "kuvera_quant",
+    "action": "PAPER_TRADE_EXECUTED",
+    "payload": {
+      "symbol": "NVDA",
+      "quantity": 10,
+      "notional": 1250
+    },
+    "prevHash": "f512985df0892a424c77bfda47cfe30215e609b64a69de83e78750d09d6579f9",
+    "entryHash": "09de33146383a1b83f22643040cba6ca6a850fa994eab8d6672267c6e2324f0c"
   }
 ]
