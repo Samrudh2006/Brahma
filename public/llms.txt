@@ -1,0 +1,12 @@
+# BRAHMA AGI Operating System & Divine Intelligence Matrix
+> Universal Scientific Discovery, Continuous Latent Reasoning, and Formal Multi-Agent Synthesis.
+
+## Foundational Engines
+- Nova Discovery Studio: DeepMind FunSearch algorithmic discovery engine with automated evolutionary LLM evaluators.
+- Coconut Mind Studio: Meta FAIR continuous latent trajectory reasoning engine in continuous embedding space.
+- Genesis OS Kernel: Autonomous self-compiling multi-agent kernel with Lean 4 formal math verification.
+- Model Training Studio: 20+ Frontier AI fine-tuning & GRPO/DPO reinforcement learning pipeline.
+
+## Multi-Agent Matrix
+- 289+ Specialized Swarm Agents across 13 Divine Intelligence Councils (Brahma, Saraswati, Ganesha, Vishwakarma, Hanuman, Shiva, Durga, Lakshmi, Krishna, Agni, Varuna, Surya, Kali).
+- Zero-Hallucination formal verification and Lean 4 proof checker integration.
