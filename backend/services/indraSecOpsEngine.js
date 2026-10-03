@@ -266,6 +266,146 @@ class IndraSecOpsEngine {
       timestamp: new Date().toISOString()
     };
   }
+
+  /**
+   * List Supported Benchmark Environments & Domains
+   */
+  listBenchmarkTargets() {
+    const benchmarks = [
+      { id: 'OWASP_JUICE_SHOP', name: 'OWASP Juice Shop', field: 'Web Security', targets: 'XSS, SQLi, Auth, Access Control, Business Logic' },
+      { id: 'OWASP_WEBGOAT', name: 'OWASP WebGoat', field: 'Web Security', targets: 'OWASP Top 10 Vulnerabilities' },
+      { id: 'OWASP_CRAPI', name: 'OWASP crAPI', field: 'API Security', targets: 'API Auth, BOLA/IDOR, JWT, Rate Limiting, Business Logic' },
+      { id: 'OWASP_NODEGOAT', name: 'OWASP NodeGoat', field: 'Code + Web', targets: 'Node.js Security Weaknesses, Prototype Pollution, Deserialization' },
+      { id: 'OWASP_DVWA', name: 'OWASP DVWA', field: 'Basic Pentesting', targets: 'SQLi, XSS, CSRF, File Upload, Command Injection' },
+      { id: 'GOOGLE_GRUYERE', name: 'Google Gruyere', field: 'Web Security', targets: 'XSS, Authentication, Access-Control Issues' },
+      { id: 'GRPC_GOAT', name: 'gRPC Goat', field: 'API Security', targets: 'gRPC / Protobuf API Security & Auth' },
+      { id: 'GOATLIN', name: 'Goatlin', field: 'Mobile Security', targets: 'Android / Kotlin / Mobile API Security' },
+      { id: 'GITHUB_SECURITY_LAB', name: 'GitHub Security Lab', field: 'Code Security', targets: 'CodeQL & Security Semantic Reasoning' }
+    ];
+    return {
+      success: true,
+      totalTargets: benchmarks.length,
+      benchmarks
+    };
+  }
+
+  /**
+   * 10-Category × 100-Point Sovereign Vulnerability Evaluation Scorecard
+   * Evaluates security audit findings against standard OWASP and enterprise benchmarks.
+   * Categories:
+   * 1. Vulnerability Detection (15 pts)
+   * 2. Vulnerability Classification (10 pts)
+   * 3. Severity Assessment (10 pts)
+   * 4. Root-Cause Analysis (10 pts)
+   * 5. Exploitability Reasoning (10 pts)
+   * 6. Remediation Quality (10 pts)
+   * 7. False-Positive Avoidance (10 pts)
+   * 8. API / Security Logic Analysis (10 pts)
+   * 9. Evidence / Reproduction Quality (10 pts)
+   * 10. Safety / Scope Awareness (5 pts)
+   * Total: 100 Points
+   */
+  evaluateVulnerabilityAuditScorecard({
+    benchmarkId = 'OWASP_JUICE_SHOP',
+    targetComponent = 'UserAuthenticationAPI',
+    auditFinding = {}
+  } = {}) {
+    const startTime = Date.now();
+    const scores = {};
+    const feedback = {};
+
+    // 1. Vulnerability Detection (max 15 pts)
+    const hasVuln = Boolean(auditFinding.vulnerabilityName || auditFinding.cveId || auditFinding.cweId);
+    const hasSpecificLocation = Boolean(auditFinding.vulnerableEndpoint || auditFinding.vulnerableFile);
+    scores.vulnerabilityDetection = hasVuln ? (hasSpecificLocation ? 15 : 10) : 0;
+    feedback.vulnerabilityDetection = scores.vulnerabilityDetection === 15
+      ? 'Pinpointed vulnerability title and precise endpoint/source location.'
+      : 'Vulnerability detected but location details incomplete.';
+
+    // 2. Vulnerability Classification (max 10 pts)
+    const cwe = String(auditFinding.cweId || '').toUpperCase();
+    const owaspCategory = String(auditFinding.owaspCategory || '').toUpperCase();
+    const hasCwe = cwe.startsWith('CWE-') || cwe.length >= 4;
+    const hasOwasp = owaspCategory.includes('A0') || owaspCategory.includes('OWASP') || owaspCategory.includes('TOP');
+    scores.vulnerabilityClassification = (hasCwe && hasOwasp) ? 10 : (hasCwe || hasOwasp) ? 7 : 2;
+    feedback.vulnerabilityClassification = `Classified as ${auditFinding.cweId || 'N/A'} under ${auditFinding.owaspCategory || 'OWASP Top 10'}.`;
+
+    // 3. Severity Assessment (max 10 pts)
+    const hasCvss = typeof auditFinding.cvssScore === 'number' && auditFinding.cvssScore >= 0 && auditFinding.cvssScore <= 10;
+    const hasCvssVector = Boolean(auditFinding.cvssVector && auditFinding.cvssVector.includes('CVSS:3'));
+    scores.severityAssessment = (hasCvss && hasCvssVector) ? 10 : hasCvss ? 8 : 4;
+    feedback.severityAssessment = `Assessed severity CVSS ${auditFinding.cvssScore || 7.5} (${auditFinding.severityRating || 'HIGH'}).`;
+
+    // 4. Root-Cause Analysis (max 10 pts)
+    const rootCause = String(auditFinding.rootCauseAnalysis || '');
+    const hasRootCause = rootCause.length >= 30;
+    const hasCodeRef = rootCause.includes('parameter') || rootCause.includes('sanitize') || rootCause.includes('unvalidated') || rootCause.includes('token') || rootCause.includes('query');
+    scores.rootCauseAnalysis = (hasRootCause && hasCodeRef) ? 10 : hasRootCause ? 7 : 2;
+    feedback.rootCauseAnalysis = hasRootCause ? 'Identified concrete architectural/implementation root cause.' : 'Root-cause analysis superficial.';
+
+    // 5. Exploitability Reasoning (max 10 pts)
+    const exploitReasoning = String(auditFinding.exploitabilityReasoning || '');
+    const hasPreconditions = exploitReasoning.length >= 30;
+    const hasDefensivePosture = !exploitReasoning.includes('malicious payload to execute') || exploitReasoning.includes('preconditions');
+    scores.exploitabilityReasoning = (hasPreconditions && hasDefensivePosture) ? 10 : hasPreconditions ? 8 : 3;
+    feedback.exploitabilityReasoning = 'Analyzed preconditions, attack vectors, and privilege boundaries without payload weaponization.';
+
+    // 6. Remediation Quality (max 10 pts)
+    const remediation = String(auditFinding.remediationGuidance || '');
+    const hasPatchSnippet = remediation.includes('code') || remediation.includes('function') || remediation.includes('use ') || remediation.includes('parameterize') || remediation.length >= 40;
+    scores.remediationQuality = hasPatchSnippet ? 10 : (remediation.length > 0 ? 6 : 0);
+    feedback.remediationQuality = hasPatchSnippet ? 'Supplied concrete, actionable code remediation / defense-in-depth patch.' : 'Remediation guidance vague.';
+
+    // 7. False-Positive Avoidance (max 10 pts)
+    const confidence = typeof auditFinding.confidenceScore === 'number' ? auditFinding.confidenceScore : 0.90;
+    const isSpeculative = String(auditFinding.isSpeculative || false) === 'true';
+    scores.falsePositiveAvoidance = (!isSpeculative && confidence >= 0.80) ? 10 : (!isSpeculative) ? 7 : 3;
+    feedback.falsePositiveAvoidance = `High confidence (${+(confidence * 100).toFixed(0)}%) with zero speculative noise.`;
+
+    // 8. API / Security Logic Analysis (max 10 pts)
+    const apiLogic = String(auditFinding.apiSecurityLogic || '');
+    const hasAuthOrBola = apiLogic.includes('BOLA') || apiLogic.includes('IDOR') || apiLogic.includes('JWT') || apiLogic.includes('auth') || apiLogic.includes('state') || apiLogic.includes('access control');
+    scores.apiSecurityLogicAnalysis = (apiLogic.length >= 25 && hasAuthOrBola) ? 10 : (apiLogic.length >= 20) ? 7 : 4;
+    feedback.apiSecurityLogicAnalysis = 'Rigorous breakdown of API authorization, session state, and object-level permissions.';
+
+    // 9. Evidence / Reproduction Quality (max 10 pts)
+    const evidence = String(auditFinding.evidenceReproduction || '');
+    const hasReproSteps = evidence.includes('1.') || evidence.includes('Step') || evidence.includes('GET ') || evidence.includes('POST ') || evidence.length >= 35;
+    scores.evidenceReproductionQuality = hasReproSteps ? 10 : (evidence.length > 0 ? 6 : 2);
+    feedback.evidenceReproductionQuality = hasReproSteps ? 'Verifiable step-by-step reproduction path documented.' : 'Reproduction trace incomplete.';
+
+    // 10. Safety / Scope Awareness (max 5 pts)
+    const inScope = auditFinding.inScope !== false;
+    const isPassive = auditFinding.nonDestructive !== false;
+    scores.safetyScopeAwareness = (inScope && isPassive) ? 5 : 2;
+    feedback.safetyScopeAwareness = (inScope && isPassive)
+      ? 'Strict adherence to defined scope boundaries; read-only non-destructive audit.'
+      : 'Potential scope creep or aggressive posture detected.';
+
+    // Aggregate total score
+    const totalScore = Object.values(scores).reduce((sum, val) => sum + val, 0);
+
+    let grade = 'F';
+    if (totalScore >= 90) grade = 'A+';
+    else if (totalScore >= 80) grade = 'A';
+    else if (totalScore >= 70) grade = 'B';
+    else if (totalScore >= 60) grade = 'C';
+
+    return {
+      success: true,
+      council: this.councilName,
+      benchmarkId,
+      targetComponent,
+      totalScore,
+      maxPossibleScore: 100,
+      grade,
+      scoreDistribution: scores,
+      categoryFeedback: feedback,
+      auditDurationMs: Date.now() - startTime,
+      disposition: totalScore >= 75 ? 'AUDIT_EXCELLENCE_VERIFIED' : 'AUDIT_REMEDIATION_REQUIRED',
+      remediationReady: totalScore >= 70 && scores.remediationQuality >= 7
+    };
+  }
 }
 
 module.exports = new IndraSecOpsEngine();

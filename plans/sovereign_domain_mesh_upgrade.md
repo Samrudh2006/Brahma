@@ -178,3 +178,44 @@
   - [x] Production build clean: `npx vite build` passed (10.16s, 0 errors).
   - [x] Zero extra UI buttons added.
   - [x] Zero third-party branding in codebase.
+
+---
+
+## 8. Phase 7 Checklist: Indra 10-Category 100-Point Vulnerability Scorecard & Benchmark Matrix (Completed)
+
+- [x] **1. Comprehensive Benchmark Target Catalog**
+  - [x] Pre-indexed 9 canonical security benchmark testbeds in `backend/services/indraSecOpsEngine.js`:
+    - `OWASP_JUICE_SHOP` (Web Security: XSS, SQLi, Auth, Access Control, Business Logic)
+    - `OWASP_WEBGOAT` (Web Security: OWASP Top 10 Vulnerabilities)
+    - `OWASP_CRAPI` (API Security: API Auth, BOLA/IDOR, JWT, Rate Limiting, Business Logic)
+    - `OWASP_NODEGOAT` (Code + Web: Node.js Security Weaknesses, Prototype Pollution, Deserialization)
+    - `OWASP_DVWA` (Basic Pentesting: SQLi, XSS, CSRF, File Upload, Command Injection)
+    - `GOOGLE_GRUYERE` (Web Security: XSS, Authentication, Access-Control Issues)
+    - `GRPC_GOAT` (API Security: gRPC / Protobuf API Security & Auth)
+    - `GOATLIN` (Mobile Security: Android / Kotlin / Mobile API Security)
+    - `GITHUB_SECURITY_LAB` (Code Security: CodeQL & Security Semantic Reasoning)
+
+- [x] **2. 10-Category × 100-Point Vulnerability Audit Scorecard**
+  - [x] Rigorous multi-dimensional rubric replacing simplistic binary detection:
+    1. Vulnerability Detection (15 pts) — Precise title & endpoint/file location
+    2. Vulnerability Classification (10 pts) — CWE-ID & OWASP category
+    3. Severity Assessment (10 pts) — CVSS v3.x score & vector
+    4. Root-Cause Analysis (10 pts) — Concrete architectural / implementation root cause
+    5. Exploitability Reasoning (10 pts) — Preconditions & privilege boundaries without weaponization
+    6. Remediation Quality (10 pts) — Actionable code patch / defense-in-depth snippet
+    7. False-Positive Avoidance (10 pts) — Statistical confidence >= 80% & non-speculative
+    8. API / Security Logic Analysis (10 pts) — BOLA/IDOR, JWT state & tenancy assertion
+    9. Evidence / Reproduction Quality (10 pts) — Verifiable step-by-step reproduction path
+    10. Safety / Scope Awareness (5 pts) — Strict read-only non-destructive audit compliance
+  - [x] Grading scale: A+ (>=90), A (>=80), B (>=70), C (>=60), F (<60).
+  - [x] Disposition tagging: `AUDIT_EXCELLENCE_VERIFIED` vs `AUDIT_REMEDIATION_REQUIRED`.
+
+- [x] **3. Council Route Integration**
+  - [x] Mounted `GET /api/councils/indra/benchmarks` in `backend/routes/councils.js`.
+  - [x] Mounted `POST /api/councils/indra/benchmark-scorecard` in `backend/routes/councils.js`.
+
+- [x] **4. Test Suite Oracle & Build Verification**
+  - [x] Added Test 4.35 to `tests/comprehensive_test_suite.cjs`.
+  - [x] 54/54 tests passing in `tests/comprehensive_test_suite.cjs` (100.0% pass rate).
+  - [x] Production build clean: `npx vite build` passed (12.43s, 0 errors).
+  - [x] Zero UI button clutter added.

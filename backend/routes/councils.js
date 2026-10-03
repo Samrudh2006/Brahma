@@ -19,6 +19,8 @@
  * - POST /api/councils/vishwakarma/supply-telemetry
  * - POST /api/councils/indra/secops-triage
  * - POST /api/councils/indra/mitre-correlation
+ * - GET  /api/councils/indra/benchmarks
+ * - POST /api/councils/indra/benchmark-scorecard
  * 
  * Cognitive & Swarm Deliberation:
  * - POST /api/councils/saraswati/cognitive-graph
@@ -242,6 +244,24 @@ router.get('/indra/endpoints', (req, res) => {
 router.post('/indra/session-triage', (req, res) => {
   try {
     const result = indra.triageAgentSession(req.body);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.get('/indra/benchmarks', (req, res) => {
+  try {
+    const benchmarks = indra.listBenchmarkTargets();
+    res.json(benchmarks);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/indra/benchmark-scorecard', (req, res) => {
+  try {
+    const result = indra.evaluateVulnerabilityAuditScorecard(req.body);
     res.json(result);
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
