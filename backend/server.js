@@ -80,6 +80,7 @@ app.use('/api/webcmd',         require('./routes/webcmd'));
 app.use('/api/voice',          require('./routes/voice'));
 app.use('/api/video',          require('./routes/video'));
 app.use('/api/councils',       require('./routes/councils'));
+app.use('/api/mesh',           require('./routes/enterpriseMesh'));
 app.use('/auth',               require('./routes/auth'));
 
 
