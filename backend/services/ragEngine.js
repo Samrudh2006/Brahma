@@ -9,10 +9,11 @@ class RAGEngine {
   }
 
   /**
-   * Ingest text or document chunks into hybrid vector store
+   * Ingest text or document chunks into hybrid vector store with Tideline Memory metadata
    */
   async ingestDocument(id, title, content, metadata = {}) {
     const chunks = this.chunkText(content, 500, 50);
+    const now = Date.now();
     const chunkEmbeddings = chunks.map((chunk, idx) => ({
       chunkId: `${id}_c${idx}`,
       docId: id,
@@ -20,7 +21,11 @@ class RAGEngine {
       text: chunk,
       vector: this.generateDenseEmbedding(chunk),
       keywords: this.extractKeywords(chunk),
-      metadata: { ...metadata, timestamp: new Date().toISOString() },
+      origin: metadata.origin || 'user_session',
+      trustScore: metadata.trustScore || 0.95,
+      createdAt: now,
+      graphLinks: metadata.graphLinks || [title.toLowerCase().replace(/\s+/g, '_')],
+      metadata: { ...metadata, timestamp: new Date(now).toISOString() },
     }));
 
     this.documents.push({ id, title, content, chunkCount: chunks.length });
@@ -31,30 +36,56 @@ class RAGEngine {
       docId: id,
       chunksIngested: chunks.length,
       totalVectors: this.embeddingsIndex.length,
+      tidelineMemoryActive: true
     };
   }
 
   /**
-   * Query RAG with Hybrid Cosine Vector Similarity + BM25 Ranking
+   * Query RAG with Hybrid BM25 + Vector Similarity + Graph Links + Temporal Decay
    */
   async search(query, topK = 4) {
     if (this.embeddingsIndex.length === 0) {
-      // Return synthetic scholarly research grounding if index is fresh
       return this.getScholarlyGrounding(query);
     }
 
     const queryVec = this.generateDenseEmbedding(query);
     const queryKeywords = this.extractKeywords(query);
+    const now = Date.now();
 
     const scored = this.embeddingsIndex.map(item => {
       const vectorScore = this.cosineSimilarity(queryVec, item.vector);
       const keywordOverlap = item.keywords.filter(k => queryKeywords.includes(k)).length;
-      const hybridScore = vectorScore * 0.7 + (keywordOverlap / (queryKeywords.length || 1)) * 0.3;
-      return { ...item, score: hybridScore };
+      const bm25Score = keywordOverlap / (queryKeywords.length || 1);
+
+      // Tideline Memory Decay: Half-life decay over 30 days
+      const ageInDays = (now - (item.createdAt || now)) / (1000 * 60 * 60 * 24);
+      const decayFactor = Math.exp(-0.02 * ageInDays);
+      const trustScore = item.trustScore || 0.9;
+
+      // Sub-graph connection boost
+      const graphMatch = item.graphLinks.some(link => query.toLowerCase().includes(link.replace(/_/g, ' ')));
+      const graphBoost = graphMatch ? 0.15 : 0;
+
+      const hybridScore = (vectorScore * 0.5 + bm25Score * 0.3 + graphBoost) * trustScore * decayFactor;
+
+      return { ...item, score: hybridScore, decayFactor: decayFactor.toFixed(3) };
     });
 
     scored.sort((a, b) => b.score - a.score);
     return scored.slice(0, topK);
+  }
+
+  /**
+   * Periodically consolidate memories and prune low-confidence decayed facts
+   */
+  consolidateMemories(threshold = 0.2) {
+    const initial = this.embeddingsIndex.length;
+    this.embeddingsIndex = this.embeddingsIndex.filter(item => {
+      const ageInDays = (Date.now() - (item.createdAt || Date.now())) / (1000 * 60 * 60 * 24);
+      const decayFactor = Math.exp(-0.02 * ageInDays);
+      return (item.trustScore * decayFactor) >= threshold;
+    });
+    return { pruned: initial - this.embeddingsIndex.length, remaining: this.embeddingsIndex.length };
   }
 
   generateDenseEmbedding(text) {
