@@ -38,6 +38,7 @@ app.use('/api/hub',            require('./routes/hub'));
 app.use('/api/images',         require('./routes/images'));
 app.use('/api/remote',         require('./routes/remote'));
 app.use('/api/research',       require('./routes/research'));
+app.use('/api/intelligence',   require('./routes/intelligence'));
 app.use('/api/laya',           require('./routes/laya'));
 app.use('/auth',               require('./routes/auth'));
 

@@ -134,3 +134,72 @@ export const classifyIntentWithLaya = (prompt, preferences = {}) =>
   request('/laya/classify', { method: 'POST', body: JSON.stringify({ prompt, preferences }) });
 
 
+// ─── Intelligence APIs (Free Public APIs — no key or free key required) ───────
+// Sources: github.com/public-apis/public-apis
+const INTEL = '/intelligence';
+
+/** Wikipedia — article summary or search list (no key required) */
+export const wikiSearch = (q, mode = 'summary') =>
+  request(`${INTEL}/wiki?q=${encodeURIComponent(q)}${mode === 'list' ? '&mode=list' : ''}`);
+
+/** arXiv — research paper search (no key required) */
+export const arxivSearch = (q, limit = 5) =>
+  request(`${INTEL}/arxiv?q=${encodeURIComponent(q)}&limit=${limit}`);
+
+/** Open-Meteo — real-time weather forecasts (no key required) */
+export const getWeather = (lat = 17.385, lon = 78.4867, city = 'Hyderabad') =>
+  request(`${INTEL}/weather?lat=${lat}&lon=${lon}&city=${encodeURIComponent(city)}`);
+
+/** NASA APOD — Astronomy Picture of the Day (DEMO_KEY built-in) */
+export const getNasaApod = () => request(`${INTEL}/nasa/apod`);
+
+/** NASA NEO — Near Earth Objects asteroid tracker */
+export const getNasaNeo = (start, end) =>
+  request(`${INTEL}/nasa/neo${start ? `?start=${start}&end=${end || start}` : ''}`);
+
+/** RestCountries — country data, flags, currencies (no key required) */
+export const getCountryInfo = (name) =>
+  request(`${INTEL}/country?name=${encodeURIComponent(name)}`);
+
+/** CoinGecko — live crypto prices USD (no key required) */
+export const getCryptoPrices = (coins = ['bitcoin', 'ethereum', 'solana']) =>
+  request(`${INTEL}/crypto?coins=${coins.join(',')}`);
+
+/** Open Exchange Rates — forex rates (no key required) */
+export const getForexRates = (base = 'USD') =>
+  request(`${INTEL}/forex?base=${base}`);
+
+/** Open Library — book search (no key required) */
+export const searchBooks = (q, limit = 5) =>
+  request(`${INTEL}/books?q=${encodeURIComponent(q)}&limit=${limit}`);
+
+/** ip-api.com — IP geolocation lookup (no key, 45 req/min) */
+export const getIpGeo = (ip = '') =>
+  request(`${INTEL}/ip${ip ? `?ip=${ip}` : ''}`);
+
+/** HuggingFace — live model search (no key for public models) */
+export const searchHfModels = (q, limit = 8) =>
+  request(`${INTEL}/hf/models?q=${encodeURIComponent(q)}&limit=${limit}`);
+
+/** HuggingFace — live dataset search (no key required) */
+export const searchHfDatasets = (q, limit = 6) =>
+  request(`${INTEL}/hf/datasets?q=${encodeURIComponent(q)}&limit=${limit}`);
+
+/** GitHub — public repository search (no key = 60 req/hr; set GITHUB_TOKEN for 5000/hr) */
+export const searchGitHub = (q, sort = 'stars', limit = 8) =>
+  request(`${INTEL}/github?q=${encodeURIComponent(q)}&sort=${sort}&limit=${limit}`);
+
+/** NewsAPI — news articles (free key: newsapi.org/register, 100 req/day) */
+export const searchNews = (q) =>
+  request(`${INTEL}/news?q=${encodeURIComponent(q)}`);
+
+/** Nager.Date — public holidays for any country (no key required) */
+export const getHolidays = (country = 'IN', year = new Date().getFullYear()) =>
+  request(`${INTEL}/holidays?country=${country}&year=${year}`);
+
+/** Unified Research — Wikipedia + arXiv + GitHub in parallel */
+export const unifiedResearch = (q) =>
+  request(`${INTEL}/research?q=${encodeURIComponent(q)}`);
+
+/** Intelligence Status — health check for all free APIs + MCP servers */
+export const getIntelligenceStatus = () => request(`${INTEL}/status`);

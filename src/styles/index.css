@@ -2404,8 +2404,11 @@ pre.hljs-code {
   inset: 0;
   background: rgba(1, 3, 8, 0.78);
   backdrop-filter: blur(6px);
-  z-index: 99;
+  z-index: 999;
   animation: fadeIn 0.2s ease-out;
+  cursor: pointer;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 @keyframes fadeIn {
@@ -2450,6 +2453,11 @@ pre.hljs-code {
   aside.sidebar.mobile-open {
     transform: translateX(0) !important;
     box-shadow: 0 0 50px rgba(0, 0, 0, 0.95);
+  }
+
+  /* Hide the desktop collapse toggle on mobile (use the X button instead) */
+  aside.sidebar.mobile-open .sidebar-collapse-btn {
+    display: none !important;
   }
 
   /* Main Workspace occupies full width on mobile */

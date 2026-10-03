@@ -5,6 +5,8 @@
 
 export const SKILL_CATEGORIES = [
   'All Skills',
+  'Vercel AI & Agent Skills',
+  'YC Founder & Growth Playbook',
   'Web & Mobile Apps',
   'Silicon & Hardware',
   'DevOps & Cloud',
@@ -15,6 +17,80 @@ export const SKILL_CATEGORIES = [
 ];
 
 export const INITIAL_SKILLS = [
+  // ── 0. Vercel AI & Agent Skills (Vercel Labs & AI SDK) ──
+  {
+    id: 'vercel-skills-standard',
+    name: 'Vercel Labs Agent Skills & Action Schema Standard',
+    category: 'Vercel AI & Agent Skills',
+    identityOwner: 'saraswati',
+    githubRepo: 'vercel-labs/skills',
+    description: 'Implements portable AI agent skill definitions with deterministic tool schemas, parameter validation, and workflow orchestration.',
+    enabled: true,
+    meta: { version: '2.4.0', usageCount: 6820, verifiedBy: 'Vercel AI Standard' }
+  },
+  {
+    id: 'vercel-ai-sdk-core',
+    name: 'Vercel AI SDK 4.0 Streaming & Multi-Modal Tool Engine',
+    category: 'Vercel AI & Agent Skills',
+    identityOwner: 'saraswati',
+    githubRepo: 'vercel/ai',
+    description: 'Enables streamText, generateObject, real-time multi-step tool calls, and unified provider abstraction across OpenAI, Anthropic, and Groq.',
+    enabled: true,
+    meta: { version: '4.1.2', usageCount: 8940, verifiedBy: 'AI SDK Council' }
+  },
+  {
+    id: 'vercel-v0-generative-ui',
+    name: 'Vercel v0 Streamable Generative UI Synthesizer',
+    category: 'Vercel AI & Agent Skills',
+    identityOwner: 'krishna',
+    githubRepo: 'vercel-labs/v0',
+    description: 'Renders dynamic interactive React UI components on-the-fly directly inside the conversation stream with Tailwind & Framer Motion.',
+    enabled: true,
+    meta: { version: '3.0.0', usageCount: 5410, verifiedBy: 'Generative UI Team' }
+  },
+
+  // ── 0.1 Y Combinator Founder & Growth Playbook (YC CEO / Leadership) ──
+  {
+    id: 'yc-pmf-growth-engine',
+    name: 'YC Product-Market Fit & 7% Weekly Growth Engine',
+    category: 'YC Founder & Growth Playbook',
+    identityOwner: 'brahma',
+    githubRepo: 'ycombinator/founder-playbook',
+    description: 'Garry Tan & Sam Altman YC framework: User interview distillation, retention curve cohort analysis, and viral k-factor growth loops.',
+    enabled: true,
+    meta: { version: '5.0.0', usageCount: 9230, verifiedBy: 'Y Combinator Partner Logic' }
+  },
+  {
+    id: 'yc-saas-legal-trap-defense',
+    name: 'SaaS Legal Pitfall & Compliance Shield ($100k+ Fine Defense)',
+    category: 'YC Founder & Growth Playbook',
+    identityOwner: 'durga',
+    githubRepo: 'ycombinator/legal-compliance',
+    description: 'Guards against COPPA ($53k/user), Munich Google Fonts IP leak (€100), California session replay wiretapping ($5k/session), CAN-SPAM email footers, ROSCA auto-renewals, and $6 DMCA Designated Agent.',
+    enabled: true,
+    meta: { version: '4.2.0', usageCount: 7120, verifiedBy: 'YC Startup Legal Defense' }
+  },
+  {
+    id: 'yc-founder-sales-unit-economics',
+    name: 'YC Founder-Led Sales & LTV/CAC Unit Economics Matrix',
+    category: 'YC Founder & Growth Playbook',
+    identityOwner: 'kuvera',
+    githubRepo: 'ycombinator/b2b-sales-playbook',
+    description: 'Calculates payback periods, net revenue retention (NRR), founder outbound discovery scripts, and enterprise pilot-to-contract closure.',
+    enabled: true,
+    meta: { version: '3.8.0', usageCount: 4670, verifiedBy: 'YC Growth Economics' }
+  },
+  {
+    id: 'system-prompt-memory-architect',
+    name: 'Cognitive System Prompt & 46-Tool Memory Architecture',
+    category: 'YC Founder & Growth Playbook',
+    identityOwner: 'shiva',
+    githubRepo: 'anthropics/anthropic-cookbook',
+    description: 'Designs tamper-proof hierarchical system prompts, persistent memory indexing, tool-boundary gating, and anti-jailbreak instruction manuals.',
+    enabled: true,
+    meta: { version: '4.8.0', usageCount: 8190, verifiedBy: 'Frontier AI Prompt Architects' }
+  },
+
   // ── 1. Web & Mobile Apps ──
   {
     id: 'fullstack-app-builder',

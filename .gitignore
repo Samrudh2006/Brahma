@@ -32,6 +32,9 @@ dist-ssr
 
 # Database
 backend/db/*.db-journal
+backend/db/*.db-shm
+backend/db/*.db-wal
+backend/db/*.db
 
 # External Tools
 mirofish/

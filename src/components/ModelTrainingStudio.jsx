@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
   Cpu, Play, Pause, RotateCcw, Check, Sparkles, Database,
-  TrendingDown, Zap, Sliders, Shield, Award, Terminal, RefreshCw, Layers
+  TrendingDown, Zap, Sliders, Shield, Award, Terminal, RefreshCw, Layers,
+  Download, FileText
 } from 'lucide-react';
 import { FRONTIER_MODELS_CATALOG } from '@data/modelsCatalog';
 
@@ -24,11 +25,40 @@ export default function ModelTrainingStudio({ onDeployModel }) {
   const [logs, setLogs] = useState([
     '[INIT] Initializing LoRA adapters on ' + selectedModel,
     '[ALLOC] Allocating FlashAttention-3 kernels on GPU Cluster Node 0-7',
-    '[DATASET] Loaded 45,000 tokenized reasoning traces with Lean 4 invariant ground truth',
+    '[DATASET] Loaded 45,000 tokenized reasoning traces with Lean 4 invariant ground truth & YC Compliance Rules',
     '[READY] Ready for optimization cycle.'
   ]);
 
   const intervalRef = useRef(null);
+
+  const handleExportJsonlDataset = () => {
+    const sampleTrainingData = [
+      {
+        instruction: "How do we prevent COPPA, GDPR Munich font leaks, and session replay wiretapping fines?",
+        input: "User asks for startup SaaS legal defenses.",
+        output: "1. COPPA: Require age confirmation during signup ($53k penalty per underage profile).\n2. GDPR: Host Google Fonts locally to stop IP leaks.\n3. Session Replay: Mask keystrokes and obtain explicit consent under California CIPA ($5,000/session).\n4. CAN-SPAM: Include 1-click unsubscribe and valid physical mailing address.\n5. ROSCA: Show auto-renewal terms next to the checkout button.\n6. DMCA: Register a $6 Designated Copyright Agent with the US Copyright Office."
+      },
+      {
+        instruction: "Define a Vercel Labs standard skill for GitHub repository analysis.",
+        input: "Repository name or URL.",
+        output: "{\n  \"name\": \"github_repo_inspector\",\n  \"description\": \"Fetches commits, stars, license, and PRs via GitHub API\",\n  \"parameters\": {\n    \"type\": \"object\",\n    \"properties\": {\n      \"owner\": { \"type\": \"string\" },\n      \"repo\": { \"type\": \"string\" }\n    },\n    \"required\": [\"owner\", \"repo\"]\n  }\n}"
+      },
+      {
+        instruction: "బ్రహ్మ AI తెలుగు సంభాషణ సామర్థ్యం ఏమిటి?",
+        input: "తెలుగు సంభాషణ",
+        output: "నమస్కారం! బ్రహ్మ అనేది 289+ స్పెషలైజ్డ్ ఏజెంట్లు, లైవ్ పబ్లిక్ డేటా మరియు సహజ తెలుగు వాయిస్ ద్వారా కోడింగ్, పరిశోధన మరియు విశ్లేషణలో సహాయపడుతుంది."
+      }
+    ];
+
+    const jsonlContent = sampleTrainingData.map(item => JSON.stringify(item)).join('\n');
+    const blob = new Blob([jsonlContent], { type: 'application/jsonl' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Brahma_${selectedModel}_Training_Dataset.jsonl`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   const startTraining = () => {
     setIsTraining(true);
@@ -105,6 +135,15 @@ export default function ModelTrainingStudio({ onDeployModel }) {
 
         {/* Action Controls */}
         <div style={{ display: 'flex', gap: 8 }}>
+          <button
+            className="filter-chip"
+            onClick={handleExportJsonlDataset}
+            title="Download formatted JSONL prompt-completion dataset for Unsloth / Hugging Face / Colab"
+            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', fontSize: '0.85rem' }}
+          >
+            <Download size={14} /> Export Dataset (.jsonl)
+          </button>
+
           {!isTraining ? (
             <button
               className="btn-gold"

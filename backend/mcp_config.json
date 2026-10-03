@@ -1,0 +1,72 @@
+{
+  "mcpServers": {
+    "fetch": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-fetch"],
+      "description": "Free web fetching & HTML scraping — no API key required",
+      "env": {}
+    },
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"],
+      "description": "Persistent in-process knowledge graph memory — no API key required",
+      "env": {}
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "description": "GitHub repo search, issue tracking, PR management — free for public repos",
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": ""
+      }
+    },
+    "brave-search": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-brave-search"],
+      "description": "Real-time web search — free tier 2000 req/month. Get key at: https://api.search.brave.com/register",
+      "env": {
+        "BRAVE_API_KEY": ""
+      }
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "."],
+      "description": "Local filesystem access — no API key required",
+      "env": {}
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
+      "description": "Multi-step structured reasoning — no API key required",
+      "env": {}
+    }
+  },
+  "publicApiKeys": {
+    "nasa": {
+      "key": "DEMO_KEY",
+      "note": "Free DEMO_KEY works for 30 req/hr. Get unlimited free key at: https://api.nasa.gov/",
+      "endpoints": {
+        "apod": "https://api.nasa.gov/planetary/apod",
+        "neo": "https://api.nasa.gov/neo/rest/v1/feed",
+        "mars": "https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos"
+      }
+    },
+    "newsapi": {
+      "key": "",
+      "note": "Free 100 req/day. Get key at: https://newsapi.org/register",
+      "endpoint": "https://newsapi.org/v2/everything"
+    }
+  },
+  "freeNoKeyApis": {
+    "openMeteo": "https://api.open-meteo.com/v1/forecast",
+    "wikipedia": "https://en.wikipedia.org/api/rest_v1",
+    "arxiv": "https://export.arxiv.org/api/query",
+    "restCountries": "https://restcountries.com/v3.1",
+    "openLibrary": "https://openlibrary.org",
+    "coinGecko": "https://api.coingecko.com/api/v3",
+    "ipGeo": "https://ip-api.com/json",
+    "huggingface": "https://huggingface.co/api",
+    "exchangeRates": "https://open.er-api.com/v6/latest",
+    "publicHolidays": "https://date.nager.at/api/v3"
+  }
+}

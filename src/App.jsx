@@ -429,6 +429,43 @@ export default function App() {
         />
       )}
 
+      {/* Live Hands-Free Continuous Voice Orb Modal */}
+      <LiveVoiceOrbModal
+        isOpen={isLiveVoiceOpen}
+        onClose={() => setIsLiveVoiceOpen(false)}
+        currentIdentity={currentIdentity}
+        onSendPrompt={(promptText, { onChunk, onComplete }) => {
+          let fullReply = '';
+          sendChatStream(
+            {
+              messages: [...messages, { sender: 'user', text: promptText }],
+              identity: currentIdentity,
+              pills: {},
+              modelSource: 'auto'
+            },
+            (chunk) => {
+              fullReply += chunk;
+              if (onChunk) onChunk(chunk);
+            },
+            () => {
+              if (onComplete) onComplete(fullReply);
+              addMessage({ sender: 'user', text: promptText, timestamp: new Date().toISOString() });
+              addMessage({
+                sender: 'assistant',
+                text: fullReply,
+                identity: currentIdentity,
+                timestamp: new Date().toISOString()
+              });
+            },
+            (err) => {
+              console.warn('[VOICE STREAM ERROR]', err);
+              const fallback = `నమస్కారం, నేను ${currentIdentity?.name || 'బ్రహ్మ'}. మీ ప్రశ్న: "${promptText}".`;
+              if (onComplete) onComplete(fallback);
+            }
+          );
+        }}
+      />
+
       {/* Privacy Policy Modal (Checklist #1) */}
       <PrivacyPolicyModal
         isOpen={isPrivacyModalOpen}

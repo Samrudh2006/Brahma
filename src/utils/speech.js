@@ -468,3 +468,109 @@ export function createSpeechRecognizer(langCode = 'te-IN', onResult, onError, on
   return recognizer;
 }
 
+/**
+ * High-Quality Raw Microphone Audio Recorder with Real-Time Decibel Metering
+ * Compatible with Safari, Chrome, Edge, Firefox for local audio recording & Whisper backend.
+ */
+export function createMediaVoiceRecorder({ onVolumeChange, onDataAvailable } = {}) {
+  let mediaRecorder = null;
+  let audioContext = null;
+  let analyser = null;
+  let source = null;
+  let animFrameId = null;
+  let audioChunks = [];
+  let stream = null;
+
+  async function start() {
+    audioChunks = [];
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true
+        }
+      });
+
+      // Volume & Frequency Analyzer
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (AudioCtx) {
+        audioContext = new AudioCtx();
+        analyser = audioContext.createAnalyser();
+        analyser.fftSize = 256;
+        source = audioContext.createMediaStreamSource(stream);
+        source.connect(analyser);
+
+        const dataArray = new Uint8Array(analyser.frequencyBinCount);
+        const updateVolume = () => {
+          if (!analyser) return;
+          analyser.getByteFrequencyData(dataArray);
+          const sum = dataArray.reduce((acc, val) => acc + val, 0);
+          const avg = sum / dataArray.length;
+          const normalizedVol = Math.min(1, avg / 128);
+          if (onVolumeChange) onVolumeChange(normalizedVol);
+          animFrameId = requestAnimationFrame(updateVolume);
+        };
+        updateVolume();
+      }
+
+      // Check supported MIME type
+      const mimeTypes = ['audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus', 'audio/mp4', 'audio/wav'];
+      const supportedMime = mimeTypes.find(t => MediaRecorder.isTypeSupported(t)) || '';
+
+      mediaRecorder = new MediaRecorder(stream, supportedMime ? { mimeType: supportedMime } : {});
+
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data && e.data.size > 0) {
+          audioChunks.push(e.data);
+          if (onDataAvailable) onDataAvailable(e.data);
+        }
+      };
+
+      mediaRecorder.start(250); // Emit chunk every 250ms
+      return true;
+    } catch (err) {
+      console.error('[MEDIA RECORDER ERROR]', err);
+      throw err;
+    }
+  }
+
+  function stop() {
+    return new Promise((resolve) => {
+      if (animFrameId) cancelAnimationFrame(animFrameId);
+      if (source) {
+        try { source.disconnect(); } catch (_) {}
+      }
+      if (audioContext && audioContext.state !== 'closed') {
+        try { audioContext.close(); } catch (_) {}
+      }
+
+      if (!mediaRecorder || mediaRecorder.state === 'inactive') {
+        if (stream) {
+          stream.getTracks().forEach(t => t.stop());
+        }
+        resolve(null);
+        return;
+      }
+
+      mediaRecorder.onstop = () => {
+        const mime = mediaRecorder.mimeType || 'audio/webm';
+        const audioBlob = new Blob(audioChunks, { type: mime });
+        if (stream) {
+          stream.getTracks().forEach(t => t.stop());
+        }
+        resolve({ blob: audioBlob, mimeType: mime, size: audioBlob.size });
+      };
+
+      try {
+        mediaRecorder.stop();
+      } catch (_) {
+        if (stream) stream.getTracks().forEach(t => t.stop());
+        resolve(null);
+      }
+    });
+  }
+
+  return { start, stop };
+}
+
