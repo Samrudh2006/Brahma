@@ -9,45 +9,67 @@ const BASE_HEADERS = {
   'Accept': 'application/json'
 };
 
-// Default 8-second timeout for all external API calls
-const timeout = (ms = 8000) => ({ signal: AbortSignal.timeout(ms) });
+// ─── 4-Layer Defense: 3.5s Hard Race Timeout & Stale Snapshot Cache ───────────
+const CIRCUIT_BREAKER_TIMEOUT_MS = 3500;
+const STALE_SNAPSHOT_CACHE = new Map();
+
+const timeout = (ms = CIRCUIT_BREAKER_TIMEOUT_MS) => ({ signal: AbortSignal.timeout(ms) });
+
+async function withResilientSnapshotCache(cacheKey, fetchFn) {
+  try {
+    const data = await fetchFn();
+    STALE_SNAPSHOT_CACHE.set(cacheKey, data);
+    return data;
+  } catch (err) {
+    if (STALE_SNAPSHOT_CACHE.has(cacheKey)) {
+      console.warn(`[Resilience Cache] Flaky network for "${cacheKey}". Serving verified snapshot cache.`);
+      return STALE_SNAPSHOT_CACHE.get(cacheKey);
+    }
+    throw err;
+  }
+}
 
 
 // ─── Wikipedia ────────────────────────────────────────────────────────────────
 async function searchWikipedia(query, sentences = 3) {
-  const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(query)}`;
-  const res = await fetch(url, { headers: BASE_HEADERS, ...timeout() });
-  if (!res.ok) throw new Error(`Wikipedia: ${res.status}`);
-  const data = await res.json();
-  return {
-    title: data.title,
-    description: data.description,
-    extract: data.extract,
-    url: data.content_urls?.desktop?.page,
-    thumbnail: data.thumbnail?.source || null,
-    lang: 'en',
-    source: 'Wikipedia REST API'
-  };
+  return withResilientSnapshotCache(`wiki:${query}`, async () => {
+    const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(query)}`;
+    const res = await fetch(url, { headers: BASE_HEADERS, ...timeout() });
+    if (!res.ok) throw new Error(`Wikipedia: ${res.status}`);
+    const data = await res.json();
+    return {
+      title: data.title,
+      description: data.description,
+      extract: (data.extract || '').slice(0, 400),
+      url: data.content_urls?.desktop?.page,
+      thumbnail: data.thumbnail?.source || null,
+      lang: 'en',
+      source: 'Wikipedia REST API'
+    };
+  });
 }
 
 async function searchWikipediaList(query) {
-  const url = `https://en.wikipedia.org/w/api.php?action=search&srsearch=${encodeURIComponent(query)}&format=json&srlimit=5&origin=*`;
-  const res = await fetch(url, { headers: BASE_HEADERS, ...timeout() });
-  if (!res.ok) throw new Error(`Wikipedia Search: ${res.status}`);
-  const data = await res.json();
-  return data.query?.search?.map(r => ({
-    title: r.title,
-    snippet: r.snippet.replace(/<[^>]+>/g, ''),
-    url: `https://en.wikipedia.org/wiki/${encodeURIComponent(r.title)}`
-  })) || [];
+  return withResilientSnapshotCache(`wiki_list:${query}`, async () => {
+    const url = `https://en.wikipedia.org/w/api.php?action=search&srsearch=${encodeURIComponent(query)}&format=json&srlimit=5&origin=*`;
+    const res = await fetch(url, { headers: BASE_HEADERS, ...timeout() });
+    if (!res.ok) throw new Error(`Wikipedia Search: ${res.status}`);
+    const data = await res.json();
+    return data.query?.search?.map(r => ({
+      title: r.title,
+      snippet: r.snippet.replace(/<[^>]+>/g, '').slice(0, 250),
+      url: `https://en.wikipedia.org/wiki/${encodeURIComponent(r.title)}`
+    })) || [];
+  });
 }
 
 // ─── arXiv ────────────────────────────────────────────────────────────────────
 async function searchArxiv(query, maxResults = 5) {
-  const url = `https://export.arxiv.org/api/query?search_query=all:${encodeURIComponent(query)}&max_results=${maxResults}&sortBy=relevance`;
-  const res = await fetch(url, { headers: { 'User-Agent': BASE_HEADERS['User-Agent'] } });
-  if (!res.ok) throw new Error(`arXiv: ${res.status}`);
-  const xml = await res.text();
+  return withResilientSnapshotCache(`arxiv:${query}`, async () => {
+    const url = `https://export.arxiv.org/api/query?search_query=all:${encodeURIComponent(query)}&max_results=${maxResults}&sortBy=relevance`;
+    const res = await fetch(url, { headers: { 'User-Agent': BASE_HEADERS['User-Agent'] }, ...timeout() });
+    if (!res.ok) throw new Error(`arXiv: ${res.status}`);
+    const xml = await res.text();
 
   // Parse XML entries
   const entries = [];
@@ -72,6 +94,7 @@ async function searchArxiv(query, maxResults = 5) {
     });
   }
   return { query, total: entries.length, papers: entries, source: 'arXiv Open Access' };
+});
 }
 
 // ─── Open-Meteo (Weather — no key needed) ────────────────────────────────────
