@@ -12,5 +12,5 @@ services:
       - key: PORT
         value: 10000
       - key: CORS_ORIGIN
-        value: "https://brahma-web.antideploy.com,http://localhost:5173,http://localhost:3000"
+        value: "https://brahma-web.antideploy.com,https://brahma-ai-hmcd.onrender.com,http://localhost:5173,http://localhost:3000"
 

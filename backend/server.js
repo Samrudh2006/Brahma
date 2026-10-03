@@ -13,6 +13,7 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 const defaultOrigins = [
   'https://brahma-web.antideploy.com',
+  'https://brahma-ai-hmcd.onrender.com',
   'http://localhost:5173',
   'http://localhost:3000',
   'http://localhost:4000'
@@ -31,7 +32,18 @@ app.use(cors({
     if (allowedOrigins.includes(origin) || allowedOrigins.includes('*')) {
       return callback(null, true);
     }
-    return callback(new Error(`CORS blocked for origin: ${origin}`));
+    try {
+      const parsed = new URL(origin);
+      if (
+        parsed.hostname.endsWith('.onrender.com') ||
+        parsed.hostname.endsWith('.antideploy.com') ||
+        parsed.hostname === 'localhost' ||
+        parsed.hostname === '127.0.0.1'
+      ) {
+        return callback(null, true);
+      }
+    } catch (_) {}
+    return callback(null, false);
   },
   credentials: true
 }));
