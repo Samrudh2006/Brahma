@@ -681,6 +681,120 @@ class KuveraQuantEngine {
       };
     }
   }
+
+  /**
+   * Altman Z-Score Corporate Solvency & Financial Distress Predictor
+   * Z = 1.2*X1 + 1.4*X2 + 3.3*X3 + 0.6*X4 + 0.999*X5
+   */
+  calculateAltmanZScore({
+    workingCapital = 15000000,
+    totalAssets = 100000000,
+    retainedEarnings = 22000000,
+    ebit = 14000000,
+    marketCapEquity = 85000000,
+    totalLiabilities = 45000000,
+    sales = 95000000
+  } = {}) {
+    const x1 = workingCapital / totalAssets; // Liquidity
+    const x2 = retainedEarnings / totalAssets; // Cumulative profitability
+    const x3 = ebit / totalAssets; // Operating efficiency
+    const x4 = marketCapEquity / totalLiabilities; // Financial leverage
+    const x5 = sales / totalAssets; // Asset turnover
+
+    const zScore = +(1.2 * x1 + 1.4 * x2 + 3.3 * x3 + 0.6 * x4 + 0.999 * x5).toFixed(3);
+    const solvencyZone = zScore > 2.99 ? 'SAFE_ZONE' : zScore >= 1.81 ? 'GREY_ZONE' : 'DISTRESS_ZONE';
+
+    return {
+      success: true,
+      zScore,
+      solvencyZone,
+      bankruptcyProbability: zScore < 1.81 ? 'HIGH_RISK_OF_DEFAULT' : zScore < 2.99 ? 'MODERATE_MONITOR_REQUIRED' : 'NEGLIGIBLE_DISTRESS_RISK',
+      ratios: {
+        x1_workingCapitalToAssets: +x1.toFixed(3),
+        x2_retainedEarningsToAssets: +x2.toFixed(3),
+        x3_ebitToAssets: +x3.toFixed(3),
+        x4_marketEquityToLiabilities: +x4.toFixed(3),
+        x5_assetTurnover: +x5.toFixed(3)
+      }
+    };
+  }
+
+  /**
+   * 5-Stage DuPont ROE Decomposition Engine
+   * ROE = (NI/EBT) * (EBT/EBIT) * (EBIT/Sales) * (Sales/Assets) * (Assets/Equity)
+   */
+  calculateDuPontROE({
+    netIncome = 12000000,
+    pretaxIncome = 16000000,
+    ebit = 20000000,
+    sales = 100000000,
+    totalAssets = 80000000,
+    shareholdersEquity = 50000000
+  } = {}) {
+    const taxBurden = +(netIncome / pretaxIncome).toFixed(4); // NI / EBT
+    const interestBurden = +(pretaxIncome / ebit).toFixed(4); // EBT / EBIT
+    const operatingMargin = +(ebit / sales).toFixed(4); // EBIT / Sales
+    const assetTurnover = +(sales / totalAssets).toFixed(4); // Sales / Assets
+    const financialLeverage = +(totalAssets / shareholdersEquity).toFixed(4); // Assets / Equity
+
+    const decomposedROE = +(taxBurden * interestBurden * operatingMargin * assetTurnover * financialLeverage * 100).toFixed(2);
+    const directROE = +((netIncome / shareholdersEquity) * 100).toFixed(2);
+
+    return {
+      success: true,
+      roePercentage: directROE,
+      decomposedROEPercentage: decomposedROE,
+      components: {
+        taxBurden, // higher is better (retaining more after taxes)
+        interestBurden, // higher is better (less interest paid)
+        operatingMarginPercentage: +(operatingMargin * 100).toFixed(2),
+        assetTurnoverRatio: assetTurnover,
+        equityMultiplierLeverage: financialLeverage
+      },
+      driverAnalysis: operatingMargin > 0.15 ? 'HIGH_OPERATIONAL_MARGIN_DRIVEN' : financialLeverage > 2.5 ? 'LEVERAGE_DRIVEN' : 'EFFICIENCY_BALANCED'
+    };
+  }
+
+  /**
+   * Discounted Cash Flow (DCF) Valuation with Gordon Growth Terminal Value
+   */
+  calculateDCFValuation({
+    freeCashFlows = [10000000, 12000000, 14000000, 16000000, 18000000], // 5-year projection
+    terminalGrowthRate = 0.025,
+    wacc = 0.09,
+    netDebt = 15000000,
+    sharesOutstanding = 10000000
+  } = {}) {
+    let presentValueOfFlows = 0;
+    const discountedFlows = freeCashFlows.map((fcf, idx) => {
+      const year = idx + 1;
+      const discountFactor = Math.pow(1 + wacc, year);
+      const pv = fcf / discountFactor;
+      presentValueOfFlows += pv;
+      return { year, fcf, pv: +pv.toFixed(2) };
+    });
+
+    // Terminal Value: (FCF_n * (1 + g)) / (WACC - g)
+    const lastFCF = freeCashFlows[freeCashFlows.length - 1];
+    const terminalValue = (lastFCF * (1 + terminalGrowthRate)) / (wacc - terminalGrowthRate);
+    const pvOfTerminalValue = terminalValue / Math.pow(1 + wacc, freeCashFlows.length);
+
+    const enterpriseValue = +(presentValueOfFlows + pvOfTerminalValue).toFixed(2);
+    const equityValue = +(enterpriseValue - netDebt).toFixed(2);
+    const intrinsicValuePerShare = +(equityValue / sharesOutstanding).toFixed(2);
+
+    return {
+      success: true,
+      waccPercentage: +(wacc * 100).toFixed(1),
+      terminalGrowthRatePercentage: +(terminalGrowthRate * 100).toFixed(1),
+      discountedFlows,
+      pvOfExplicitPeriod: +presentValueOfFlows.toFixed(2),
+      pvOfTerminalValue: +pvOfTerminalValue.toFixed(2),
+      enterpriseValue,
+      equityValue,
+      intrinsicValuePerShare
+    };
+  }
 }
 
 module.exports = new KuveraQuantEngine();

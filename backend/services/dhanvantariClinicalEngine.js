@@ -548,6 +548,86 @@ class DhanvantariClinicalEngine {
       isPrescriptionSafe: detectedAlerts.filter(a => a.severity === 'CRITICAL').length === 0
     };
   }
+
+  /**
+   * CKD-EPI 2021 eGFR (Race-Free) & Cockcroft-Gault Creatinine Clearance Engine
+   * Enforces KDIGO 2024 Chronic Kidney Disease Staging and Renal Dosing Adjustments
+   */
+  calculateRenalFunction({
+    serumCreatinineMgDl = 1.2,
+    ageYears = 65,
+    isFemale = false,
+    weightKg = 70
+  } = {}) {
+    // 1. CKD-EPI 2021 Race-Free Refit Equation
+    // eGFR = 142 * min(Scr/kappa, 1)^alpha * max(Scr/kappa, 1)^(-1.200) * 0.9938^Age * (1.012 if female)
+    const kappa = isFemale ? 0.7 : 0.9;
+    const alpha = isFemale ? -0.241 : -0.302;
+    const femaleMultiplier = isFemale ? 1.012 : 1.0;
+
+    const scrOverKappa = serumCreatinineMgDl / kappa;
+    const term1 = Math.pow(Math.min(scrOverKappa, 1), alpha);
+    const term2 = Math.pow(Math.max(scrOverKappa, 1), -1.200);
+    const term3 = Math.pow(0.9938, ageYears);
+
+    const egfrCkdEpi = +(142 * term1 * term2 * term3 * femaleMultiplier).toFixed(1);
+
+    // 2. Cockcroft-Gault CrCl (for FDA renal dose adjustments)
+    // CrCl = [(140 - Age) * Weight] / (72 * Scr) * (0.85 if female)
+    const crClRaw = ((140 - ageYears) * weightKg) / (72 * serumCreatinineMgDl);
+    const crCl = +(crClRaw * (isFemale ? 0.85 : 1.0)).toFixed(1);
+
+    // 3. KDIGO Staging
+    let kdigoStage = 'G1';
+    let stageDescription = 'Normal or High Kidney Function';
+    if (egfrCkdEpi >= 90) {
+      kdigoStage = 'G1';
+      stageDescription = 'Normal or high GFR (≥ 90 mL/min/1.73 m²)';
+    } else if (egfrCkdEpi >= 60) {
+      kdigoStage = 'G2';
+      stageDescription = 'Mildly decreased GFR (60-89 mL/min/1.73 m²)';
+    } else if (egfrCkdEpi >= 45) {
+      kdigoStage = 'G3a';
+      stageDescription = 'Mild to moderately decreased GFR (45-59 mL/min/1.73 m²)';
+    } else if (egfrCkdEpi >= 30) {
+      kdigoStage = 'G3b';
+      stageDescription = 'Moderately to severely decreased GFR (30-44 mL/min/1.73 m²)';
+    } else if (egfrCkdEpi >= 15) {
+      kdigoStage = 'G4';
+      stageDescription = 'Severely decreased GFR (15-29 mL/min/1.73 m²)';
+    } else {
+      kdigoStage = 'G5';
+      stageDescription = 'Kidney Failure (GFR < 15 mL/min/1.73 m²)';
+    }
+
+    // 4. Common Drug Dosing Guidance
+    const doseAdjustments = [];
+    if (egfrCkdEpi < 30) {
+      doseAdjustments.push({ drug: 'Metformin', action: 'CONTRAINDICATED', reason: 'High risk of lactic acidosis when eGFR < 30 mL/min' });
+      doseAdjustments.push({ drug: 'Enoxaparin', action: 'REDUCE_TO_ONCE_DAILY', reason: 'CrCl < 30 mL/min requires 50% anti-Xa dose reduction' });
+      doseAdjustments.push({ drug: 'Gabapentin', action: 'REDUCE_TO_300MG_OR_LESS', reason: 'Renal excretion decreased; neurotoxicity prevention' });
+    } else if (egfrCkdEpi < 45) {
+      doseAdjustments.push({ drug: 'Metformin', action: 'MAX_1000MG_DAILY', reason: 'Limit daily dose when eGFR is 30-44 mL/min' });
+    }
+
+    return {
+      success: true,
+      patientInputs: {
+        serumCreatinineMgDl,
+        ageYears,
+        gender: isFemale ? 'FEMALE' : 'MALE',
+        weightKg
+      },
+      egfrCkdEpi2021: egfrCkdEpi,
+      egfrUnit: 'mL/min/1.73 m²',
+      cockcroftGaultCrCl: crCl,
+      crClUnit: 'mL/min',
+      kdigoStage,
+      stageDescription,
+      requiresDoseAdjustment: doseAdjustments.length > 0,
+      doseAdjustments
+    };
+  }
 }
 
 module.exports = new DhanvantariClinicalEngine();

@@ -100,6 +100,15 @@ router.post('/dhanvantari/drug-interactions', (req, res) => {
   }
 });
 
+router.post('/dhanvantari/renal-function', (req, res) => {
+  try {
+    const result = dhanvantari.calculateRenalFunction(req.body);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // ─── 2. Chanakya: Legal Intelligence & Protocols ─────────────────────────────
 router.post('/chanakya/legal-audit', async (req, res) => {
   try {
@@ -113,6 +122,24 @@ router.post('/chanakya/legal-audit', async (req, res) => {
 router.post('/chanakya/protocols', async (req, res) => {
   try {
     const result = await chanakya.executeProtocolSuite(req.body);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/chanakya/jurisdiction-conflict', (req, res) => {
+  try {
+    const result = chanakya.evaluateJurisdictionConflict(req.body);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/chanakya/force-majeure', (req, res) => {
+  try {
+    const result = chanakya.validateForceMajeureClause(req.body);
     res.json(result);
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
@@ -207,6 +234,33 @@ router.get('/kuvera/prediction-calibration', (req, res) => {
   try {
     const result = predictionJournal.getCalibrationScore();
     res.json({ success: true, ...result });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/kuvera/altman-z', (req, res) => {
+  try {
+    const result = kuvera.calculateAltmanZScore(req.body);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/kuvera/dupont-roe', (req, res) => {
+  try {
+    const result = kuvera.calculateDuPontROE(req.body);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/kuvera/dcf-valuation', (req, res) => {
+  try {
+    const result = kuvera.calculateDCFValuation(req.body);
+    res.json(result);
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
@@ -307,6 +361,24 @@ router.post('/indra/benchmarks/:id/audit', (req, res) => {
   }
 });
 
+router.post('/indra/sarif-report', (req, res) => {
+  try {
+    const result = indra.generateSARIFReport(req.body);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/indra/asvs-checklist', (req, res) => {
+  try {
+    const result = indra.mapASVSChecklist(req.body);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // ─── 6. VoxCPM Neural Voice & Acoustic Attention Gate ─────────────────────────
 router.post('/vox/addressee-gate', (req, res) => {
   try {
@@ -321,6 +393,24 @@ router.post('/vox/mark-responding', (req, res) => {
   try {
     const result = voxEngine.markResponding(req.body);
     res.json({ success: true, ...result });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/vox/call-quality-mos', (req, res) => {
+  try {
+    const result = voxEngine.calculateCallQualityMOS(req.body);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/vox/barge-in-vad', (req, res) => {
+  try {
+    const result = voxEngine.evaluateBargeInVAD(req.body);
+    res.json(result);
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }

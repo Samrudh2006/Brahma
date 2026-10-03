@@ -664,4 +664,38 @@ router.post('/hospitality/revpash', (req, res) => {
   }
 });
 
+// ─── 21. Brahma Dimensional Analysis & Frontier Science Engine ────────────────
+const dimensionalAnalysis = require('../services/brahmaDimensionalAnalysisEngine');
+
+router.post('/science/dimension-check', (req, res) => {
+  try {
+    const { lhs, rhs } = req.body;
+    if (!lhs || !rhs) {
+      return res.status(400).json({ success: false, error: 'Both lhs and rhs 7-element dimension vectors are required.' });
+    }
+    const result = dimensionalAnalysis.verifyDimensionalHomogeneity(lhs, rhs);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/science/dimensionless-numbers', (req, res) => {
+  try {
+    const result = dimensionalAnalysis.calculateDimensionlessNumbers(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/science/lean4-proof', (req, res) => {
+  try {
+    const result = dimensionalAnalysis.generateLean4ProofScaffold(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 module.exports = router;

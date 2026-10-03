@@ -46,6 +46,7 @@ const fleetLogistics = require('../backend/services/brahmaFleetLogisticsEngine')
 const publicAdmin = require('../backend/services/brahmaPublicAdminEngine');
 const creativeMedia = require('../backend/services/brahmaCreativeMediaEngine');
 const hospitalityHaccp = require('../backend/services/brahmaHospitalityHaccpEngine');
+const dimensionalAnalysis = require('../backend/services/brahmaDimensionalAnalysisEngine');
 
 const testResults = {
   total: 0,
@@ -1206,6 +1207,151 @@ async function runAllTests() {
     );
   } catch (err) {
     assertTest('integration', 'Dhanvantari Clinical HL7 FHIR Bundle & Multi-Drug CYP450 Interaction Gate', false, err.message);
+  }
+
+  // Test 4.44: Brahma Dimensional Analysis & Buckingham Pi Dimensionless Groups
+  try {
+    const pressureHomogeneity = dimensionalAnalysis.verifyDimensionalHomogeneity(
+      [1, -1, -2, 0, 0, 0, 0], // Pressure: kg m^-1 s^-2
+      [1, -1, -2, 0, 0, 0, 0]  // Force / Area
+    );
+    const fluidNumbers = dimensionalAnalysis.calculateDimensionlessNumbers({
+      velocityMS: 2.5,
+      characteristicLengthM: 0.05,
+      dynamicViscosityPaS: 1.002e-3
+    });
+    const lean4Scaffold = dimensionalAnalysis.generateLean4ProofScaffold({
+      theoremName: 'kinetic_energy_positivity',
+      hypothesis: 'h : 0 < m',
+      claim: '0 ≤ (1/2) * m * v^2'
+    });
+
+    assertTest(
+      'integration',
+      'Brahma Dimensional Analysis, Buckingham Pi Dimensionless Groups & Lean 4 Scaffolding',
+      pressureHomogeneity.isHomogeneous === true && fluidNumbers.reynolds.regime === 'TURBULENT' && fluidNumbers.reynolds.value > 100000 && lean4Scaffold.lean4Source.includes('theorem kinetic_energy_positivity'),
+      `SI 7-base homogeneity verified; pipe flow Re = ${fluidNumbers.reynolds.value} (${fluidNumbers.reynolds.regime}), Fr = ${fluidNumbers.froude.value}; Lean 4 tactic scaffold generated`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Dimensional Analysis, Buckingham Pi Dimensionless Groups & Lean 4 Scaffolding', false, err.message);
+  }
+
+  // Test 4.45: Kuvera Corporate Solvency (Altman Z-Score) & 5-Stage DuPont ROE
+  try {
+    const altmanZ = kuvera.calculateAltmanZScore({
+      workingCapital: 20000000,
+      totalAssets: 100000000,
+      retainedEarnings: 25000000,
+      ebit: 15000000,
+      marketCapEquity: 90000000,
+      totalLiabilities: 40000000,
+      sales: 110000000
+    });
+    const duPont = kuvera.calculateDuPontROE({
+      netIncome: 12000000,
+      pretaxIncome: 16000000,
+      ebit: 20000000,
+      sales: 100000000,
+      totalAssets: 80000000,
+      shareholdersEquity: 50000000
+    });
+    const dcf = kuvera.calculateDCFValuation({
+      freeCashFlows: [10000000, 12000000, 14000000, 16000000, 18000000],
+      terminalGrowthRate: 0.025,
+      wacc: 0.09,
+      netDebt: 15000000,
+      sharesOutstanding: 10000000
+    });
+
+    assertTest(
+      'integration',
+      'Kuvera Altman Z-Score Corporate Solvency, 5-Stage DuPont ROE & DCF Valuation',
+      altmanZ.zScore > 2.99 && altmanZ.solvencyZone === 'SAFE_ZONE' && duPont.roePercentage === 24 && dcf.intrinsicValuePerShare > 0,
+      `Altman Z = ${altmanZ.zScore} (${altmanZ.solvencyZone}); DuPont ROE decomposed to ${duPont.decomposedROEPercentage}%; DCF fair equity value ₹${dcf.equityValue} (₹${dcf.intrinsicValuePerShare}/share)`
+    );
+  } catch (err) {
+    assertTest('integration', 'Kuvera Altman Z-Score Corporate Solvency, 5-Stage DuPont ROE & DCF Valuation', false, err.message);
+  }
+
+  // Test 4.46: VoxCPM Acoustic Attention, ITU-T G.107 VoIP MOS & Barge-in VAD Gate
+  try {
+    const voipMOS = voxEngine.calculateCallQualityMOS({
+      oneWayDelayMs: 40,
+      jitterMs: 5,
+      packetLossPercentage: 0.2,
+      codec: 'OPUS'
+    });
+    const bargeIn = voxEngine.evaluateBargeInVAD({
+      speechEnergy: 0.72,
+      noiseFloor: 0.14,
+      agentIsPlaying: true
+    });
+
+    assertTest(
+      'integration',
+      'VoxCPM ITU-T G.107 VoIP MOS Call Quality & Sub-120ms Barge-In VAD Gate',
+      voipMOS.mosScore >= 4.0 && voipMOS.qualityTier === 'EXCELLENT_HD_VOICE' && bargeIn.shouldKillTTS === true && bargeIn.interruptionLatencyMs <= 120,
+      `VoIP G.107 transmission R = ${voipMOS.rFactor} (MOS: ${voipMOS.mosScore}, ${voipMOS.qualityTier}); Barge-in latency ${bargeIn.interruptionLatencyMs}ms dispatched TTS cancel`
+    );
+  } catch (err) {
+    assertTest('integration', 'VoxCPM ITU-T G.107 VoIP MOS Call Quality & Sub-120ms Barge-In VAD Gate', false, err.message);
+  }
+
+  // Test 4.47: Chanakya Cross-Border Choice of Law & Force Majeure Frustration Causation
+  try {
+    const choiceOfLaw = chanakya.evaluateJurisdictionConflict({
+      governingLaw: 'DELAWARE',
+      disputeForum: 'SINGAPORE_SIAC_ARBITRATION',
+      enforcementCountry: 'INDIA'
+    });
+    const forceMajeure = chanakya.validateForceMajeureClause({
+      eventType: 'ACT_OF_GOD_CYCLONE',
+      wasForeseeable: false,
+      alternativePerformanceAvailable: false,
+      noticeGivenWithinDays: 4,
+      requiredNoticeWindowDays: 14
+    });
+
+    assertTest(
+      'integration',
+      'Chanakya Cross-Border Choice of Law (NYC 1958) & Force Majeure Causation',
+      choiceOfLaw.newYorkConventionApplicable === true && choiceOfLaw.isSplitForum === true && forceMajeure.canInvokeForceMajeure === true,
+      `SIAC arbitration enforceable in India via New York Convention 1958; Force Majeure invoked under Indian Contract Act Section 56`
+    );
+  } catch (err) {
+    assertTest('integration', 'Chanakya Cross-Border Choice of Law (NYC 1958) & Force Majeure Causation', false, err.message);
+  }
+
+  // Test 4.48: Indra OASIS SARIF v2.1.0 & Dhanvantari CKD-EPI 2021 eGFR Renal Dosing
+  try {
+    const sarifReport = indra.generateSARIFReport({
+      findings: [
+        {
+          cweId: 'CWE-89',
+          vulnerabilityName: 'SQL Injection in Products Endpoint',
+          cvssScore: 8.2,
+          severityRating: 'HIGH',
+          vulnerableEndpoint: '/rest/products/search',
+          rootCauseAnalysis: 'Unsanitized query string interpolation into raw database statement'
+        }
+      ]
+    });
+    const asvsChecklist = indra.mapASVSChecklist({ level: 2 });
+    const renalFunction = dhanvantari.calculateRenalFunction({
+      serumCreatinineMgDl: 1.9,
+      ageYears: 72,
+      isFemale: true,
+      weightKg: 62
+    });
+
+    assertTest(
+      'integration',
+      'Indra OASIS SARIF v2.1.0 Report, OWASP ASVS v4.0.3 & Dhanvantari CKD-EPI eGFR',
+      sarifReport.version === '2.1.0' && sarifReport.runs[0].results.length === 1 && asvsChecklist.posture === 'FULLY_ASVS_COMPLIANT' && renalFunction.kdigoStage === 'G4' && renalFunction.requiresDoseAdjustment === true,
+      `SARIF v2.1.0 sealed; ASVS Level 2 (${asvsChecklist.passedCount} controls); CKD-EPI eGFR ${renalFunction.egfrCkdEpi2021} mL/min (Stage ${renalFunction.kdigoStage}, dose adjustment required)`
+    );
+  } catch (err) {
+    assertTest('integration', 'Indra OASIS SARIF v2.1.0 Report, OWASP ASVS v4.0.3 & Dhanvantari CKD-EPI eGFR', false, err.message);
   }
 
   // ═════════════════════════════════════════════════════════════════════════════

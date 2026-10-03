@@ -270,6 +270,52 @@ class ChanakyaLegalEngine {
       `- **General Counsel Signoff Required:** ${p.preFlightGate.requiresGeneralCounselSignoff ? 'YES' : 'NO'}`
     ].join('\n');
   }
+
+  /**
+   * Cross-Border Choice of Law & Jurisdictional Conflict Resolver
+   */
+  evaluateJurisdictionConflict({ governingLaw = 'DELAWARE', disputeForum = 'SINGAPORE_SIAC_ARBITRATION', enforcementCountry = 'INDIA' }) {
+    const isSplitForum = governingLaw !== disputeForum;
+    const isArbitration = disputeForum.includes('ARBITRATION') || disputeForum.includes('SIAC') || disputeForum.includes('LCIA') || disputeForum.includes('ICC');
+    const isNewYorkConventionEnforceable = isArbitration && ['INDIA', 'USA', 'UK', 'SINGAPORE', 'GERMANY'].includes(enforcementCountry.toUpperCase());
+
+    return {
+      success: true,
+      governingLaw,
+      disputeForum,
+      enforcementCountry,
+      isSplitForum,
+      isArbitration,
+      newYorkConventionApplicable: isNewYorkConventionEnforceable,
+      conflictRisk: isSplitForum && !isArbitration ? 'HIGH_PATHOLOGICAL_CLAUSE_RISK' : 'STRUCTURALLY_SOUND',
+      enforcementAssessment: isNewYorkConventionEnforceable 
+        ? 'ENFORCEABLE_FOREIGN_ARBITRAL_AWARD_VIA_NYC_1958' 
+        : 'RECIPROCATING_TERRITORY_JUDICIAL_EXECUTION_REQUIRED'
+    };
+  }
+
+  /**
+   * Force Majeure & Doctrine of Frustration Causation Analyzer
+   */
+  validateForceMajeureClause({ eventType = 'EPIDEMIC_OR_EMBARGO', wasForeseeable = false, alternativePerformanceAvailable = false, noticeGivenWithinDays = 5, requiredNoticeWindowDays = 14 }) {
+    const isTimelyNotice = noticeGivenWithinDays <= requiredNoticeWindowDays;
+    const canInvoke = !wasForeseeable && !alternativePerformanceAvailable && isTimelyNotice;
+
+    return {
+      success: true,
+      eventType,
+      canInvokeForceMajeure: canInvoke,
+      statutoryDoctrine: canInvoke ? 'SECTION_56_INDIAN_CONTRACT_ACT_OR_COMMON_LAW_FRUSTRATION' : 'PERFORMANCE_OBLIGATION_SURVIVES',
+      auditChecks: {
+        unforeseeabilitySatisfied: !wasForeseeable,
+        mitigationImpossibilitySatisfied: !alternativePerformanceAvailable,
+        timelyNoticeCompliance: isTimelyNotice
+      },
+      recommendation: canInvoke 
+        ? 'ISSUE_FORMAL_EXCUSE_OF_PERFORMANCE_AND_MITIGATION_MEMORANDUM' 
+        : 'CONTINUE_PERFORMANCE_UNDER_COMMERCIAL_IMPRACTICABILITY_RESERVE'
+    };
+  }
 }
 
 module.exports = new ChanakyaLegalEngine();
