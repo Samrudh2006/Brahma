@@ -1170,4 +1170,66 @@ router.post('/constitution/audit-action', (req, res) => {
   }
 });
 
+// ─── 36. Breakthrough Proto-AGI Intelligence Transcendence Mesh ───────────────
+const toolSynth = require('../services/brahmaAutonomousToolSynthesizer');
+const mctsReasoning = require('../services/brahmaMctsReasoningEngine');
+const analogicalTransfer = require('../services/brahmaAnalogicalTransferEngine');
+const repEPlasticity = require('../services/brahmaRepEPlasticityEngine');
+const grammarDiscovery = require('../services/brahmaGrammarSymbolicDiscovery');
+const selfPlayArena = require('../services/brahmaSelfPlayArenaEngine');
+
+router.post('/transcendence/synthesize-tool', (req, res) => {
+  try {
+    const result = toolSynth.synthesizeAndRegisterTool(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/transcendence/mcts-explore', (req, res) => {
+  try {
+    const result = mctsReasoning.exploreReasoningTree(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/transcendence/analogical-transfer', (req, res) => {
+  try {
+    const result = analogicalTransfer.transferAnalogicalPrinciple(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/transcendence/repe-steer', (req, res) => {
+  try {
+    const result = repEPlasticity.applyActivationSteering(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/transcendence/grammar-discover', (req, res) => {
+  try {
+    const result = grammarDiscovery.discoverEquationFromDataset(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/transcendence/selfplay-duel', (req, res) => {
+  try {
+    const result = selfPlayArena.runAdversarialSelfPlayDuel(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 module.exports = router;

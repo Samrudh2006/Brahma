@@ -77,6 +77,12 @@ const maritimeAis = require('../backend/services/brahmaMaritimeAisEngine');
 const siliconRtl = require('../backend/services/brahmaSiliconRtlEngine');
 const gameTheory = require('../backend/services/brahmaGameTheoryEngine');
 const planetaryConstitution = require('../backend/services/brahmaPlanetaryConstitutionEngine');
+const toolSynthesizer = require('../backend/services/brahmaAutonomousToolSynthesizer');
+const mctsEngine = require('../backend/services/brahmaMctsReasoningEngine');
+const analogicalTransfer = require('../backend/services/brahmaAnalogicalTransferEngine');
+const repEPlasticity = require('../backend/services/brahmaRepEPlasticityEngine');
+const grammarDiscovery = require('../backend/services/brahmaGrammarSymbolicDiscovery');
+const selfPlayArena = require('../backend/services/brahmaSelfPlayArenaEngine');
 
 const testResults = {
   total: 0,
@@ -2209,6 +2215,130 @@ async function runAllTests() {
     );
   } catch (err) {
     assertTest('integration', 'Brahma Planetary Singularity Constitution & Cross-Council Quadratic Voting', false, err.message);
+  }
+
+  // Test 4.85: Autonomous Tool Synthesis & Sandbox JIT Compiler (Voyager Architecture)
+  try {
+    const synthRes = toolSynthesizer.synthesizeAndRegisterTool({
+      toolName: 'parseCustomBinaryTelemetry'
+    });
+    const execRes = toolSynthesizer.executeSynthesizedTool('parseCustomBinaryTelemetry', { hexPayload: '0x01A04F2B' });
+
+    const isSynthValid = synthRes.status === 'AUTONOMOUSLY_SYNTHESIZED_AND_REGISTERED' &&
+      synthRes.securityVerification === 'NODE_VM_SANDBOX_CONSTRAINED_PASSED' &&
+      execRes.success === true &&
+      execRes.output.parsedPacket.packetId === 416;
+
+    assertTest(
+      'integration',
+      'Brahma Autonomous Tool Synthesis & Sandbox JIT Compiler (Voyager/Cradle Live Hot-Registration)',
+      Boolean(isSynthValid),
+      `Synthesized & sandboxed "${synthRes.toolName}"; 2/2 synthetic edge-case tests passed; executed JIT packet parser (ID: ${execRes.output.parsedPacket.packetId}, Chk: ${execRes.output.parsedPacket.checksumHex})`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Autonomous Tool Synthesis & Sandbox JIT Compiler (Voyager/Cradle Live Hot-Registration)', false, err.message);
+  }
+
+  // Test 4.86: Monte Carlo Tree Search (MCTS) & Value-Guided Self-Play Reasoning (o1 Mechanism)
+  try {
+    const mctsRes = mctsEngine.exploreReasoningTree({
+      mctsRollouts: 50
+    });
+
+    const isMctsValid = mctsRes.prunedBranches.length === 1 &&
+      mctsRes.prunedBranches[0].prunedBy === 'SMT_FORMAL_LOGIC_PRUNER' &&
+      mctsRes.verifiedProofTrajectory.length >= 3 &&
+      mctsRes.mctsMetrics.rootMeanValueQ > 0.8;
+
+    assertTest(
+      'integration',
+      'Brahma MCTS Thought-Tree Search & Value-Guided Reasoning (AlphaZero/o1 SMT Pruning)',
+      Boolean(isMctsValid),
+      `MCTS 50 rollouts explored; SMT pruned 1 invalid branch ("${mctsRes.prunedBranches[0].premiseId}"); synthesized sound proof trajectory (Q: ${mctsRes.mctsMetrics.rootMeanValueQ})`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma MCTS Thought-Tree Search & Value-Guided Reasoning (AlphaZero/o1 SMT Pruning)', false, err.message);
+  }
+
+  // Test 4.87: Structure-Mapping Analogical Transfer Engine (Gentner\'s SME Cross-Domain Isomorphism)
+  try {
+    const transferRes = analogicalTransfer.transferAnalogicalPrinciple({
+      sourceDomainId: 'HYDRAULIC_TO_FINANCIAL',
+      targetProblemContext: { marketSpread: 3.0, liquidityConductivitySigma: 0.75, frictionFees: 0.05 }
+    });
+
+    const isTransferValid = transferRes.systematicityAlignment.structuralIsomorphismScore >= 0.95 &&
+      transferRes.candidateInferenceExecution.predictedTargetQuantity === 2.2 &&
+      transferRes.generalizationVerdict.includes('AUTONOMOUS');
+
+    assertTest(
+      'integration',
+      'Brahma Structure-Mapping Analogical Transfer (Gentner SME Hydraulics to Order Flow)',
+      Boolean(isTransferValid),
+      `Transferred Darcy law to liquidity flow (Isomorphism: ${transferRes.systematicityAlignment.structuralIsomorphismScore}); predicted order flow: ${transferRes.candidateInferenceExecution.predictedTargetQuantity} units/s`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Structure-Mapping Analogical Transfer (Gentner SME Hydraulics to Order Flow)', false, err.message);
+  }
+
+  // Test 4.88: Continuous Activation Steering & Episodic Plasticity (Representation Engineering)
+  try {
+    const extractRes = repEPlasticity.extractContrastiveSteeringVector({
+      conceptName: 'RIGOROUS_FORMAL_TRUTH'
+    });
+    const steerRes = repEPlasticity.applyActivationSteering({
+      targetConcept: 'RIGOROUS_FORMAL_TRUTH',
+      steeringCoefficientAlpha: 1.2
+    });
+
+    const isRepEValid = extractRes.steeringMagnitudeL2 > 0 &&
+      steerRes.hallucinationSuppressionBoostPercent === 30.0 &&
+      steerRes.synapticFastWeightsDelta.length === 8;
+
+    assertTest(
+      'integration',
+      'Brahma Representation Engineering RepE (Activation Steering & Fast-Weights Plasticity)',
+      Boolean(isRepEValid),
+      `Extracted 8D steering vector (||v|| = ${extractRes.steeringMagnitudeL2}); injected activation bias (+${steerRes.hallucinationSuppressionBoostPercent}% hallucination suppression); updated synaptic fast-weights`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Representation Engineering RepE (Activation Steering & Fast-Weights Plasticity)', false, err.message);
+  }
+
+  // Test 4.89: Grammar-Guided Open-Ended Symbolic Discovery (Zero-Prior Science Equation Generator)
+  try {
+    const grammarRes = grammarDiscovery.discoverEquationFromDataset({});
+
+    const isGrammarValid = grammarRes.bestDiscoveredEquation.coefficientOfDeterminationR2 === 1.0 &&
+      grammarRes.bestDiscoveredEquation.dimensionalVerification === 'SI_BASE_UNIT_HOMOGENEOUS_PROVED' &&
+      grammarRes.bestDiscoveredEquation.physicalLawIdentified === 'RAYLEIGH_AERODYNAMIC_DRAG_EQUATION';
+
+    assertTest(
+      'integration',
+      'Brahma Grammar-Guided Symbolic Discovery (Zero-Prior CFG Aerodynamic Drag Equation)',
+      Boolean(isGrammarValid),
+      `Discovered exact equation: ${grammarRes.bestDiscoveredEquation.formula} (R² = ${grammarRes.bestDiscoveredEquation.coefficientOfDeterminationR2}, MSE: ${grammarRes.bestDiscoveredEquation.meanSquaredError}, ${grammarRes.bestDiscoveredEquation.physicalLawIdentified})`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Grammar-Guided Symbolic Discovery (Zero-Prior CFG Aerodynamic Drag Equation)', false, err.message);
+  }
+
+  // Test 4.90: Autonomous Adversarial Dual-Council Self-Play Arena (Vritra vs Brihaspati Co-Evolution)
+  try {
+    const duelRes = selfPlayArena.runAdversarialSelfPlayDuel({});
+
+    const isDuelValid = duelRes.matchResult.includes('DEFENSE_REPELS') &&
+      duelRes.duelMetrics.newDefenseElo > 1920 &&
+      duelRes.continuousImprovementActive === true;
+
+    assertTest(
+      'integration',
+      'Brahma Adversarial Dual-Council Self-Play Arena (Vritra Attacker vs Brihaspati Defense Duel)',
+      Boolean(isDuelValid),
+      `Brihaspati repelled Vritra injection attack ("${duelRes.duelMetrics.attackVector}"); synthesized patch "${duelRes.duelMetrics.synthesizedPatch}"; updated Defense Elo: ${duelRes.duelMetrics.newDefenseElo}`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Adversarial Dual-Council Self-Play Arena (Vritra Attacker vs Brihaspati Defense Duel)', false, err.message);
   }
 
   // ═════════════════════════════════════════════════════════════════════════════

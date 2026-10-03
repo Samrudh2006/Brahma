@@ -809,5 +809,55 @@
     },
     "prevHash": "54c582a73193f3f751fe23942416ab8d354465c2980fa66a27573875283cfbfd",
     "entryHash": "ed8b56c05d01df19d518d16134880a735439bd1e79c8440b2f576eb5eb8a64df"
+  },
+  {
+    "index": 65,
+    "timestamp": "2026-10-03T13:23:15.451Z",
+    "councilId": "chanakya_legal",
+    "action": "CONTRACT_REDLINE_COMMITTED",
+    "payload": {
+      "contractId": "ctr_771",
+      "redlines": 3
+    },
+    "prevHash": "ed8b56c05d01df19d518d16134880a735439bd1e79c8440b2f576eb5eb8a64df",
+    "entryHash": "0eab3cd25eb245510fe23beed62ffe4560c8f0941ece0084738ae25fc339409f"
+  },
+  {
+    "index": 66,
+    "timestamp": "2026-10-03T13:23:15.454Z",
+    "councilId": "kuvera_quant",
+    "action": "PAPER_TRADE_EXECUTED",
+    "payload": {
+      "symbol": "NVDA",
+      "quantity": 10,
+      "notional": 1250
+    },
+    "prevHash": "0eab3cd25eb245510fe23beed62ffe4560c8f0941ece0084738ae25fc339409f",
+    "entryHash": "d6d581bede6d3b53959762c5b5db65b029f0f7ddaa068fa32cd38e77263515bd"
+  },
+  {
+    "index": 67,
+    "timestamp": "2026-10-03T13:25:33.981Z",
+    "councilId": "chanakya_legal",
+    "action": "CONTRACT_REDLINE_COMMITTED",
+    "payload": {
+      "contractId": "ctr_771",
+      "redlines": 3
+    },
+    "prevHash": "d6d581bede6d3b53959762c5b5db65b029f0f7ddaa068fa32cd38e77263515bd",
+    "entryHash": "934d970aa806588fa5449ff98444f24eac72a79bb65d11000874fb72513fa242"
+  },
+  {
+    "index": 68,
+    "timestamp": "2026-10-03T13:25:33.982Z",
+    "councilId": "kuvera_quant",
+    "action": "PAPER_TRADE_EXECUTED",
+    "payload": {
+      "symbol": "NVDA",
+      "quantity": 10,
+      "notional": 1250
+    },
+    "prevHash": "934d970aa806588fa5449ff98444f24eac72a79bb65d11000874fb72513fa242",
+    "entryHash": "2204847988b21b5cbc7f5d55d1a41af1da1dc01469b349ca37e0bd6d3da8d8af"
   }
 ]
