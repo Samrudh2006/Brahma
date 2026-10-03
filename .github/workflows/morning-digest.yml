@@ -1,0 +1,54 @@
+name: Brahma 8:00 AM Daily Research Briefing Cron
+
+on:
+  schedule:
+    # 08:00 AM IST is 02:30 AM UTC (2:30 UTC every day)
+    - cron: '30 2 * * *'
+  workflow_dispatch: # Allows manual 1-click trigger from GitHub Actions tab
+
+jobs:
+  morning-briefing:
+    name: Generate & Dispatch 8:00 AM arXiv Tanglish Digest
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Dependencies
+        run: |
+          cd backend
+          npm ci || npm install
+
+      - name: Execute Daily 8:00 AM Research Digest
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          TARGET_EMAIL: ${{ secrets.TARGET_EMAIL }}
+        run: |
+          node -e "
+            const auto = require('./backend/services/autonomousWorkflowsService');
+            const email = require('./backend/services/emailDispatcher');
+            async function run() {
+              console.log('🌅 Starting 8:00 AM Autonomous Research Digest...');
+              const digest = await auto.generateMorningResearchDigest('artificial intelligence');
+              console.log('✅ Digest generated successfully!');
+              console.log(digest.tanglishDigest);
+              if (process.env.RESEND_API_KEY && process.env.TARGET_EMAIL) {
+                const res = await email.sendEmail({
+                  to: process.env.TARGET_EMAIL,
+                  subject: '🌅 BRAHMA 8:00 AM Daily Research Briefing',
+                  text: digest.tanglishDigest
+                });
+                console.log('📬 Email Dispatch Result:', res);
+              } else {
+                console.log('ℹ️ Tip: Add RESEND_API_KEY and TARGET_EMAIL to GitHub Secrets for automatic inbox delivery!');
+              }
+            }
+            run().catch(console.error);
+          "

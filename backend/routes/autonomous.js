@@ -50,4 +50,26 @@ router.post('/profile-audit', async (req, res) => {
   }
 });
 
+// POST /api/autonomous/send-email-digest
+router.post('/send-email-digest', async (req, res) => {
+  try {
+    const emailDispatcher = require('../services/emailDispatcher');
+    const { to = 'admin@brahma.ai', topic = 'artificial intelligence' } = req.body;
+    const digest = await autonomousService.generateMorningResearchDigest(topic);
+    const emailRes = await emailDispatcher.sendEmail({
+      to,
+      subject: `🌅 BRAHMA 8:00 AM Research Briefing (${new Date().toLocaleDateString('en-IN')})`,
+      text: digest.tanglishDigest
+    });
+
+    res.json({
+      success: emailRes.success,
+      emailStatus: emailRes,
+      digestPreview: digest.tanglishDigest.slice(0, 300) + '...'
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 module.exports = router;
