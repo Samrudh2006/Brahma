@@ -33,4 +33,13 @@ router.post('/swarm/debate', async (req, res) => {
   res.json(debate);
 });
 
+const reactLoopEngine = require('../services/reactLoopEngine');
+
+// POST /api/frontier/react/execute
+router.post('/react/execute', async (req, res) => {
+  const { task = 'Inspect backend routes and verify server mounting invariants', maxSteps = 6 } = req.body;
+  const result = await reactLoopEngine.execute(task, { maxSteps });
+  res.json(result);
+});
+
 module.exports = router;
