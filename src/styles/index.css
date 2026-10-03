@@ -216,36 +216,49 @@ html, body, #root {
 .living-bg-image {
   position: absolute;
   inset: -30px;
-  background-color: #000000;
-  background-image: none;
+  background-image:
+    linear-gradient(180deg, rgba(3,7,18,0.42) 0%, rgba(3,7,18,0.18) 35%, rgba(3,7,18,0.85) 100%),
+    url('/assets/brahma_temple_bg.jpg');
+  background-size: cover;
+  background-position: center 22%;
+  filter: contrast(1.08) saturate(1.15) brightness(0.96);
   will-change: transform;
+  transition: background-image 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.12s cubic-bezier(0.2,0,0.2,1);
 }
 
-/* 1. Mayūra Teal Theme (Clean Black, Waiting for New Artwork) */
+/* 1. Mayūra Teal Theme (Peacock, Emerald & Sri Yantra - Perfectly Centered on Peacock Fan) */
 [data-theme='teal'] .living-bg-image {
-  background-color: #000000 !important;
-  background-image: none !important;
+  background-image:
+    linear-gradient(180deg, rgba(2,16,20,0.44) 0%, rgba(2,16,20,0.18) 35%, rgba(2,16,20,0.88) 100%),
+    url('/assets/mayura_peacock_bg.jpg');
+  background-position: center 22%;
+  filter: contrast(1.08) saturate(1.18) brightness(0.96);
 }
 
 /* 2. Cyberpunk Kashi Theme (Neon Violet & Electric Pink) */
 [data-theme='cyberpunk'] .living-bg-image {
   background-image:
-    linear-gradient(180deg, rgba(10,3,20,0.54) 0%, rgba(10,3,20,0.22) 35%, rgba(10,3,20,0.90) 100%),
+    linear-gradient(180deg, rgba(10,3,20,0.48) 0%, rgba(10,3,20,0.18) 35%, rgba(10,3,20,0.90) 100%),
     url('/assets/cyberpunk_kashi_bg.jpg');
+  background-position: center 25%;
   filter: contrast(1.12) saturate(1.22) brightness(0.96);
 }
 
-/* 3. Sūrya Solarized Theme (Clean Black, Waiting for New Artwork) */
+/* 3. Sūrya Solarized / Cosmic Gold Theme (Sacred Golden Sun Temple - Centered on Solar Mandala) */
 [data-theme='surya'] .living-bg-image {
-  background-color: #000000 !important;
-  background-image: none !important;
+  background-image:
+    linear-gradient(180deg, rgba(20,5,2,0.42) 0%, rgba(20,5,2,0.16) 35%, rgba(20,5,2,0.88) 100%),
+    url('/assets/surya_gold_bg.jpg');
+  background-position: center 22%;
+  filter: contrast(1.10) saturate(1.20) brightness(0.96);
 }
 
 /* 4. Himālaya Zen Theme (Snow Mountains, Kedarnath & Midnight Blue) */
 [data-theme='zen'] .living-bg-image {
   background-image:
-    linear-gradient(180deg, rgba(2,6,23,0.50) 0%, rgba(2,6,23,0.20) 35%, rgba(2,6,23,0.88) 100%),
+    linear-gradient(180deg, rgba(2,6,23,0.45) 0%, rgba(2,6,23,0.16) 35%, rgba(2,6,23,0.88) 100%),
     url('/assets/himalaya_zen_bg.jpg');
+  background-position: center 25%;
   filter: contrast(1.06) saturate(1.10) brightness(0.96);
 }
 
