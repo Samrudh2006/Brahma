@@ -3,7 +3,8 @@
  * All backend calls go through here. Never call fetch() directly from components.
  */
 
-const BASE_URL = '/api'; // Proxied to http://localhost:4000 via vite.config.js
+export const API_BASE = (import.meta.env.VITE_BACKEND_URL || '').replace(/\/$/, '') + '/api';
+const BASE_URL = API_BASE;
 
 // ─── Generic request helper ───────────────────────────────────────────────────
 async function request(path, options = {}) {

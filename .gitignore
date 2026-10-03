@@ -38,3 +38,5 @@ backend/db/*.db
 
 # External Tools
 mirofish/
+backend/voice_outputs/
+backend/voice_samples/

@@ -22,7 +22,6 @@
     }
   ],
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "http://backend-url/api/$1" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
