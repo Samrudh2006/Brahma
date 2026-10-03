@@ -85,6 +85,7 @@ app.use('/api/evolution',      require('./routes/evolution'));
 app.use('/api/adapters',       require('./routes/adapters'));
 app.use('/auth',               require('./routes/auth'));
 app.use('/api/auth',           require('./routes/auth'));
+app.use('/api/cloudflare',     require('./routes/cloudflare'));
 
 
 // ─── Serve built frontend (when deployed together in container) ────────────────

@@ -55,7 +55,14 @@
       "headMerkleRoot": "acc18edfa414aa40e85aaf25bfc0e61fcac081d44745e4d7f58396dde5e779e0",
       "checkpointCount": 6,
       "lastUpdated": "2026-10-03T14:17:55.026Z"
+    },
+    "horizon_1791039604645": {
+      "sessionId": "horizon_1791039604645",
+      "currentStep": 10000,
+      "headMerkleRoot": "687547ed7074124b9e85fd716d70fb83d7a9795902e708b12dae4d27b4ea5e3e",
+      "checkpointCount": 6,
+      "lastUpdated": "2026-10-03T15:00:04.667Z"
     }
   },
-  "totalCheckpoints": 48
+  "totalCheckpoints": 54
 }
