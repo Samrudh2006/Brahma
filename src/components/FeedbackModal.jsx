@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Star, X, Check, Sparkles, AlertTriangle, MessageSquare, Lightbulb, Shield, Send, CheckCircle2, ChevronRight, ThumbsUp } from 'lucide-react';
 import { playTactileClick, playDivineChime } from '@utils/soundEffects';
+import { API_BASE } from '../api/client';
 
 const IMPROVEMENT_REGIONS = [
   { id: 'ui_themes', label: '🎨 UI / UX & Themes', desc: 'Theme switcher, aesthetics, glassmorphism' },
@@ -120,8 +121,7 @@ export default function FeedbackModal({ isOpen, onClose, sessionDurationSec = 30
       }));
 
       // POST to backend API
-      const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:4000';
-      await fetch(`${API_BASE}/api/feedback`, {
+      await fetch(`${API_BASE}/feedback`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(feedbackPayload)

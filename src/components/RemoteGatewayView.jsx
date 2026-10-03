@@ -5,6 +5,7 @@ import {
   Activity, Play, Lock, Key, Copy, Check, QrCode, Zap,
   Server, HardDrive, Cpu, Clock, CheckCheck
 } from 'lucide-react';
+import { API_BASE } from '../api/client';
 
 export default function RemoteGatewayView() {
   const [telemetry, setTelemetry] = useState(null);
@@ -28,7 +29,7 @@ export default function RemoteGatewayView() {
   // QR Code & Token Pair State
   const [tokenCopied, setTokenCopied] = useState(false);
   const mobileGatewayToken = 'BRAHMA-SECURE-MOBILE-NODE-991A';
-  const mobileAccessUrl = 'http://localhost:4000/api/remote/status?auth=' + mobileGatewayToken;
+  const mobileAccessUrl = `${API_BASE}/remote/status?auth=` + mobileGatewayToken;
 
   useEffect(() => {
     fetchTelemetry();
@@ -38,7 +39,7 @@ export default function RemoteGatewayView() {
 
   const fetchTelemetry = async () => {
     try {
-      const res = await fetch('http://localhost:4000/api/remote/status');
+      const res = await fetch(`${API_BASE}/remote/status`);
       if (res.ok) {
         const data = await res.json();
         setTelemetry(data);
@@ -55,7 +56,7 @@ export default function RemoteGatewayView() {
     setExecuting(true);
     setCommandOutput('⚡ Transmitting command through secure IPC gateway...');
     try {
-      const res = await fetch('http://localhost:4000/api/remote/execute', {
+      const res = await fetch(`${API_BASE}/remote/execute`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ command: remoteCommand, autoNotify: true, emailRecipient: emailTo })
@@ -73,7 +74,7 @@ export default function RemoteGatewayView() {
     if (!searchQuery.trim()) return;
     setSearching(true);
     try {
-      const res = await fetch('http://localhost:4000/api/remote/search', {
+      const res = await fetch(`${API_BASE}/remote/search`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: searchQuery })
@@ -91,7 +92,7 @@ export default function RemoteGatewayView() {
     if (!emailTo.trim() || !emailBody.trim()) return;
     setSendingEmail(true);
     try {
-      const res = await fetch('http://localhost:4000/api/remote/notify-mail', {
+      const res = await fetch(`${API_BASE}/remote/notify-mail`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ to: emailTo, subject: emailSubject, message: emailBody })

@@ -3,7 +3,15 @@
  * All backend calls go through here. Never call fetch() directly from components.
  */
 
-export const API_BASE = (import.meta.env.VITE_BACKEND_URL || '').replace(/\/$/, '') + '/api';
+const isAntideploy = typeof window !== 'undefined' && window.location.hostname.includes('antideploy.com');
+const defaultBackend = isAntideploy ? 'https://brahma-backend.onrender.com' : '';
+const rawEnvUrl = (import.meta.env.VITE_API_URL || import.meta.env.VITE_BACKEND_URL || import.meta.env.VITE_API_BASE_URL || defaultBackend).trim().replace(/\/$/, '');
+export const API_BASE = rawEnvUrl
+  ? (rawEnvUrl.endsWith('/api') ? rawEnvUrl : `${rawEnvUrl}/api`)
+  : '/api';
+export const BACKEND_BASE = rawEnvUrl
+  ? rawEnvUrl.replace(/\/api$/, '')
+  : (typeof window !== 'undefined' && window.location.origin ? window.location.origin : '');
 const BASE_URL = API_BASE;
 
 // ─── Generic request helper ───────────────────────────────────────────────────

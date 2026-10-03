@@ -5,7 +5,7 @@
 **Author & Principal Architect:** Dwivedula Venkata Satya Samrudh  
 **Affiliation:** Sovereign Systems Laboratory • Creator of BRAHMA  
 **Canonical Repository:** [https://github.com/Samrudh2006/Brahma](https://github.com/Samrudh2006/Brahma)  
-**Live Production Gateway:** [https://brahma-ai.vercel.app](https://brahma-ai.vercel.app)  
+**Live Production Gateway:** [https://brahma-web.antideploy.com](https://brahma-web.antideploy.com)  
 **Author Profile:** [https://www.linkedin.com/in/satyasamrudh/](https://www.linkedin.com/in/satyasamrudh/)  
 
 ---
@@ -702,7 +702,7 @@ Every incoming request passes through [`backend/middleware/securityShield.js`](f
 [User Browser (Global)]
          │
          ▼
-[Vercel Edge Network (brahma-ai.vercel.app)] ◄─── Vite 5 SPA (dist/index.html)
+[Antideploy Edge Network (brahma-web.antideploy.com)] ◄─── Vite 5 SPA (dist/index.html)
          │
          │ (CORS Enabled /api/* Proxy)
          ▼

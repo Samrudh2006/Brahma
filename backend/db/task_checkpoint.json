@@ -5,9 +5,9 @@
       "id": "task_001",
       "command": "npm run test",
       "status": "in_progress",
-      "updatedAt": 1790781842987,
-      "resumedAt": "2026-09-30T15:24:02.986Z",
-      "sleepDurationSec": 671
+      "updatedAt": 1790844203088,
+      "resumedAt": "2026-10-01T08:43:23.088Z",
+      "sleepDurationSec": 268
     }
   ]
 ]

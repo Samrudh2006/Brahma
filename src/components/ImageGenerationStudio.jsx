@@ -3,6 +3,7 @@ import {
   Image, Sparkles, Download, Copy, ExternalLink, RefreshCw,
   Sliders, Maximize, Play, Check, Eye, Wand2, Layers, Zap
 } from 'lucide-react';
+import { API_BASE } from '../api/client';
 
 const STYLES = [
   { id: 'cosmic-gold', name: 'Cosmic Gold Sovereign', icon: Sparkles, preview: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=300' },
@@ -56,7 +57,7 @@ export default function ImageGenerationStudio({ onClose, onSendToChat }) {
     if (!prompt.trim()) return;
     setIsGenerating(true);
     try {
-      const res = await fetch('http://localhost:4000/api/images/generate', {
+      const res = await fetch(`${API_BASE}/images/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt, style: selectedStyle, aspectRatio, guidance })

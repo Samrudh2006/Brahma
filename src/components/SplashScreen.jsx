@@ -92,7 +92,6 @@ export default function SplashScreen({ onComplete }) {
       videoRef.current.play().then(() => {
         setIsPlaying(true);
         setShowPlayFallback(false);
-        if (ambientRef.current) ambientRef.current.play().catch(() => {});
       }).catch(() => {
         // If play still cannot execute, transition straight to app
         finishSplash();

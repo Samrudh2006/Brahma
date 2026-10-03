@@ -7,6 +7,7 @@ import {
   HardDrive, Filter, Dna, Cloud, Flame, Globe, Compass, Radio, CreditCard, HeartPulse
 } from 'lucide-react';
 import { INITIAL_TOOLS } from '@data/toolsData';
+import { API_BASE } from '../api/client';
 const NovaDiscoveryStudio = React.lazy(() => import('./NovaDiscoveryStudio'));
 const CoconutMindStudio = React.lazy(() => import('./CoconutMindStudio'));
 const GenesisOSStudio = React.lazy(() => import('./GenesisOSStudio'));
@@ -142,7 +143,7 @@ function LiveEngineSandbox({ tool, onClose }) {
     setRunning(true);
     try {
       if (tool.id === 'cuda-ternary-gemm') {
-        const res = await fetch('http://localhost:4000/api/frontier/cuda/simulate', {
+        const res = await fetch(`${API_BASE}/frontier/cuda/simulate`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ matrix_dim: 1024, sparsity: 0.35 })
@@ -150,7 +151,7 @@ function LiveEngineSandbox({ tool, onClose }) {
         const data = await res.json();
         setResult(data);
       } else if (tool.id === 'swarm-consensus-debater') {
-        const res = await fetch('http://localhost:4000/api/frontier/swarm/debate', {
+        const res = await fetch(`${API_BASE}/frontier/swarm/debate`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ topic: customInput, rounds: 3 })
@@ -158,7 +159,7 @@ function LiveEngineSandbox({ tool, onClose }) {
         const data = await res.json();
         setResult(data);
       } else if (tool.id === 'semantic-vector-search') {
-        const res = await fetch('http://localhost:4000/api/frontier/rag/search', {
+        const res = await fetch(`${API_BASE}/frontier/rag/search`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ query: customInput, top_k: 3 })
@@ -166,7 +167,7 @@ function LiveEngineSandbox({ tool, onClose }) {
         const data = await res.json();
         setResult(data);
       } else if (tool.id === 'polyglot-vm-runner') {
-        const res = await fetch('http://localhost:4000/api/execute', {
+        const res = await fetch(`${API_BASE}/execute`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ language: 'javascript', code: 'console.log("BRAHMA Polyglot VM Executed Successfully: " + (2**64 - 1));' })

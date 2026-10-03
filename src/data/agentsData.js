@@ -60,8 +60,8 @@ export const ALL_289_AGENTS = DIVINE_COUNCILS.flatMap((council, cIdx) => {
       status: aIdx % 5 === 0 ? 'active' : (aIdx % 3 === 0 ? 'synthesizing' : 'standby'),
       tier: 'Level 5 Autonomous',
       specialty: `${council.deity} Domain: ${role}`,
-      totalTasksExecuted: Math.floor(Math.random() * 800 + 120),
-      verificationRate: (99.2 + Math.random() * 0.79).toFixed(2) + '%',
+      totalTasksExecuted: 'N/A',
+      verificationRate: 'N/A',
       // Frontier Model & Logo
       underlyingModel: model.modelName,
       modelId: model.modelId,

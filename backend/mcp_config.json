@@ -39,6 +39,14 @@
       "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
       "description": "Multi-step structured reasoning — no API key required",
       "env": {}
+    },
+    "webcmd": {
+      "command": "npx",
+      "args": ["-y", "@agentrhq/webcmd"],
+      "description": "AgentR Webcmd — Self-learning browser infrastructure, website CLI, and agent web navigation",
+      "env": {
+        "WEBCMD_TOKEN": "eyJwaWQiOjMxMjI4ODAsInNpZCI6MTI1ODg4MTI0MywiYXgiOiI2YzA0ZjU0OWQxMWMzZDE5ZGRjMmFmMTJkODY1MzRlMyIsInRzIjoxNzkwODU1NDUwLCJleHAiOjE3OTMyNzQ2NTB9.NLB46sCcRLRuTNvBlfJrfIbjzfsoSTDJZTdKkD1mqO8"
+      }
     }
   },
   "publicApiKeys": {

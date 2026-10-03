@@ -149,7 +149,7 @@ export default function CoconutMindStudio({ onClose }) {
             <div className="canvas-header-overlay">
               <div className="live-indicator">
                 <span className="pulse-dot" />
-                <span>Continuous Latent Manifold ($\mathbb{R}^{currentMode.latentDimensions}$)</span>
+                <span>Continuous Latent Manifold (ℝ<sup>{currentMode.latentDimensions}</sup>)</span>
               </div>
               <span className="entropy-chip">{currentMode.entropyLoss}</span>
             </div>

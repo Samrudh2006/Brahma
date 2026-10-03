@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { lsGet, lsSet, uid, timeAgo } from '@utils/index';
 import { IDENTITIES } from '@data/identities';
+import { API_BASE } from '../api/client';
 
 const DEFAULT_PROJECTS = [
   {
@@ -83,7 +84,7 @@ export default function ProjectsView() {
     setRunningCode(true);
     setCodeOutput(null);
     try {
-      const res = await fetch('http://localhost:4000/api/execute', {
+      const res = await fetch(`${API_BASE}/execute`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ language: 'javascript', code: proj.code || 'console.log("Executed Project Sandbox");' })

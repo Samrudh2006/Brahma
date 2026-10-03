@@ -40,3 +40,5 @@ backend/db/*.db
 mirofish/
 backend/voice_outputs/
 backend/voice_samples/
+__pycache__/
+*.pyc

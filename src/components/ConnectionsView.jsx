@@ -5,6 +5,7 @@ import {
   Figma, CreditCard, Cloud, RefreshCw, Radio, Sparkles
 } from 'lucide-react';
 import { lsGet, lsSet } from '@utils/index';
+import { BACKEND_BASE } from '../api/client';
 
 const INTEGRATIONS = [
   { id: 'github',      name: 'GitHub',             icon: Github,        desc: 'Review PRs, browse repos, analyze commit histories, and auto-sync branches.', color: '#6e40c9', authType: 'oauth', status: 'connected' },
@@ -46,7 +47,7 @@ export default function ConnectionsView() {
 
   const handleConnect = (integration) => {
     if (integration.authType === 'oauth') {
-      window.open(`http://localhost:4000/auth/${integration.id}`, '_blank', 'width=600,height=700');
+      window.open(`${BACKEND_BASE}/auth/${integration.id}`, '_blank', 'width=600,height=700');
       setConn(integration.id, { connected: true, account: 'samrudh@brahma.ai' });
     } else if (integration.authType === 'api-key') {
       setShowKeyInput(prev => ({ ...prev, [integration.id]: true }));

@@ -22,6 +22,8 @@
     }
   ],
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/api/health", "destination": "/api/health" },
+    { "source": "/api/chat", "destination": "/api/chat" },
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
   ]
 }

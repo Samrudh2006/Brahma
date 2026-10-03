@@ -7,6 +7,7 @@ import {
 import { DIVINE_COUNCILS, ALL_289_AGENTS } from '../data/agentsData';
 import { INITIAL_SKILLS, SKILL_CATEGORIES } from '../data/skillsData';
 import { lsGet, lsSet } from '@utils/index';
+import { API_BASE } from '../api/client';
 
 export default function SkillsView({ onLaunchStudio }) {
   const [activeTab, setActiveTab] = useState('github-skills'); // 'github-skills' | 'agents' | 'hub'
@@ -35,11 +36,11 @@ export default function SkillsView({ onLaunchStudio }) {
     setHubLoading(true);
     try {
       if (hubTab === 'hf') {
-        const res = await fetch(`http://localhost:4000/api/hub/huggingface/search?q=${encodeURIComponent(hubQuery)}`);
+        const res = await fetch(`${API_BASE}/hub/huggingface/search?q=${encodeURIComponent(hubQuery)}`);
         const data = await res.json();
         if (data.success) setHubModels(data.models);
       } else {
-        const res = await fetch(`http://localhost:4000/api/hub/kaggle/search?q=${encodeURIComponent(hubQuery)}`);
+        const res = await fetch(`${API_BASE}/hub/kaggle/search?q=${encodeURIComponent(hubQuery)}`);
         const data = await res.json();
         if (data.success) setHubDatasets(data.datasets);
       }
@@ -52,7 +53,7 @@ export default function SkillsView({ onLaunchStudio }) {
 
   const handleImportHubItem = async (item, type) => {
     try {
-      const res = await fetch('http://localhost:4000/api/hub/import', {
+      const res = await fetch(`${API_BASE}/hub/import`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ type, id: item.id, name: item.name || item.title })
@@ -78,7 +79,7 @@ export default function SkillsView({ onLaunchStudio }) {
     setExecutingAgent(agent.id);
     setTestOutput(null);
     try {
-      const res = await fetch('http://localhost:4000/api/frontier/swarm/debate', {
+      const res = await fetch(`${API_BASE}/frontier/swarm/debate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ topic: `Verify domain invariance for ${agent.name} (${agent.specialty})`, rounds: 2 })
@@ -90,8 +91,8 @@ export default function SkillsView({ onLaunchStudio }) {
         timestamp: new Date().toLocaleTimeString(),
         council: agent.councilName,
         metrics: {
-          latencyMs: (Math.random() * 8 + 1.2).toFixed(2),
-          tokensPerSec: (Math.random() * 60 + 220).toFixed(0),
+          latencyMs: data?.latencyMs || 'N/A',
+          tokensPerSec: data?.tokensPerSec || 'N/A',
           verificationScore: agent.verificationRate,
         },
         output: data.consensus || `[✓ VERIFIED] Agent ${agent.name} executed domain invariant check: All formal preconditions satisfied. Lean 4 proof trace synthesized with 0 discrepancies.`,
@@ -326,9 +327,11 @@ export default function SkillsView({ onLaunchStudio }) {
                       <span style={{ fontSize: '0.72rem', color: 'var(--accent-gold)', fontWeight: 700 }}>
                         {agent.councilName} Council
                       </span>
-                      <span style={{ fontSize: '0.68rem', padding: '2px 6px', borderRadius: 6, background: 'rgba(34, 197, 94, 0.12)', color: '#4ade80', fontWeight: 600 }}>
-                        {agent.verificationRate} verified
-                      </span>
+                      {agent.verificationRate && agent.verificationRate !== 'N/A' && (
+                        <span style={{ fontSize: '0.68rem', padding: '2px 6px', borderRadius: 6, background: 'rgba(34, 197, 94, 0.12)', color: '#4ade80', fontWeight: 600 }}>
+                          {agent.verificationRate} verified
+                        </span>
+                      )}
                     </div>
 
                     <div style={{ fontWeight: 700, fontSize: '0.92rem', color: '#f8fafc', marginBottom: 4 }}>

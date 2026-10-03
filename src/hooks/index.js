@@ -3,6 +3,7 @@
  * All reusable stateful logic lives here.
  */
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { API_BASE } from '../api/client';
 
 // ─── useTypewriter ────────────────────────────────────────────────────────────
 /**
@@ -213,11 +214,17 @@ export function useBackendHealth() {
   useEffect(() => {
     const check = async () => {
       try {
-        const res = await fetch('/api/health', { signal: AbortSignal.timeout(3000) });
+        const healthUrl = `${API_BASE}/health`;
+        const res = await fetch(healthUrl, { signal: AbortSignal.timeout(3000) });
         if (res.ok) {
-          const data = await res.json();
-          setStatus({ backendOnline: true, ollamaOnline: data.ollamaOnline || false });
+          const contentType = res.headers.get('content-type') || '';
+          if (contentType.includes('application/json')) {
+            const data = await res.json();
+            setStatus({ backendOnline: true, ollamaOnline: data.ollamaOnline || false });
+            return;
+          }
         }
+        setStatus({ backendOnline: false, ollamaOnline: false });
       } catch {
         setStatus({ backendOnline: false, ollamaOnline: false });
       }

@@ -11,13 +11,30 @@ require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 const app = express();
 const PORT = process.env.PORT || 4000;
-const allowedOrigins = process.env.CORS_ORIGIN 
-  ? process.env.CORS_ORIGIN.split(',').map(s => s.trim()) 
-  : true;
+const defaultOrigins = [
+  'https://brahma-web.antideploy.com',
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'http://localhost:4000'
+];
+const rawCors = process.env.CORS_ORIGIN;
+const allowedOrigins = (rawCors && rawCors !== '*')
+  ? rawCors.split(',').map(s => s.trim())
+  : defaultOrigins;
 
 // ─── Middleware ────────────────────────────────────────────────────────────────
 app.use(helmet({ crossOriginEmbedderPolicy: false }));
-app.use(cors({ origin: allowedOrigins, credentials: true }));
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow non-browser requests (mobile apps, server-to-server, curl)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin) || allowedOrigins.includes('*')) {
+      return callback(null, true);
+    }
+    return callback(new Error(`CORS blocked for origin: ${origin}`));
+  },
+  credentials: true
+}));
 app.use(express.json({ limit: '20mb' }));
 app.use(express.urlencoded({ extended: true }));
 
@@ -26,6 +43,7 @@ const securityShield = require('./middleware/securityShield');
 app.use(securityShield);
 
 // ─── Routes ────────────────────────────────────────────────────────────────────
+app.use('/health',             require('./routes/health'));
 app.use('/api/health',         require('./routes/health'));
 app.use('/api/models',         require('./routes/models'));
 app.use('/api/chat',           require('./routes/chat'));
@@ -46,8 +64,21 @@ app.use('/api/autonomous',     require('./routes/autonomous'));
 app.use('/api/whatsapp',       require('./routes/whatsapp'));
 app.use('/api/laya',           require('./routes/laya'));
 app.use('/api/feedback',       require('./routes/feedback'));
+app.use('/api/webcmd',         require('./routes/webcmd'));
 app.use('/auth',               require('./routes/auth'));
 
+
+// ─── Serve built frontend (when deployed together in container) ────────────────
+const path = require('path');
+const fs = require('fs');
+const distPath = path.join(__dirname, '../dist');
+if (fs.existsSync(distPath)) {
+  app.use(express.static(distPath));
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api') || req.path.startsWith('/auth') || req.path.startsWith('/ws')) return next();
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+}
 
 // ─── Global Centralized Error Handler Middleware ────────────────────────────────
 const errorHandler = require('./middleware/errorHandler');

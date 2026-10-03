@@ -10,6 +10,7 @@ import {
   Maximize2, Type, PenTool, PanelLeftClose, PanelLeftOpen, Zap,
   Palette, Image, Search, Layout, Sliders, Box, FolderPlus
 } from 'lucide-react';
+import { API_BASE } from '../api/client';
 
 const BRAHMA_PROJECTS = [
   {
@@ -506,7 +507,7 @@ npm run dev
     if (!imageSearchQuery.trim()) return;
     setSearchingImages(true);
     try {
-      const res = await fetch('http://localhost:4000/api/remote/search', {
+      const res = await fetch(`${API_BASE}/remote/search`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: `${imageSearchQuery} wallpaper high resolution` })
