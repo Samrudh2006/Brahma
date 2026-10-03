@@ -199,6 +199,14 @@ async function runAllTests() {
   const retrievedSecret = agentIdentityService.vaultRetrieve('chanakya', 'api_secret_token');
   assertTest('unit', 'AES-256-GCM Encrypted Agent Vault Storage & Decryption', retrievedSecret.success === true && retrievedSecret.value === 'sk_live_brahma_matrix_9988', 'Decrypted payload matches original secret');
 
+  // Test 1.6: MCTS Test-Time Compute Rollout Engine (DeepSeek R1 / OpenAI o3 / STaR)
+  const mctsRes = await reactLoop.executeMctsTestTimeComputeRollout({ taskPrompt: 'Optimize quadratic portfolio covariance with risk bounds', numRollouts: 3 });
+  assertTest('unit', 'MCTS Test-Time Compute Multi-Path Rollout Engine', mctsRes.success === true && mctsRes.branches.length === 3 && typeof mctsRes.bestScore === 'number', `Selected best branch #${mctsRes.selectedBranchIndex} (Score: ${mctsRes.bestScore})`);
+
+  // Test 1.7: VoxCPM Real-Time Streaming Audio Synthesis (<80ms first-chunk cadence)
+  const voiceStream = await voxEngine.synthesizeStreamingSpeech({ text: 'నమస్కారం బ్రహ్మ సిస్టమ్ సిద్ధంగా ఉంది', deity: 'brahma', language: 'te' });
+  assertTest('unit', 'VoxCPM Real-Time Streaming Speech Synthesis', voiceStream.success === true && voiceStream.firstChunkLatencyMs <= 80 && voiceStream.chunks.length > 0, `First-chunk latency: ${voiceStream.firstChunkLatencyMs}ms across ${voiceStream.totalChunks} chunks`);
+
   // ═════════════════════════════════════════════════════════════════════════════
   // 2. WHITEBOX TESTING (AST Invariants, Code Paths & Branch Coverage)
   // ═════════════════════════════════════════════════════════════════════════════

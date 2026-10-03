@@ -76,7 +76,21 @@
       "headMerkleRoot": "f370e7113e9f788407120e8920b0b833f02862b012f407e3e14f680fef33d3b3",
       "checkpointCount": 6,
       "lastUpdated": "2026-10-03T15:42:47.652Z"
+    },
+    "horizon_1791042386494": {
+      "sessionId": "horizon_1791042386494",
+      "currentStep": 10000,
+      "headMerkleRoot": "fa79575282dd1c775d986e06faca2f8a337675bb3ba292b8985167fedbc798a4",
+      "checkpointCount": 6,
+      "lastUpdated": "2026-10-03T15:46:26.513Z"
+    },
+    "horizon_1791042569573": {
+      "sessionId": "horizon_1791042569573",
+      "currentStep": 10000,
+      "headMerkleRoot": "8e20b281180210b88dc5304992a44d4a5c3e7acc2659eb844669506e49e88988",
+      "checkpointCount": 6,
+      "lastUpdated": "2026-10-03T15:49:29.593Z"
     }
   },
-  "totalCheckpoints": 66
+  "totalCheckpoints": 78
 }
