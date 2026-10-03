@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "vite --port 3000",
-    "dev:backend": "node --watch backend/server.js",
+    "dev:backend": "node --watch-path=backend/routes --watch-path=backend/services --watch-path=backend/server.js backend/server.js",
     "dev:all": "concurrently -k -p \"[{name}]\" -n \"FRONTEND,BACKEND\" -c \"cyan,magenta\" \"npm run dev\" \"npm run dev:backend\"",
     "build": "vite build",
     "preview": "vite preview",
