@@ -24,4 +24,15 @@ router.get('/', async (req, res) => {
   });
 });
 
+// Full system diagnostic doctor report
+const systemDoctor = require('../services/systemDoctorService');
+router.get('/doctor', async (req, res) => {
+  try {
+    const report = await systemDoctor.runDiagnostics();
+    res.json(report);
+  } catch (err) {
+    res.status(500).json({ status: 'ERROR', error: err.message });
+  }
+});
+
 module.exports = router;

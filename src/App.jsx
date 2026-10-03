@@ -44,7 +44,7 @@ import FeedbackModal from '@components/FeedbackModal';
 import NotFoundView from '@components/NotFoundView';
 import LiveVoiceOrbModal from '@components/LiveVoiceOrbModal';
 import RiskApprovalModal from '@components/RiskApprovalModal';
-import VirtualOfficeCanvas from '@components/VirtualOfficeCanvas';
+import AdminSettingsView from '@components/AdminSettingsView';
 import { evaluateActionRisk } from '@utils/securityGuard';
 
 
@@ -90,7 +90,7 @@ function StudioLoader() {
 const VALID_PAGES = [
   'chat', 'notifications', 'board', 'app-builder', 'remote-gateway',
   'image-studio', 'skills', 'projects', 'tools', 'favorites',
-  'scheduled', 'connections', 'governance'
+  'scheduled', 'connections', 'governance', 'admin-settings'
 ];
 
 export default function App() {
@@ -429,9 +429,9 @@ export default function App() {
           {activePage === 'scheduled' && <ScheduledTasksView onOpenGenesis={() => setActiveStudioModal('genesis')} />}
           {activePage === 'connections' && <ConnectionsView />}
           {activePage === 'governance' && <DharmaGovernanceView />}
-          {activePage === 'dots-office' && (
+          {activePage === 'admin-settings' && (
             (user?.email?.toLowerCase() === 'samrudhdwivvedula12@gmail.com' || user?.isAdmin || user?.hasDotsOfficeAccess) ? (
-              <VirtualOfficeCanvas onSelectIdentity={setIdentity} />
+              <AdminSettingsView />
             ) : (
               <div style={{ padding: '80px 20px', textAlign: 'center', color: '#f43f5e' }}>
                 <div style={{ fontSize: '3rem', marginBottom: 16 }}>🔒</div>
@@ -439,7 +439,7 @@ export default function App() {
                   Restricted Sovereign Clearance
                 </h2>
                 <p style={{ color: '#94a3b8', maxWidth: 480, margin: '0 auto 24px', lineHeight: 1.6 }}>
-                  The Indra Dots Virtual Office Canvas is restricted exclusively to the Supreme Sovereign Architect. Please log in with supreme credentials.
+                  The Sovereign Admin Settings portal is restricted exclusively to the Supreme Sovereign Architect. Please log in with supreme credentials.
                 </p>
                 <button
                   onClick={() => openAuthModal()}

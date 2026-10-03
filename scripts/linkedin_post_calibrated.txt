@@ -1,0 +1,47 @@
+🇮🇳 Thought in Bharat. Built for the World. 🔱
+
+Excited to announce the open-source release of my sovereign 7B reasoning model: SAMRUDH (Instruction-Tuned Sovereign Intelligence).
+
+Over the last few weeks, while the global AI narrative was dominated by multi-million dollar compute clusters, I set out to prove a different thesis:
+👉 Can an individual engineer fine-tune, align, and deploy a domain-intelligent reasoning model entirely on consumer-tier cloud hardware (<7GB VRAM)?
+
+Today, that thesis is reality.
+
+────────────────────────────────────────
+⚡ WHAT POWERS THE ARCHITECTURE:
+────────────────────────────────────────
+
+1. 4-bit NF4 QLoRA on a Single Tesla T4 GPU:
+Fine-tuned on an Apache 2.0 open-weights foundation using Unsloth AI. Achieved zero Out-Of-Memory (OOM) overhead while staying strictly under 7GB VRAM during training.
+
+2. Domain-Specific Cognitive Depth:
+Curated a high-density synthetic master corpus covering mission-critical verticals:
+• ⚖️ 6 SaaS Legal Defenses: Defending against unilateral indemnification traps and California CIPA wiretapping exposure ($5,000 statutory penalties).
+• 📈 Quantitative Risk & Circuit Breakers: 95% Parametric VaR evaluations and hard 14.85% maximum drawdown circuit breakers.
+• 🧬 Biomedical Pharmacology: Verbatim IC50 binding affinity and molecular telemetry extraction.
+• 🛡️ AST Code Refactoring: Enforcing bounded recursion ceilings (MAX_MUTATION_DEPTH = 12) to eliminate infinite blooming loops.
+
+3. Authentic Multi-Dialect Indic Vitality:
+Moving beyond stiff, robotic translation to true regional Telugu cultural vitality across Telangana, Rayalaseema, and Coastal idioms alongside technical rigor.
+
+4. 100% Long-Context Attention (NIAH):
+Overcame the 'Lost in the Middle' degradation using bidirectional context attention, achieving 100% recall across 1.5k, 4k, and 8,192-token windows.
+
+5. Edge-Ready Offline GGUF Deployment:
+Quantized to Q4_K_M (4.68 GB), ready to run 100% offline via Ollama on any standard 8GB laptop with zero latency and zero API bills.
+
+────────────────────────────────────────
+🏛️ THE BRAIN OF BRAHMA AI OS
+────────────────────────────────────────
+This model serves as the primary cognitive engine for Brahma — an autonomous sovereign AI operating system with deterministic multi-council verification.
+
+Built different. Built sovereign. A movement towards sovereign AI for Bharat and beyond.
+
+🔗 Open Source & Reproducible:
+• Hugging Face GGUF: https://huggingface.co/dwivedula/Samrudh-3-Brahma-7B-GGUF
+• GitHub Repository: https://github.com/Samrudh2006/Brahma
+• License: Apache 2.0 (Open weights for commercial & research use)
+
+I'd love to hear your thoughts, feedback, and benchmarks!
+
+#ArtificialIntelligence #SovereignAI #MakeInIndia #AIInBharat #OpenSource #DeepSeek #MachineLearning #LLM #HuggingFace #Ollama #Unsloth #BrahmaAI

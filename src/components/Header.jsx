@@ -156,15 +156,15 @@ export default function Header({
 
       <div className="header-right" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         
-        {/* Supreme Architect Virtual Office Direct Access */}
+        {/* Supreme Architect Admin Settings Direct Access */}
         {isSupremeAdmin && (
           <button
             type="button"
             onClick={() => {
               playTactileClick();
-              if (setActivePage) setActivePage('dots-office');
+              if (setActivePage) setActivePage('admin-settings');
             }}
-            title="Open Indra Dots Virtual Office Matrix"
+            title="Open Sovereign Admin Settings"
             style={{
               background: 'linear-gradient(135deg, rgba(251, 191, 36, 0.25), rgba(217, 119, 6, 0.25))',
               border: '1px solid rgba(251, 191, 36, 0.5)',
@@ -181,8 +181,8 @@ export default function Header({
               transition: 'all 0.2s ease'
             }}
           >
-            <span>🏢</span>
-            <span>Virtual Office</span>
+            <span>🛡️</span>
+            <span>Admin Settings</span>
           </button>
         )}
 

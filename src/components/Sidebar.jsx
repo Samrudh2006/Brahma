@@ -46,15 +46,15 @@ export default function Sidebar({
   const user = useAuthStore(state => state.user);
   const isSupremeAdmin = user?.email?.toLowerCase() === 'samrudhdwivvedula12@gmail.com' || user?.isAdmin || user?.hasDotsOfficeAccess;
 
-  // Exact 13 Sacred Sanskrit Navigation Matrix + Supreme Dots Office Canvas
+  // Dedicated Supreme Architect Controls
   const supremeItems = isSupremeAdmin ? [
     { 
-      id: 'dots-office',    
-      glyph: '🏢', 
-      title: 'INDRA DOTS',      
-      subtitle: 'Virtual Office Canvas (13 Councils)', 
-      icon: LayoutGrid,    
-      badge: '👑 SUPREME', 
+      id: 'admin-settings',    
+      glyph: '🛡️', 
+      title: 'ADMIN SETTINGS',      
+      subtitle: 'Supreme Architect Controls', 
+      icon: Shield,    
+      badge: '👑 ADMIN', 
       hasChevron: true,
       isSupreme: true
     }

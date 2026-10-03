@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Play, Moon, Sun, Key, ShieldCheck, Command, Cpu, Check, Eye, EyeOff, User, LogOut, Shield, Zap, Download, Code2 } from 'lucide-react';
-import { useAuthStore } from '@store/index';
+import { useAuthStore, useAppStore } from '@store/index';
 import { getCouncilAdapters, hotSwapCouncilAdapter, getCouncilAdapterRecipe } from '../api/client';
 
 export default function SettingsModal({ 
@@ -163,6 +163,42 @@ export default function SettingsModal({
               <Shield size={13} color="#fbbf24" />
               <span>Sovereign Identity Session Protected by Native Node.js Scrypt & SQLite WAL</span>
             </div>
+
+            {(user?.email?.toLowerCase() === 'samrudhdwivvedula12@gmail.com' || user?.isAdmin || user?.hasDotsOfficeAccess) && (
+              <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid rgba(251, 191, 36, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div>
+                  <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#fbbf24', display: 'flex', alignItems: 'center', gap: 6 }}>
+                    👑 Supreme Sovereign Privileges Active
+                  </span>
+                  <span style={{ fontSize: '0.72rem', color: '#94a3b8' }}>
+                    Access God-Mode controls, AI routing, database metrics & user management.
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    onClose();
+                    try { useAppStore.getState().setActivePage('admin-settings'); } catch (_) {}
+                  }}
+                  style={{
+                    background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                    color: '#090d16',
+                    border: 'none',
+                    borderRadius: 8,
+                    padding: '8px 14px',
+                    fontSize: '0.75rem',
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    boxShadow: '0 2px 10px rgba(245, 158, 11, 0.35)'
+                  }}
+                >
+                  <ShieldCheck size={14} /> Open Admin Settings
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Replay Splash Screen Video Button (Rule #1) */}

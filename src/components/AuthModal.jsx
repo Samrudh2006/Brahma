@@ -47,11 +47,11 @@ export default function AuthModal({ isOpen, onClose }) {
         const res = await authLogin(email, password);
         if (res.success && res.token) {
           playDivineChime();
-          setSuccessMsg(isSupremeAdmin ? '🔱 Welcome Supreme Architect. Unlocking Indra Virtual Office...' : 'Authentication verified. Entering Sovereign Workspace...');
+          setSuccessMsg(isSupremeAdmin ? '🔱 Welcome Supreme Architect. Opening Sovereign Admin Settings...' : 'Authentication verified. Entering Sovereign Workspace...');
           setTimeout(() => {
             setAuth(res.user, res.token);
             if (isSupremeAdmin || res.user?.hasDotsOfficeAccess) {
-              try { useAppStore.getState().setActivePage('dots-office'); } catch (_) {}
+              try { useAppStore.getState().setActivePage('admin-settings'); } catch (_) {}
             }
             if (onClose) onClose();
           }, 600);
@@ -78,10 +78,10 @@ export default function AuthModal({ isOpen, onClose }) {
             isGuest: false
           };
           playDivineChime();
-          setSuccessMsg('🔱 Supreme Sovereign Key Recognized. Opening Indra Virtual Office Matrix...');
+          setSuccessMsg('🔱 Supreme Sovereign Key Recognized. Opening Sovereign Admin Settings...');
           setTimeout(() => {
             setAuth(fallbackUser, 'bsh_supreme_' + Date.now().toString(36));
-            try { useAppStore.getState().setActivePage('dots-office'); } catch (_) {}
+            try { useAppStore.getState().setActivePage('admin-settings'); } catch (_) {}
             if (onClose) onClose();
           }, 600);
           return;
@@ -92,11 +92,11 @@ export default function AuthModal({ isOpen, onClose }) {
         const res = await authRegister(email, password, name);
         if (res.success && res.token) {
           playDivineChime();
-          setSuccessMsg(isSupremeAdmin ? '🔱 Supreme Architect Account Created! Opening Indra Virtual Office...' : 'Sovereign account created! Welcome to Brahma.');
+          setSuccessMsg(isSupremeAdmin ? '🔱 Supreme Architect Account Created! Opening Sovereign Admin Settings...' : 'Sovereign account created! Welcome to Brahma.');
           setTimeout(() => {
             setAuth(res.user, res.token);
             if (isSupremeAdmin || res.user?.hasDotsOfficeAccess) {
-              try { useAppStore.getState().setActivePage('dots-office'); } catch (_) {}
+              try { useAppStore.getState().setActivePage('admin-settings'); } catch (_) {}
             }
             if (onClose) onClose();
           }, 600);
@@ -123,10 +123,10 @@ export default function AuthModal({ isOpen, onClose }) {
             isGuest: false
           };
           playDivineChime();
-          setSuccessMsg('🔱 Welcome Supreme Architect. Unlocking Indra Virtual Office...');
+          setSuccessMsg('🔱 Welcome Supreme Architect. Opening Sovereign Admin Settings...');
           setTimeout(() => {
             setAuth(fallbackUser, 'bsh_supreme_' + Date.now().toString(36));
-            try { useAppStore.getState().setActivePage('dots-office'); } catch (_) {}
+            try { useAppStore.getState().setActivePage('admin-settings'); } catch (_) {}
             if (onClose) onClose();
           }, 600);
           return;
@@ -156,10 +156,10 @@ export default function AuthModal({ isOpen, onClose }) {
           isGuest: false
         };
         playDivineChime();
-        setSuccessMsg('🔱 Supreme Sovereign Key Recognized. Opening Indra Virtual Office Matrix...');
+        setSuccessMsg('🔱 Supreme Sovereign Key Recognized. Opening Sovereign Admin Settings...');
         setTimeout(() => {
           setAuth(fallbackUser, 'bsh_supreme_' + Date.now().toString(36));
-          try { useAppStore.getState().setActivePage('dots-office'); } catch (_) {}
+          try { useAppStore.getState().setActivePage('admin-settings'); } catch (_) {}
           if (onClose) onClose();
         }, 600);
         return;
