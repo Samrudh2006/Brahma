@@ -3,12 +3,17 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
+  "bin": {
+    "create-brahma-ecosystem": "./bin/create-brahma-ecosystem.cjs"
+  },
   "scripts": {
     "dev": "vite --port 3000",
     "dev:backend": "nodemon backend/server.js",
     "dev:all": "concurrently -k -p \"[{name}]\" -n \"FRONTEND,BACKEND\" -c \"cyan,magenta\" \"npm run dev\" \"npm run dev:backend\"",
     "build": "vite build",
     "preview": "vite preview",
+    "test:full": "node tests/comprehensive_test_suite.cjs",
+    "benchmark": "node tests/agi_frontier_benchmarks.cjs",
     "lint": "eslint src --report-unused-disable-directives",
     "format": "prettier --write src/**/*.{js,jsx,css}"
   },
