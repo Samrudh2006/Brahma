@@ -4,6 +4,89 @@
  */
 
 export const INITIAL_TOOLS = [
+  // ── 0.00 Enterprise Integrations & OSINT (Nango, Flowsint, Agentic Inbox) ──
+  {
+    id: 'flowsint-osint-studio',
+    name: 'Flowsint Cyber Threat & OSINT Graph Studio',
+    icon: 'Search',
+    category: 'Integrations & OSINT',
+    identity: 'varuna',
+    description: 'Autonomous OSINT multi-node graph recon: Domain infrastructure, DNS routing, SSL certificates, IP reputations, and threat intelligence vectors.',
+    status: 'READY',
+    isInteractive: true,
+    engineEndpoint: '/api/intelligence/osint/investigate'
+  },
+  {
+    id: 'agentic-inbox-studio',
+    name: 'Cloudflare Agentic Inbox Autonomous Email Triage',
+    icon: 'Mail',
+    category: 'Integrations & OSINT',
+    identity: 'narada',
+    description: 'Inbound email triage: priority categorization, security anomaly detection, one-sentence executive briefs, and 1-click contextual AI response drafts.',
+    status: 'READY',
+    isInteractive: true,
+    engineEndpoint: '/api/remote/inbox/triage'
+  },
+  {
+    id: 'nango-api-sync-studio',
+    name: 'NangoHQ 250+ Unified API & OAuth Synchronization',
+    icon: 'Layers',
+    category: 'Integrations & OSINT',
+    identity: 'brahma',
+    description: 'Unified integration gateway managing 250+ OAuth connectors and bidirectional syncing with GitHub, Notion, Slack, and Linear.',
+    status: 'READY',
+    isInteractive: true,
+    engineEndpoint: '/api/integrations/nango/sync'
+  },
+
+  // ── 0.0 Sovereign Neural Media Studio (VoxCPM & MoneyPrinterTurbo) ──
+  {
+    id: 'voxcpm-voice-cloning-studio',
+    name: 'VoxCPM Zero-Shot Voice Cloning & 13 Deity Speech',
+    icon: 'Mic',
+    category: 'Voice & Generative Video',
+    identity: 'saraswati',
+    description: 'Synthesize natural conversational speech and zero-shot voice clones with native Telugu, Sanskrit, and English prosody.',
+    status: 'READY',
+    isInteractive: true,
+    engineEndpoint: '/api/voice/synthesize'
+  },
+  {
+    id: 'moneyprinter-video-shorts-studio',
+    name: 'MoneyPrinterTurbo 1-Click Short Video & HyperFrames',
+    icon: 'Play',
+    category: 'Voice & Generative Video',
+    identity: 'krishna',
+    description: 'End-to-end autonomous video generator: AI Scriptwriting -> VoxCPM Voiceover -> Karaoke Subtitles -> HyperFrames Canvas Rendering.',
+    status: 'READY',
+    isInteractive: true,
+    engineEndpoint: '/api/video/generate-short'
+  },
+
+  // ── 0. Sovereign Quantitative Finance (TradingAgents & Fincept) ──
+  {
+    id: 'tradingagents-quant-studio',
+    name: 'TradingAgents Multi-Agent Quant Hedge Fund',
+    icon: 'Activity',
+    category: 'Finance & Quantum Alpha',
+    identity: 'kuvera',
+    description: 'Autonomous 4-agent hedge fund consensus debate (Fundamental, Technical, Risk Gatekeeper, Portfolio Manager) synthesizing Wall Street alpha signals.',
+    status: 'READY',
+    isInteractive: true,
+    engineEndpoint: '/api/frontier/quant/debate'
+  },
+  {
+    id: 'fincept-terminal-feed',
+    name: 'Fincept Terminal Wall Street Feeds & SEC Edgar Dissector',
+    icon: 'Radio',
+    category: 'Finance & Quantum Alpha',
+    identity: 'kuvera',
+    description: 'Pulls live technical indicators (RSI, MACD, Golden Cross, Bollinger Bands) and extracts SEC 10-K risk disclosures.',
+    status: 'READY',
+    isInteractive: true,
+    engineEndpoint: '/api/frontier/quant/feed'
+  },
+
   // ── 1. Silicon, Kernels & Acceleration ──
   {
     id: 'cuda-ternary-gemm',

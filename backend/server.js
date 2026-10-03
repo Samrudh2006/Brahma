@@ -77,6 +77,8 @@ app.use('/api/whatsapp',       require('./routes/whatsapp'));
 app.use('/api/laya',           require('./routes/laya'));
 app.use('/api/feedback',       require('./routes/feedback'));
 app.use('/api/webcmd',         require('./routes/webcmd'));
+app.use('/api/voice',          require('./routes/voice'));
+app.use('/api/video',          require('./routes/video'));
 app.use('/auth',               require('./routes/auth'));
 
 

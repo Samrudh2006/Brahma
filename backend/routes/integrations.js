@@ -32,4 +32,30 @@ router.post('/set-key', (req, res) => {
   res.json({ success: true });
 });
 
+// ─── Nango Unified Integration Engine (250+ APIs) ─────────────────────────────
+const nangoSyncService = require('../services/nangoSyncService');
+
+// GET /api/integrations/nango/catalog
+router.get('/nango/catalog', (req, res) => {
+  res.json(nangoSyncService.getProvidersCatalog());
+});
+
+// POST /api/integrations/nango/session
+router.post('/nango/session', (req, res) => {
+  const { integrationId, returnUrl } = req.body;
+  const session = nangoSyncService.createConnectSession({ integrationId, returnUrl });
+  res.json(session);
+});
+
+// POST /api/integrations/nango/sync
+router.post('/nango/sync', async (req, res) => {
+  try {
+    const { integrationId, model } = req.body;
+    const syncResult = await nangoSyncService.syncProviderData({ integrationId, model });
+    res.json(syncResult);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;

@@ -34,12 +34,27 @@ router.post('/swarm/debate', async (req, res) => {
 });
 
 const reactLoopEngine = require('../services/reactLoopEngine');
+const kuveraQuantEngine = require('../services/kuveraQuantEngine');
 
 // POST /api/frontier/react/execute
 router.post('/react/execute', async (req, res) => {
   const { task = 'Inspect backend routes and verify server mounting invariants', maxSteps = 6 } = req.body;
   const result = await reactLoopEngine.execute(task, { maxSteps });
   res.json(result);
+});
+
+// POST /api/frontier/quant/debate (TradingAgents Swarm Hedge Fund Debate)
+router.post('/quant/debate', async (req, res) => {
+  const { ticker = 'NVDA', capital = 100000, rounds = 3 } = req.body;
+  const analysis = await kuveraQuantEngine.runTradingAgentsDebate({ ticker, capital, rounds });
+  res.json(analysis);
+});
+
+// GET /api/frontier/quant/feed (Fincept Terminal Telemetry Feed)
+router.get('/quant/feed', async (req, res) => {
+  const ticker = req.query.ticker || 'NVDA';
+  const feed = await kuveraQuantEngine.getFinceptTerminalFeed(ticker);
+  res.json(feed);
 });
 
 module.exports = router;

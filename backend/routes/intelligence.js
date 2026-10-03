@@ -214,4 +214,17 @@ router.get('/status', async (req, res) => {
   });
 });
 
+// ─── Flowsint OSINT Intelligence Graph Route ─────────────────────────────────
+const flowsintOsintEngine = require('../services/flowsintOsintEngine');
+
+router.post('/osint/investigate', async (req, res) => {
+  try {
+    const { target = 'brahma.ai', type = 'domain' } = req.body;
+    const report = await flowsintOsintEngine.investigateTarget({ target, type });
+    res.json(report);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 module.exports = router;

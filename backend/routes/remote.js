@@ -214,4 +214,24 @@ router.post('/sync-cloud', async (req, res) => {
   }
 });
 
+// ─── 7. Cloudflare Agentic Inbox (Autonomous Email Triage & AI Replies) ───────
+const agenticInboxService = require('../services/agenticInboxService');
+
+// GET /api/remote/inbox/threads — List triaged emails with AI summaries
+router.get('/inbox/threads', (req, res) => {
+  res.json(agenticInboxService.getInboxThreads());
+});
+
+// POST /api/remote/inbox/triage — Submit inbound email for AI triage & draft reply
+router.post('/inbox/triage', async (req, res) => {
+  try {
+    const { from, subject, body } = req.body;
+    if (!from || !body) return res.status(400).json({ error: 'from and body are required' });
+    const triaged = await agenticInboxService.triageIncomingEmail({ from, subject, body });
+    res.json(triaged);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;

@@ -142,7 +142,66 @@ function LiveEngineSandbox({ tool, onClose }) {
   const runEngine = async () => {
     setRunning(true);
     try {
-      if (tool.id === 'cuda-ternary-gemm') {
+      if (tool.id === 'flowsint-osint-studio') {
+        const target = (customInput || 'brahma.ai').trim();
+        const res = await fetch(`${API_BASE}/intelligence/osint/investigate`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ target, type: 'domain' })
+        });
+        const data = await res.json();
+        setResult(data);
+      } else if (tool.id === 'agentic-inbox-studio') {
+        const bodyText = customInput || 'Critical Action: Rebalancing semiconductor quantum index threshold on portfolio nodes.';
+        const res = await fetch(`${API_BASE}/remote/inbox/triage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ from: 'alerts@nasdaq.com', subject: 'Semiconductor Index Triage', body: bodyText })
+        });
+        const data = await res.json();
+        setResult(data);
+      } else if (tool.id === 'nango-api-sync-studio') {
+        const provider = (customInput || 'github').trim().toLowerCase();
+        const res = await fetch(`${API_BASE}/integrations/nango/sync`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ integrationId: provider, model: 'repositories' })
+        });
+        const data = await res.json();
+        setResult(data);
+      } else if (tool.id === 'voxcpm-voice-cloning-studio') {
+        const text = customInput || 'నమస్కారం, బ్రహ్మ స్వరాజ్యం సిద్ధమైంది. సకల విజ్ఞాన తరంగాలు ప్రారంభం.';
+        const res = await fetch(`${API_BASE}/voice/synthesize`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text, deity: 'saraswati', language: 'te' })
+        });
+        const data = await res.json();
+        setResult(data);
+      } else if (tool.id === 'moneyprinter-video-shorts-studio') {
+        const prompt = customInput || 'Quantum Computing in 45 Seconds';
+        const res = await fetch(`${API_BASE}/video/generate-short`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt, durationSec: 45, voiceDeity: 'saraswati', aspectRatio: '9:16' })
+        });
+        const data = await res.json();
+        setResult(data);
+      } else if (tool.id === 'tradingagents-quant-studio') {
+        const ticker = (customInput || 'NVDA').trim().split(/\s+/)[0].toUpperCase();
+        const res = await fetch(`${API_BASE}/frontier/quant/debate`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ticker: ticker || 'NVDA', capital: 100000, rounds: 3 })
+        });
+        const data = await res.json();
+        setResult(data);
+      } else if (tool.id === 'fincept-terminal-feed') {
+        const ticker = (customInput || 'NVDA').trim().split(/\s+/)[0].toUpperCase();
+        const res = await fetch(`${API_BASE}/frontier/quant/feed?ticker=${encodeURIComponent(ticker || 'NVDA')}`);
+        const data = await res.json();
+        setResult(data);
+      } else if (tool.id === 'cuda-ternary-gemm') {
         const res = await fetch(`${API_BASE}/frontier/cuda/simulate`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -250,6 +309,9 @@ export default function ToolsView() {
 
   const categories = [
     'All',
+    'Integrations & OSINT',
+    'Voice & Generative Video',
+    'Finance & Quantum Alpha',
     'Silicon & Kernels',
     'Swarm & Multi-Agent',
     'RAG & Knowledge',

@@ -5,6 +5,10 @@
 
 export const SKILL_CATEGORIES = [
   'All Skills',
+  'Enterprise Integrations & OSINT (Nango, Flowsint, Agentic Inbox)',
+  'Voice Cloning & Video Generation (VoxCPM & MoneyPrinterTurbo)',
+  'Claude Code & Agent Skills (Addy Osmani)',
+  'Quant & Algorithmic Trading (TradingAgents)',
   'Vercel AI & Agent Skills',
   'YC Founder & Growth Playbook',
   'Web & Mobile Apps',
@@ -17,6 +21,144 @@ export const SKILL_CATEGORIES = [
 ];
 
 export const INITIAL_SKILLS = [
+  // ── 0.000 Enterprise Integrations & OSINT (Nango, Flowsint, Agentic Inbox) ──
+  {
+    id: 'nango-250-api-sync',
+    name: 'NangoHQ 250+ Unified API & OAuth Synchronization Engine',
+    category: 'Enterprise Integrations & OSINT (Nango, Flowsint, Agentic Inbox)',
+    identityOwner: 'brahma',
+    githubRepo: 'NangoHQ/nango',
+    description: 'Unified integration gateway managing 250+ OAuth connectors, automated token refreshes, webhooks, and bidirectional syncing with GitHub, Notion, Slack, and Linear.',
+    enabled: true,
+    meta: { version: '0.62.0', usageCount: 11450, verifiedBy: 'Nango Core Lab' }
+  },
+  {
+    id: 'flowsint-graph-osint',
+    name: 'Flowsint Node-Based Cyber Threat & OSINT Knowledge Graph',
+    category: 'Enterprise Integrations & OSINT (Nango, Flowsint, Agentic Inbox)',
+    identityOwner: 'varuna',
+    githubRepo: 'reconurge/flowsint',
+    description: 'Synthesizes visual entity-relationship graphs for domain infrastructure, DNS routing, SSL certificates, IP reputations, and threat intelligence vectors.',
+    enabled: true,
+    meta: { version: '1.2.0', usageCount: 7890, verifiedBy: 'Varuna Recon Squad' }
+  },
+  {
+    id: 'agentic-inbox-email-triage',
+    name: 'Cloudflare Agentic Inbox Autonomous Email Classifier & Auto-Reply',
+    category: 'Enterprise Integrations & OSINT (Nango, Flowsint, Agentic Inbox)',
+    identityOwner: 'narada',
+    githubRepo: 'cloudflare/agentic-inbox',
+    description: 'Autonomous inbound email triage: priority categorization, security anomaly detection, one-sentence executive briefs, and 1-click contextual AI response drafts.',
+    enabled: true,
+    meta: { version: '1.0.0', usageCount: 8620, verifiedBy: 'Executive Dispatch' }
+  },
+
+  // ── 0.00 Voice Cloning & Video Generation (VoxCPM, HyperFrames, MoneyPrinterTurbo) ──
+  {
+    id: 'voxcpm-deity-voice-cloning',
+    name: 'OpenBMB VoxCPM Neural Voice Cloning & 13 Deity Prosody Engine',
+    category: 'Voice Cloning & Video Generation (VoxCPM & MoneyPrinterTurbo)',
+    identityOwner: 'saraswati',
+    githubRepo: 'OpenBMB/VoxCPM',
+    description: 'Implements zero-shot voice cloning and conversational speech synthesis with native Telugu, Sanskrit, and English phonetic pitch alignment.',
+    enabled: true,
+    meta: { version: '1.5.0', usageCount: 6810, verifiedBy: 'VoxCPM Audio Lab' }
+  },
+  {
+    id: 'moneyprinter-turbo-shorts-creator',
+    name: 'MoneyPrinterTurbo AI 1-Click Short Video & Reels Pipeline',
+    category: 'Voice Cloning & Video Generation (VoxCPM & MoneyPrinterTurbo)',
+    identityOwner: 'krishna',
+    githubRepo: 'harry0703/MoneyPrinterTurbo',
+    description: 'End-to-end autonomous video creation: Scriptwriting -> VoxCPM Voiceover -> Karaoke Subtitles -> Video Scene Assembly for YouTube Shorts/TikTok.',
+    enabled: true,
+    meta: { version: '2.0.0', usageCount: 9240, verifiedBy: 'Viral Media Lab' }
+  },
+  {
+    id: 'hyperframes-code-video-renderer',
+    name: 'HeyGen HyperFrames Code-Driven Remotion Frame Renderer',
+    category: 'Voice Cloning & Video Generation (VoxCPM & MoneyPrinterTurbo)',
+    identityOwner: 'krishna',
+    githubRepo: 'heygen-com/hyperframes',
+    description: 'Programmatically renders WebGL/Canvas video frames, dynamic motion graphics, and presentation explainers at 60 FPS using pure code.',
+    enabled: true,
+    meta: { version: '1.1.0', usageCount: 4780, verifiedBy: 'Remotion Engine' }
+  },
+
+  // ── 0.0 Claude Code & Agent Skills (Addy Osmani) ──
+  {
+    id: 'addy-web-vitals-profiler',
+    name: 'Addy Osmani Core Web Vitals & INP Performance Profiler',
+    category: 'Claude Code & Agent Skills (Addy Osmani)',
+    identityOwner: 'shiva',
+    githubRepo: 'addyosmani/agent-skills',
+    description: 'Profiles Interaction to Next Paint (INP), Largest Contentful Paint (LCP), and Cumulative Layout Shift with Chrome DevTools trace AST metrics.',
+    enabled: true,
+    meta: { version: '1.2.0', usageCount: 4210, verifiedBy: 'Chrome Engineering' }
+  },
+  {
+    id: 'addy-memory-leak-hunter',
+    name: 'Addy Osmani V8 Heap & Detached DOM Memory Leak Hunter',
+    category: 'Claude Code & Agent Skills (Addy Osmani)',
+    identityOwner: 'shiva',
+    githubRepo: 'addyosmani/agent-skills',
+    description: 'Automates heap snapshot differential analysis, identifies detached DOM subtrees, closure retainers, and garbage collection thrashing.',
+    enabled: true,
+    meta: { version: '1.1.0', usageCount: 3890, verifiedBy: 'V8 Performance' }
+  },
+  {
+    id: 'addy-pr-code-reviewer',
+    name: 'Addy Osmani High-Rigor Architecture & PR Reviewer',
+    category: 'Claude Code & Agent Skills (Addy Osmani)',
+    identityOwner: 'brahma',
+    githubRepo: 'addyosmani/agent-skills',
+    description: 'Executes automated enterprise-grade PR reviews inspecting idempotence, boundary invariants, API backwards compatibility, and DRY purity.',
+    enabled: true,
+    meta: { version: '2.0.0', usageCount: 7120, verifiedBy: 'Staff Eng Review' }
+  },
+  {
+    id: 'addy-bundle-treeshaker',
+    name: 'Addy Osmani Rollup/Vite Bundle Tree-Shaking Optimizer',
+    category: 'Claude Code & Agent Skills (Addy Osmani)',
+    identityOwner: 'saraswati',
+    githubRepo: 'addyosmani/agent-skills',
+    description: 'Deconstructs JavaScript bundle ASTs, isolates circular re-exports, enforces dynamic import code-splitting, and trims dead weight.',
+    enabled: true,
+    meta: { version: '1.4.0', usageCount: 3450, verifiedBy: 'Vite Ecosystem' }
+  },
+
+  // ── 0.0.1 Quantitative & Algorithmic Trading (TradingAgents & Fincept) ──
+  {
+    id: 'tradingagents-hedge-fund-debate',
+    name: 'TradingAgents Multi-Agent Quantitative Swarm Consensus',
+    category: 'Quant & Algorithmic Trading (TradingAgents)',
+    identityOwner: 'kuvera',
+    githubRepo: 'TauricResearch/TradingAgents',
+    description: 'Simulates a 4-agent hedge fund debate (Fundamental vs Technical vs Risk Gatekeeper vs Portfolio Manager) to derive high-conviction alpha signals.',
+    enabled: true,
+    meta: { version: '1.0.0', usageCount: 8430, verifiedBy: 'Kuvera Sovereign Quant' }
+  },
+  {
+    id: 'fincept-terminal-telemetry',
+    name: 'Fincept Terminal Wall Street Feeds & SEC Edgar Dissector',
+    category: 'Quant & Algorithmic Trading (TradingAgents)',
+    identityOwner: 'kuvera',
+    githubRepo: 'Fincept-Corporation/FinceptTerminal',
+    description: 'Pulls real-time equity & crypto telemetry, calculates 14-day RSI, MACD histograms, Golden Crosses, and extracts 10-K financial disclosures.',
+    enabled: true,
+    meta: { version: '2.1.0', usageCount: 6540, verifiedBy: 'Wall Street Terminal' }
+  },
+  {
+    id: 'kuvera-var-risk-shield',
+    name: 'Kuvera Capital Value-at-Risk (95% VaR) & Drawdown Shield',
+    category: 'Quant & Algorithmic Trading (TradingAgents)',
+    identityOwner: 'kuvera',
+    githubRepo: 'TauricResearch/TradingAgents',
+    description: 'Enforces mathematical portfolio risk constraints, bounded drawdown limits, stop-loss ratios, and automated dynamic position sizing.',
+    enabled: true,
+    meta: { version: '1.2.0', usageCount: 5210, verifiedBy: 'Kuvera Capital' }
+  },
+
   // ── 0. Vercel AI & Agent Skills (Vercel Labs & AI SDK) ──
   {
     id: 'vercel-skills-standard',
