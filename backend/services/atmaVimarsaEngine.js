@@ -113,7 +113,7 @@ class AtmaVimarsaEngine {
         timeout: 25000
       });
 
-      const passed = testOutput.includes('17/17 TESTS PASSED');
+      const passed = testOutput.includes('TESTS PASSED (100.0%)') || testOutput.includes('17/17 TESTS PASSED');
 
       return {
         success: true,
