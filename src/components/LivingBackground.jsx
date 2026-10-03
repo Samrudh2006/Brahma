@@ -114,9 +114,9 @@ export default function LivingBackground({ theme }) {
   }, []);
 
   return (
-    <div className="living-bg-root" style={{ background: '#000000' }}>
-      {/* 1. Background Artwork Layer (Full Black, Ready for Custom Images) */}
-      <div ref={bgLayerRef} className="living-bg-image" style={{ background: '#000000' }} />
+    <div className="living-bg-root">
+      {/* 1. Dynamic Parallax Background Artwork Layer */}
+      <div ref={bgLayerRef} className="living-bg-image" />
 
       {/* 2. Central Subtle Breathing Aura */}
       <div ref={auraLayerRef} className="living-bg-aura" />
