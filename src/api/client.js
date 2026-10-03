@@ -91,7 +91,7 @@ export function sendChatStream({ messages, identity, pills, modelSource, userApi
       pills,
       modelSource: modelSource || 'auto',
       userApiKey: userApiKey || storedApiKey || null,
-      model: model || storedModel || 'deepseek-r1'
+      model: model || storedModel || 'samrudh-3-7b'
     }),
     signal: controller.signal,
   })
@@ -244,3 +244,18 @@ export const unifiedResearch = (q) =>
 
 /** Intelligence Status — health check for all free APIs + MCP servers */
 export const getIntelligenceStatus = () => request(`${INTEL}/status`);
+
+// ─── Council QLoRA LoRA Adapters API ──────────────────────────────────────────
+/** List all 13 Council QLoRA LoRA Adapters with VRAM footprint */
+export const getCouncilAdapters = () => request('/adapters');
+
+/** Hot-swap active council LoRA adapter dynamically (<15ms) */
+export const hotSwapCouncilAdapter = (councilId) =>
+  request('/adapters/swap', {
+    method: 'POST',
+    body: JSON.stringify({ councilId })
+  });
+
+/** Export ready-to-run Unsloth / PEFT QLoRA PyTorch training recipe */
+export const getCouncilAdapterRecipe = (councilId) =>
+  request(`/adapters/${councilId}/recipe`);

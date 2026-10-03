@@ -82,6 +82,7 @@ app.use('/api/video',          require('./routes/video'));
 app.use('/api/councils',       require('./routes/councils'));
 app.use('/api/mesh',           require('./routes/enterpriseMesh'));
 app.use('/api/evolution',      require('./routes/evolution'));
+app.use('/api/adapters',       require('./routes/adapters'));
 app.use('/auth',               require('./routes/auth'));
 app.use('/api/auth',           require('./routes/auth'));
 

@@ -5,6 +5,11 @@ const OLLAMA_URL = process.env.OLLAMA_BASE_URL || 'http://localhost:11434';
 
 // 100+ Global Frontier & Open Source AI Models Directory (Worldwide Labs)
 const FRONTIER_MODELS_CATALOG = [
+  // ─── 0. SOVEREIGN SAMRUDH & BHARAT LABS (INDIA) ───────────────────────────
+  { id: 'samrudh-3-7b', name: '👑 Samrudh-3 7B (DPO Anti-Hallucination & 8k Reasoner)', provider: 'Samrudh AI / Bharat Labs', origin: 'India / Bharat', context: '8k', speed: '310 T/s', tier: '👑 Sovereign DPO SOTA', license: 'Apache 2.0 Sovereign', repo: 'dwivedula/Samrudh-3-Brahma-7B' },
+  { id: 'samrudh-2-7b', name: '👑 Samrudh-2 7B (DeepSeek-R1 CoT & Native Tool Calling)', provider: 'Samrudh AI / Bharat Labs', origin: 'India / Bharat', context: '4k', speed: '310 T/s', tier: '👑 Sovereign CoT Reasoner', license: 'Apache 2.0 Sovereign', repo: 'dwivedula/Samrudh-2-Brahma-7B' },
+  { id: 'samrudh-1-7b', name: '👑 Samrudh-1 7B (Sovereign Indic Foundation & Councils)', provider: 'Samrudh AI / Bharat Labs', origin: 'India / Bharat', context: '2k', speed: '310 T/s', tier: '👑 Sovereign Foundation', license: 'Apache 2.0 Sovereign', repo: 'dwivedula/Samrudh-1-Brahma-7B' },
+
   // ─── 1. DEEPSEEK AI (CHINA) ───────────────────────────────────────────────
   { id: 'deepseek-r1', name: 'DeepSeek R1 (671B MoE Reasoning)', provider: 'DeepSeek AI', origin: 'China', context: '128k', speed: '98 T/s', tier: 'Reasoning SOTA', license: 'MIT Open' },
   { id: 'deepseek-v3', name: 'DeepSeek V3 (671B MoE Multi-Head)', provider: 'DeepSeek AI', origin: 'China', context: '128k', speed: '125 T/s', tier: 'Frontier Flagship', license: 'MIT Open' },

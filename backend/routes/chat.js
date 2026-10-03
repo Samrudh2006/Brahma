@@ -29,7 +29,7 @@ router.get('/sessions/:id/messages', (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-  const { messages = [], identity = {}, pills = {}, model = 'deepseek-r1', userApiKey = null, sessionId = null } = req.body;
+  const { messages = [], identity = {}, pills = {}, model = 'samrudh-3-7b', userApiKey = null, sessionId = null } = req.body;
 
   // Set up SSE headers
   res.setHeader('Content-Type', 'text/event-stream');
