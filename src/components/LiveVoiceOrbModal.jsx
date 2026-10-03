@@ -123,8 +123,8 @@ export default function LiveVoiceOrbModal({
             style={{
               padding: '6px 14px',
               borderRadius: '20px',
-              background: 'rgba(56, 189, 248, 0.12)',
-              border: '1px solid rgba(56, 189, 248, 0.4)',
+              background: 'linear-gradient(135deg, rgba(56, 189, 248, 0.15), rgba(168, 85, 247, 0.15))',
+              border: '1px solid rgba(56, 189, 248, 0.45)',
               color: '#38bdf8',
               fontSize: '0.82rem',
               fontWeight: 700,
@@ -135,7 +135,7 @@ export default function LiveVoiceOrbModal({
             }}
           >
             <Radio size={14} className="animate-pulse" />
-            <span>LIVE TELUGU VOICE • HANDS-FREE VAD</span>
+            <span>OPENWHISPER NEURAL STT • LIVE TELUGU VAD</span>
           </div>
         </div>
 
