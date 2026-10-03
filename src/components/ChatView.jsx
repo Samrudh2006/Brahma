@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import {
   ArrowUp, Mic, Plus, Paperclip, Globe, Code, Brain,
   Check, Copy, Trash2, RefreshCw, ThumbsUp, ThumbsDown, X, Clock,
-  Volume2, VolumeX, Star, Sparkles, Languages
+  Volume2, VolumeX, Star, Sparkles, Languages, Download, Printer, FileDown
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -312,8 +312,128 @@ export default function ChatView({ currentIdentity, messages, onSendMessage, isT
     alert('Message saved to Favorites!');
   };
 
+  const handleExportMarkdown = () => {
+    let md = `# BRAHMA Sovereign Intelligence Matrix — Conversation\n\n`;
+    md += `*Generated:* ${new Date().toLocaleString('en-IN')}\n`;
+    md += `*Primary Intelligence:* ${currentIdentity.name} (${currentIdentity.title || 'Supreme Council'})\n\n`;
+    md += `---\n\n`;
+
+    messages.forEach((m, idx) => {
+      const sender = m.sender === 'user' ? 'User' : (m.identity?.name || currentIdentity.name);
+      md += `### ${idx + 1}. [${sender}] (${new Date(m.timestamp).toLocaleTimeString()})\n\n`;
+      if (m.thought) {
+        md += `> **[Reasoning Path]**\n> ${m.thought.replace(/\n/g, '\n> ')}\n\n`;
+      }
+      md += `${m.text}\n\n`;
+      md += `---\n\n`;
+    });
+
+    const blob = new Blob([md], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `brahma-session-${Date.now()}.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const handlePrintChat = () => {
+    window.print();
+  };
+
+  const handleCopyFullChat = () => {
+    let text = `BRAHMA Intelligence Session (${new Date().toLocaleDateString()}):\n\n`;
+    messages.forEach((m) => {
+      const sender = m.sender === 'user' ? 'User' : (m.identity?.name || currentIdentity.name);
+      text += `[${sender}]:\n${m.text}\n\n`;
+    });
+    navigator.clipboard.writeText(text);
+    alert('Full chat session copied to clipboard as clean Markdown!');
+  };
+
   return (
     <div className="chat-view-container animate-fade-in">
+      {/* Session Export & Metadata Bar */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '8px 16px',
+        borderBottom: '1px solid rgba(212, 175, 55, 0.15)',
+        background: 'rgba(8, 12, 20, 0.65)',
+        backdropFilter: 'blur(10px)',
+        fontSize: '0.78rem'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ color: 'var(--accent-gold)', fontWeight: 700 }}>
+            {currentIdentity.name} Council
+          </span>
+          <span style={{ color: 'var(--text-muted)' }}>• {messages.length} messages</span>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <button
+            onClick={handleCopyFullChat}
+            style={{
+              background: 'transparent',
+              border: '1px solid rgba(255, 255, 255, 0.12)',
+              color: 'var(--text-secondary)',
+              borderRadius: 6,
+              padding: '4px 8px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 4,
+              fontSize: '0.72rem'
+            }}
+            title="Copy entire conversation to clipboard"
+          >
+            <Copy size={12} /> Copy
+          </button>
+
+          <button
+            onClick={handleExportMarkdown}
+            style={{
+              background: 'rgba(212, 175, 55, 0.12)',
+              border: '1px solid rgba(212, 175, 55, 0.35)',
+              color: 'var(--accent-gold-bright)',
+              borderRadius: 6,
+              padding: '4px 10px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 4,
+              fontSize: '0.72rem',
+              fontWeight: 600
+            }}
+            title="Download complete session as .md document"
+          >
+            <Download size={12} /> Export .MD
+          </button>
+
+          <button
+            onClick={handlePrintChat}
+            style={{
+              background: 'transparent',
+              border: '1px solid rgba(255, 255, 255, 0.12)',
+              color: 'var(--text-secondary)',
+              borderRadius: 6,
+              padding: '4px 8px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 4,
+              fontSize: '0.72rem'
+            }}
+            title="Print or Save as PDF"
+          >
+            <Printer size={12} /> Print/PDF
+          </button>
+        </div>
+      </div>
+
       {/* Messages List */}
       <div className="chat-messages-scroll" ref={scrollRef}>
         {messages.map((m, i) => (

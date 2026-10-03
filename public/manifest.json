@@ -1,0 +1,25 @@
+{
+  "name": "BRAHMA — Supreme Sovereign AI Ecosystem",
+  "short_name": "BRAHMA",
+  "description": "50+ Global Frontier AI models, 13 Divine Intelligence Councils, and ✦ SṚṢṬI Full-Stack Synthesizer",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#040711",
+  "theme_color": "#06080c",
+  "icons": [
+    {
+      "src": "/brahma-icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/brahma-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "developer-tools", "utilities"]
+}

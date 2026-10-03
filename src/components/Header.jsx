@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Search, ChevronDown, Sun, Moon, Settings, Clock, Palette, Check, Menu } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Search, ChevronDown, Sun, Moon, Settings, Clock, Palette, Check, Menu, Volume2, VolumeX, Smartphone } from 'lucide-react';
+import { toggleAmbientDrone, getDroneState, playTactileClick } from '@utils/soundEffects';
 
 const LUXURY_THEMES = [
   { id: 'obsidian', name: '🌌 Cosmic Gold', color: '#fbbf24', desc: 'Obsidian & Gold' },
@@ -20,8 +21,40 @@ export default function Header({
   onToggleMobileSidebar
 }) {
   const [showThemeMenu, setShowThemeMenu] = useState(false);
+  const [isDroneActive, setIsDroneActive] = useState(false);
+  const [installPrompt, setInstallPrompt] = useState(null);
+
+  useEffect(() => {
+    // Listen for PWA installation event
+    const handleBeforeInstall = (e) => {
+      e.preventDefault();
+      setInstallPrompt(e);
+    };
+    window.addEventListener('beforeinstallprompt', handleBeforeInstall);
+    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+  }, []);
+
+  const handleToggleDrone = () => {
+    playTactileClick();
+    const active = toggleAmbientDrone((state) => setIsDroneActive(state));
+    setIsDroneActive(active);
+  };
+
+  const handleInstallPwa = async () => {
+    playTactileClick();
+    if (installPrompt) {
+      installPrompt.prompt();
+      const choiceResult = await installPrompt.userChoice;
+      if (choiceResult.outcome === 'accepted') {
+        setInstallPrompt(null);
+      }
+    } else {
+      alert('To install BRAHMA on your phone or desktop: open your browser menu (⋮ or Share) and tap "Install App" or "Add to Home Screen"!');
+    }
+  };
 
   const handleSelectTheme = (themeId) => {
+    playTactileClick();
     setTheme(themeId);
     setShowThemeMenu(false);
   };
@@ -136,6 +169,32 @@ export default function Header({
           title="System Settings & Model Config"
         >
           <Settings size={17} />
+        </button>
+
+        {/* Sacred 432 Hz Ambient Soundscape Toggle */}
+        <button
+          className="icon-action-btn"
+          onClick={handleToggleDrone}
+          title={isDroneActive ? '432 Hz Sacred Harmonic Drone Active (Click to Mute)' : 'Play 432 Hz Sacred Meditative Soundscape'}
+          style={{
+            background: isDroneActive ? 'rgba(251, 191, 36, 0.2)' : 'transparent',
+            borderColor: isDroneActive ? '#fbbf24' : 'transparent',
+            color: isDroneActive ? '#fbbf24' : 'var(--text-secondary)'
+          }}
+        >
+          {isDroneActive ? <Volume2 size={17} /> : <VolumeX size={17} />}
+        </button>
+
+        {/* PWA Install Native App Button */}
+        <button
+          className="icon-action-btn"
+          onClick={handleInstallPwa}
+          title="Install BRAHMA Native App (PWA)"
+          style={{
+            color: 'var(--accent-gold)'
+          }}
+        >
+          <Smartphone size={17} />
         </button>
 
         {/* 4. Scheduled Tasks / History */}

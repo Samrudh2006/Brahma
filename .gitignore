@@ -32,3 +32,6 @@ dist-ssr
 
 # Database
 backend/db/*.db-journal
+
+# External Tools
+mirofish/

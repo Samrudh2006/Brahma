@@ -17,6 +17,7 @@
     <meta name="theme-color" content="#06080c" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="manifest" href="/manifest.json" />
 
     <!-- ── 2. OpenGraph & Facebook Metadata ── -->
     <meta property="og:type" content="website" />
@@ -200,6 +201,15 @@
             }
           }
         }, 60);
+
+        // Register Service Worker for PWA
+        if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
+          window.addEventListener('load', function() {
+            navigator.serviceWorker.register('/sw.js').catch(function(err) {
+              console.log('SW registration note:', err);
+            });
+          });
+        }
       });
     </script>
   </body>

@@ -9,6 +9,7 @@ import { useKeyPress, useBackendHealth } from '@hooks/index';
 // Utils
 import { saveChatSession, saveRecentPrompt } from '@utils/index';
 import { sendChatStream } from '@api/client';
+import { playDivineChime, playTactileClick } from '@utils/soundEffects';
 
 // Data
 import { INITIAL_NOTIFICATIONS } from '@data/notificationsData';
@@ -91,6 +92,7 @@ export default function App() {
   const handleSendPrompt = (text, pills = {}) => {
     if (!text.trim()) return;
 
+    playTactileClick();
     const userMsg = { sender: 'user', text, timestamp: new Date().toISOString() };
     const updatedMessages = [...messages, userMsg];
     addMessage(userMsg);
@@ -118,6 +120,7 @@ export default function App() {
       },
       () => {
         // Stream completed
+        playDivineChime();
         const assistantMsg = {
           sender: 'assistant',
           text: accumulatedText || `Greetings. As **${currentIdentity.name}**, ${currentIdentity.philosophy}\n\nI have synthesized your request across the 13 Divine Intelligence Councils.`,

@@ -22,8 +22,25 @@ class AIGateway {
    */
   async streamCompletion({ messages, model = 'deepseek-r1', identity, pills = {}, userApiKey = null }, onChunk, onComplete, onError) {
     const activeGroqKey = userApiKey || this.groqApiKey;
-    const systemPrompt = this.buildSystemPrompt(identity, pills);
     const lastUserQuery = messages.filter(m => m.sender === 'user').pop()?.text || 'Hello';
+
+    // Live Web Grounding if Search pill is active or requested
+    let searchContext = '';
+    if (pills.search || lastUserQuery.toLowerCase().includes('search') || lastUserQuery.toLowerCase().includes('latest news')) {
+      try {
+        onChunk(`__THOUGHT__Summoning Sovereign Web Intelligence for: "${lastUserQuery.slice(0, 60)}"...`);
+        const searchResults = await this.performWebSearch(lastUserQuery);
+        if (searchResults && searchResults.length > 0) {
+          searchContext = `\n\nREAL-TIME GROUNDED LIVE WEB SOURCES:\n` +
+            searchResults.map((r, i) => `[Source ${i+1}]: ${r.title}\nURL: ${r.url}\nExcerpt: ${r.snippet}`).join('\n\n');
+          onChunk(`__THOUGHT__Discovered ${searchResults.length} live verified sources. Synthesizing citations...`);
+        }
+      } catch (searchErr) {
+        console.warn('Web search error, continuing without live grounding:', searchErr.message);
+      }
+    }
+
+    const systemPrompt = this.buildSystemPrompt(identity, pills, searchContext);
 
     const formattedMessages = [
       { role: 'system', content: systemPrompt },
@@ -79,7 +96,7 @@ class AIGateway {
     }
   }
 
-  buildSystemPrompt(identity, pills = {}) {
+  buildSystemPrompt(identity, pills = {}, searchContext = '') {
     const now = new Date();
     const currentTimeStr = now.toLocaleTimeString('en-IN', { hour12: true, timeZone: 'Asia/Kolkata' });
     const currentDateStr = now.toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Asia/Kolkata' });
@@ -95,7 +112,51 @@ CONVERSATIONAL PERSONALITY & EMOTIONAL SENSES:
 - If the user talks casually, jokingly, or uses Telugu/slang words (like "mawa", "bro", "ela unnav", "cheppu"), match their vibe instantly with high-energy Telugu humor, punchy witty replies, and genuine friendship ("Manam thaggipoye prasakthe ledu mawa!").
 - If the user asks deep technical/scientific questions, provide world-class, mathematically verified depth.
 - If asked for resources or research, always include a structured list of clickable verified links and citations.
-- Active pills: ${JSON.stringify(pills)}`;
+- Active pills: ${JSON.stringify(pills)}${searchContext ? `\n\n${searchContext}` : ''}`;
+  }
+
+  async performWebSearch(query) {
+    const results = [];
+    const cleanQuery = query.replace(/^search\s*:\s*/i, '').trim();
+
+    try {
+      // 1. DuckDuckGo Instant Answer
+      const ddgUrl = `https://api.duckduckgo.com/?q=${encodeURIComponent(cleanQuery)}&format=json&no_html=1&skip_disambig=1`;
+      const ddgRes = await axios.get(ddgUrl, { timeout: 3500 });
+      if (ddgRes.data) {
+        if (ddgRes.data.AbstractText) {
+          results.push({
+            title: ddgRes.data.Heading || 'DuckDuckGo Knowledge',
+            url: ddgRes.data.AbstractURL || `https://duckduckgo.com/?q=${encodeURIComponent(cleanQuery)}`,
+            snippet: ddgRes.data.AbstractText
+          });
+        }
+        if (Array.isArray(ddgRes.data.RelatedTopics)) {
+          ddgRes.data.RelatedTopics.slice(0, 3).forEach(t => {
+            if (t.Text && t.FirstURL) {
+              results.push({ title: t.Text.slice(0, 70), url: t.FirstURL, snippet: t.Text });
+            }
+          });
+        }
+      }
+    } catch (_) {}
+
+    try {
+      // 2. Wikipedia Search API
+      const wikiUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(cleanQuery)}&utf8=&format=json`;
+      const wikiRes = await axios.get(wikiUrl, { timeout: 3500 });
+      if (wikiRes.data?.query?.search) {
+        wikiRes.data.query.search.slice(0, 3).forEach(item => {
+          results.push({
+            title: item.title,
+            url: `https://en.wikipedia.org/wiki/${encodeURIComponent(item.title.replace(/\s+/g, '_'))}`,
+            snippet: item.snippet.replace(/<[^>]+>/g, '')
+          });
+        });
+      }
+    } catch (_) {}
+
+    return results;
   }
 
   async streamFreeOpenRouter(messages, model, onChunk) {
