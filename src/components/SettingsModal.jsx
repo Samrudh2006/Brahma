@@ -310,6 +310,7 @@ export default function SettingsModal({
                   }}
                 >
                   <option value="samrudh-3-7b">👑 Samrudh-3-7B (Sovereign DPO SOTA - Hugging Face)</option>
+                  <option value="gnani-evon-30b">🇮🇳 Gnani Evon v3.3 (30B MoE Sovereign Indic - Hugging Face)</option>
                   <option value="samrudh-2-7b">⚡ Samrudh-2-7B (DeepSeek-R1 CoT Reasoner)</option>
                   <option value="samrudh-1-7b">🏛️ Samrudh-1-7B (Sovereign Foundation)</option>
                   <option value="deepseek-r1">DeepSeek R1 (Sovereign Reasoner)</option>

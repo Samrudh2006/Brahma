@@ -71,6 +71,7 @@ class LayaJevRouter {
         intent: 'indic_vernacular_telugu_vedic',
         council: 'brahma',
         tier: 'L1_instant',
+        preferredModel: 'gnani-evon-30b',
         regex: /([\u0C00-\u0C7F]|తెలుగు|ఏం|ఎలా|చెప్పు|నమస్కారం|బాగున్నారా|సంస్కృతం|వేద|mantra|shloka|indic|mawa)/i
       },
       {
@@ -111,7 +112,10 @@ class LayaJevRouter {
       ['debug', { intent: 'deep_logic_debugging_rootcause', council: 'shiva', tier: 'L3_deep_reasoner' }],
       ['vulnerability', { intent: 'security_redteam_invariants', council: 'kali', tier: 'L3_deep_reasoner' }],
       ['image', { intent: 'creative_image_multimodal', council: 'surya', tier: 'L1_instant' }],
-      ['stock', { intent: 'quant_alpha_consensus', council: 'brahma', tier: 'L3_deep_reasoner' }]
+      ['stock', { intent: 'quant_alpha_consensus', council: 'brahma', tier: 'L3_deep_reasoner' }],
+      ['తెలుగు', { intent: 'indic_vernacular_telugu_vedic', council: 'brahma', tier: 'L1_instant', preferredModel: 'gnani-evon-30b' }],
+      ['indic', { intent: 'indic_vernacular_telugu_vedic', council: 'brahma', tier: 'L1_instant', preferredModel: 'gnani-evon-30b' }],
+      ['namaste', { intent: 'indic_vernacular_telugu_vedic', council: 'brahma', tier: 'L1_instant', preferredModel: 'gnani-evon-30b' }]
     ]);
   }
 
@@ -131,6 +135,7 @@ class LayaJevRouter {
     let targetCouncilKey = 'brahma';
     let predictedTier = 'L2_balanced';
     let confidence = 0.94;
+    let modelOverride = null;
 
     for (const [key, val] of this.fastIndex.entries()) {
       if (lowerPrompt.includes(key)) {
@@ -138,6 +143,7 @@ class LayaJevRouter {
         targetCouncilKey = val.council;
         predictedTier = val.tier;
         confidence = 0.99;
+        if (val.preferredModel) modelOverride = val.preferredModel;
         break;
       }
     }
@@ -150,6 +156,7 @@ class LayaJevRouter {
           targetCouncilKey = p.council;
           predictedTier = p.tier;
           confidence = 0.985;
+          if (p.preferredModel) modelOverride = p.preferredModel;
           break;
         }
       }
@@ -180,7 +187,7 @@ class LayaJevRouter {
         category: guardrail.category
       },
       routingDecision: {
-        targetModel: recommendedCouncil.preferredModel,
+        targetModel: modelOverride || recommendedCouncil.preferredModel,
         streamOptimization: predictedTier === 'L1_instant' ? 'turbo' : 'standard',
         bypassAutoregressive: guardrail.riskScore > 0.85
       },
