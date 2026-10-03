@@ -5,6 +5,9 @@ import {
 } from 'lucide-react';
 import { IDENTITIES } from '@data/identities';
 import { SUPPORTED_LANGUAGES, createSpeechRecognizer } from '@utils/speech';
+import SpotlightCard from '@components/ui/SpotlightCard';
+import ShimmerText from '@components/ui/ShimmerText';
+import BorderBeam from '@components/ui/BorderBeam';
 
 const ACTION_MENU_ITEMS = [
   { id: 'file',     icon: Paperclip, label: 'Upload File',            hint: 'PDF, image, code, data' },
@@ -229,12 +232,33 @@ export default function HeroSection({ currentIdentity, onSendPrompt, onOpenStudi
         </div>
       </div>
 
-      {/* 2. Hero Titles */}
+      {/* 2. Hero Titles with Shimmer Vedic Badge */}
+      <div style={{ textAlign: 'center', marginBottom: '8px' }}>
+        <div style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '8px',
+          padding: '4px 16px',
+          borderRadius: '20px',
+          background: 'rgba(251, 191, 36, 0.08)',
+          border: '1px solid rgba(251, 191, 36, 0.25)',
+          marginBottom: '10px'
+        }}>
+          <span style={{ fontSize: '0.8rem', color: '#fbbf24' }}>✦</span>
+          <ShimmerText shimmerColor="#fbbf24" textColor="#e2e8f0" fontSize="0.78rem">
+            ॥ ब्रह्म सत्यं जगन्मिथ्या जीवो ब्रह्मैव नापरः ॥
+          </ShimmerText>
+          <span style={{ fontSize: '0.8rem', color: '#fbbf24' }}>✦</span>
+        </div>
+      </div>
+
       <h1 className="hero-title">How can I help?</h1>
       <p className="hero-subtitle">Ask anything — learn, create, research, plan, build, or simply think with me.</p>
 
-      {/* 3. Prompt Bar with @Mention Support */}
-      <div className="prompt-bar-wrapper" onClick={(e) => e.stopPropagation()} style={{ position: 'relative' }}>
+      {/* 3. Prompt Bar with @Mention Support and Plasma BorderBeam */}
+      <div className="prompt-bar-wrapper" onClick={(e) => e.stopPropagation()} style={{ position: 'relative', overflow: 'hidden' }}>
+        <BorderBeam size={240} duration={8} colorFrom="#fbbf24" colorTo="#ec4899" borderWidth={1.5} />
+
         
         {/* @Mention Floating Autocomplete Popover (13 Supreme Divine Councils) */}
         {showMentionPopover && filteredIdentities.length > 0 && (
@@ -524,40 +548,77 @@ export default function HeroSection({ currentIdentity, onSendPrompt, onOpenStudi
         ))}
       </div>
 
-      {/* 4. Action Cards Grid */}
-      <div className="action-cards-grid">
-        <button className="action-card card-purple" onClick={() => onOpenStudio && onOpenStudio('genesis')}>
-          <div className="card-content-left">
-            <div className="card-icon-wrapper"><Zap size={16} className="card-icon" /></div>
-            <span className="card-title">Start a task</span>
+      {/* 4. Action Cards Grid with Spotlight Cards (Aceternity / React Bits Style) */}
+      <div className="action-cards-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px', marginTop: '12px' }}>
+        <SpotlightCard
+          spotlightColor="rgba(168, 85, 247, 0.25)"
+          borderColor="rgba(168, 85, 247, 0.35)"
+          onClick={() => onOpenStudio && onOpenStudio('genesis')}
+          style={{ cursor: 'pointer', padding: '12px 14px' }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div style={{ padding: '6px', borderRadius: '8px', background: 'rgba(168, 85, 247, 0.2)', color: '#c084fc', display: 'flex' }}>
+                <Zap size={16} />
+              </div>
+              <span style={{ fontSize: '0.84rem', fontWeight: 600, color: '#f8fafc' }}>Start a task</span>
+            </div>
+            <span style={{ color: '#c084fc', fontSize: '1.1rem', fontWeight: 700 }}>›</span>
           </div>
-          <span className="card-arrow">›</span>
-        </button>
+        </SpotlightCard>
 
-        <button className="action-card card-blue" onClick={() => onOpenStudio && onOpenStudio('coconut')}>
-          <div className="card-content-left">
-            <div className="card-icon-wrapper"><Search size={16} className="card-icon" /></div>
-            <span className="card-title">Search & research</span>
+        <SpotlightCard
+          spotlightColor="rgba(59, 130, 246, 0.25)"
+          borderColor="rgba(59, 130, 246, 0.35)"
+          onClick={() => onOpenStudio && onOpenStudio('coconut')}
+          style={{ cursor: 'pointer', padding: '12px 14px' }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div style={{ padding: '6px', borderRadius: '8px', background: 'rgba(59, 130, 246, 0.2)', color: '#60a5fa', display: 'flex' }}>
+                <Search size={16} />
+              </div>
+              <span style={{ fontSize: '0.84rem', fontWeight: 600, color: '#f8fafc' }}>Search & research</span>
+            </div>
+            <span style={{ color: '#60a5fa', fontSize: '1.1rem', fontWeight: 700 }}>›</span>
           </div>
-          <span className="card-arrow">›</span>
-        </button>
+        </SpotlightCard>
 
-        <button className="action-card card-teal" onClick={() => onOpenStudio && onOpenStudio('discovery')}>
-          <div className="card-content-left">
-            <div className="card-icon-wrapper"><Sparkles size={16} className="card-icon" /></div>
-            <span className="card-title">Create something</span>
+        <SpotlightCard
+          spotlightColor="rgba(43, 182, 189, 0.25)"
+          borderColor="rgba(43, 182, 189, 0.35)"
+          onClick={() => onOpenStudio && onOpenStudio('discovery')}
+          style={{ cursor: 'pointer', padding: '12px 14px' }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div style={{ padding: '6px', borderRadius: '8px', background: 'rgba(43, 182, 189, 0.2)', color: '#2bb6bd', display: 'flex' }}>
+                <Sparkles size={16} />
+              </div>
+              <span style={{ fontSize: '0.84rem', fontWeight: 600, color: '#f8fafc' }}>Create something</span>
+            </div>
+            <span style={{ color: '#2bb6bd', fontSize: '1.1rem', fontWeight: 700 }}>›</span>
           </div>
-          <span className="card-arrow">›</span>
-        </button>
+        </SpotlightCard>
 
-        <button className="action-card card-amber" onClick={() => onOpenStudio && onOpenStudio('genesis')}>
-          <div className="card-content-left">
-            <div className="card-icon-wrapper"><Calendar size={16} className="card-icon" /></div>
-            <span className="card-title">Plan & organize</span>
+        <SpotlightCard
+          spotlightColor="rgba(245, 158, 11, 0.25)"
+          borderColor="rgba(245, 158, 11, 0.35)"
+          onClick={() => onOpenStudio && onOpenStudio('genesis')}
+          style={{ cursor: 'pointer', padding: '12px 14px' }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div style={{ padding: '6px', borderRadius: '8px', background: 'rgba(245, 158, 11, 0.2)', color: '#fbbf24', display: 'flex' }}>
+                <Calendar size={16} />
+              </div>
+              <span style={{ fontSize: '0.84rem', fontWeight: 600, color: '#f8fafc' }}>Plan & organize</span>
+            </div>
+            <span style={{ color: '#fbbf24', fontSize: '1.1rem', fontWeight: 700 }}>›</span>
           </div>
-          <span className="card-arrow">›</span>
-        </button>
+        </SpotlightCard>
       </div>
     </div>
+
   );
 }
