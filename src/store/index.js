@@ -54,6 +54,43 @@ export const useAppStore = create((set, get) => ({
     set({ backendOnline, ollamaOnline }),
 }));
 
+// ─── Authentication Store (persisted to localStorage) ─────────────────────────
+export const useAuthStore = create(
+  persist(
+    (set, get) => ({
+      user: null, // { id, email, name, tier, avatar, isGuest }
+      token: null,
+      isAuthenticated: false,
+      isAuthModalOpen: false,
+
+      setAuth: (user, token) => {
+        if (typeof window !== 'undefined' && token) {
+          localStorage.setItem('brahma-auth-token', token);
+        }
+        set({ user, token, isAuthenticated: !!user, isAuthModalOpen: false });
+      },
+
+      logout: () => {
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('brahma-auth-token');
+        }
+        set({ user: null, token: null, isAuthenticated: false, isAuthModalOpen: true });
+      },
+
+      openAuthModal: () => set({ isAuthModalOpen: true }),
+      closeAuthModal: () => set({ isAuthModalOpen: false }),
+    }),
+    {
+      name: 'brahma-auth',
+      partialize: (state) => ({
+        user: state.user,
+        token: state.token,
+        isAuthenticated: state.isAuthenticated
+      }),
+    }
+  )
+);
+
 // ─── Identity Store (persisted to localStorage) ───────────────────────────────
 export const useIdentityStore = create(
   persist(

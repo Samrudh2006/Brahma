@@ -152,9 +152,53 @@ try {
       user_agent            TEXT,
       created_at            TEXT DEFAULT (datetime('now'))
     );
+
+    CREATE TABLE IF NOT EXISTS users (
+      id            TEXT PRIMARY KEY,
+      email         TEXT UNIQUE NOT NULL,
+      password_hash TEXT NOT NULL,
+      salt          TEXT NOT NULL,
+      name          TEXT NOT NULL,
+      tier          TEXT DEFAULT 'Sovereign Pioneer',
+      avatar        TEXT,
+      created_at    TEXT DEFAULT (datetime('now')),
+      last_login    TEXT DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS user_sessions (
+      token       TEXT PRIMARY KEY,
+      user_id     TEXT NOT NULL,
+      created_at  TEXT DEFAULT (datetime('now')),
+      expires_at  TEXT NOT NULL
+    );
   `);
 } catch (migErr) {
   console.warn('[DB] Schema migration note:', migErr.message);
+}
+
+// Seed default demo pioneer if users table is empty
+try {
+  const userCount = db.prepare('SELECT COUNT(*) as n FROM users').get();
+  if (userCount && userCount.n === 0) {
+    const crypto = require('crypto');
+    const demoSalt = '7f8a9b1c2d3e4f5a6b7c8d9e0f1a2b3c';
+    const demoHash = crypto.scryptSync('brahma-sovereign', demoSalt, 64).toString('hex');
+    db.prepare(`
+      INSERT INTO users (id, email, password_hash, salt, name, tier, avatar)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+    `).run(
+      'usr_demo_sovereign',
+      'sovereign@brahma.ai',
+      demoHash,
+      demoSalt,
+      'Samrudh',
+      'Cosmic Architect (Level 5)',
+      'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80'
+    );
+    console.log('[DB] Seeded sovereign demo user: sovereign@brahma.ai');
+  }
+} catch (userSeedErr) {
+  console.warn('[DB] User seed note:', userSeedErr.message);
 }
 
 // Seed initial notification if empty

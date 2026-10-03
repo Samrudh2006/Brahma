@@ -16,8 +16,11 @@ const BASE_URL = API_BASE;
 
 // ─── Generic request helper ───────────────────────────────────────────────────
 async function request(path, options = {}) {
+  const token = typeof window !== 'undefined' ? localStorage.getItem('brahma-auth-token') : null;
+  const authHeaders = token ? { Authorization: `Bearer ${token}` } : {};
+
   const response = await fetch(`${BASE_URL}${path}`, {
-    headers: { 'Content-Type': 'application/json', ...options.headers },
+    headers: { 'Content-Type': 'application/json', ...authHeaders, ...options.headers },
     ...options,
   });
 
@@ -28,6 +31,35 @@ async function request(path, options = {}) {
 
   return response.json();
 }
+
+// ─── Authentication API ───────────────────────────────────────────────────────
+export const authLogin = (email, password) =>
+  request('/auth/login', {
+    method: 'POST',
+    body: JSON.stringify({ email, password }),
+  });
+
+export const authRegister = (email, password, name) =>
+  request('/auth/register', {
+    method: 'POST',
+    body: JSON.stringify({ email, password, name }),
+  });
+
+export const authGetMe = (token) =>
+  request('/auth/me', {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
+
+export const authLogout = (token) =>
+  request('/auth/logout', {
+    method: 'POST',
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
+
+export const authGuest = () =>
+  request('/auth/guest', {
+    method: 'POST',
+  });
 
 // ─── Health Check ─────────────────────────────────────────────────────────────
 export const checkHealth = () => request('/health');

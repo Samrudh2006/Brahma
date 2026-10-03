@@ -1,14 +1,14 @@
 import React, { useEffect, useState, Suspense, lazy } from 'react';
 
 // Zustand stores (Phase 1 — centralized state)
-import { useAppStore, useIdentityStore, useChatStore, useNotificationsStore } from '@store/index';
+import { useAppStore, useIdentityStore, useChatStore, useNotificationsStore, useAuthStore } from '@store/index';
 
 // Custom hooks
 import { useKeyPress, useBackendHealth } from '@hooks/index';
 
 // Utils
 import { saveChatSession, saveRecentPrompt } from '@utils/index';
-import { sendChatStream } from '@api/client';
+import { sendChatStream, authGetMe } from '@api/client';
 import { playDivineChime, playTactileClick } from '@utils/soundEffects';
 import { telemetry } from '@utils/telemetry';
 import { validatePromptInput, checkRateLimit } from '@utils/securityGuard';
@@ -18,6 +18,7 @@ import { INITIAL_NOTIFICATIONS } from '@data/notificationsData';
 
 // Core UI Components
 import SplashScreen from '@components/SplashScreen';
+import AuthModal from '@components/AuthModal';
 import Sidebar from '@components/Sidebar';
 import Header from '@components/Header';
 import HeroSection from '@components/HeroSection';
@@ -132,9 +133,37 @@ export default function App() {
     setBackendStatus,
   } = useAppStore();
 
+  const {
+    user,
+    token,
+    isAuthenticated,
+    isAuthModalOpen,
+    setAuth,
+    openAuthModal,
+    closeAuthModal
+  } = useAuthStore();
+
   const { currentIdentity, setIdentity } = useIdentityStore();
   const { messages, isThinking, addMessage, clearMessages, setThinking } = useChatStore();
   const { notifications, setNotifications, markAllRead, unreadCount } = useNotificationsStore();
+
+  // ─── Verify Authentication Session on Startup ─────────────────────────────
+  useEffect(() => {
+    const savedToken = typeof window !== 'undefined' ? localStorage.getItem('brahma-auth-token') : null;
+    if (savedToken && !user) {
+      authGetMe(savedToken)
+        .then(res => {
+          if (res.success && res.user) {
+            setAuth(res.user, savedToken);
+          }
+        })
+        .catch(() => {
+          if (typeof window !== 'undefined') {
+            localStorage.removeItem('brahma-auth-token');
+          }
+        });
+    }
+  }, []);
 
   // ─── Backend health check ─────────────────────────────────────────────────
   const { backendOnline, ollamaOnline } = useBackendHealth();
@@ -194,6 +223,9 @@ export default function App() {
     setIsPrivacyModalOpen(false);
     setIsTermsModalOpen(false);
     setActiveStudioModal(null);
+    if (isAuthenticated || user) {
+      closeAuthModal();
+    }
   });
 
   // ─── Core chat handler (Live SSE streaming with validation & anti-spam) ───
@@ -280,6 +312,14 @@ export default function App() {
     setActivePage('chat');
   };
 
+  const handleSplashComplete = () => {
+    completeSplash();
+    // Prompt login/signup modal immediately after splash screen if unauthenticated
+    if (!isAuthenticated && !user) {
+      openAuthModal();
+    }
+  };
+
   const isKnownPage = VALID_PAGES.includes(activePage);
 
   return (
@@ -288,9 +328,15 @@ export default function App() {
       <LivingBackground theme={theme} />
 
       {/* 1. Splash Screen */}
-      {showSplash && <SplashScreen onComplete={completeSplash} />}
+      {showSplash && <SplashScreen onComplete={handleSplashComplete} />}
 
-      {/* 2. Main Workspace */}
+      {/* 2. Sovereign Authentication Modal (Triggered immediately after Splash Screen if unauthenticated) */}
+      <AuthModal
+        isOpen={!showSplash && (isAuthModalOpen || (!isAuthenticated && !user))}
+        onClose={closeAuthModal}
+      />
+
+      {/* 3. Main Workspace */}
       <Sidebar
         activePage={activePage}
         setActivePage={setActivePage}

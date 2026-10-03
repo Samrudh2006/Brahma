@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { X, Play, Moon, Sun, Key, ShieldCheck, Command, Cpu, Check, Eye, EyeOff } from 'lucide-react';
+import { X, Play, Moon, Sun, Key, ShieldCheck, Command, Cpu, Check, Eye, EyeOff, User, LogOut, Shield } from 'lucide-react';
+import { useAuthStore } from '@store/index';
 
 export default function SettingsModal({ 
   onClose, 
@@ -7,6 +8,7 @@ export default function SettingsModal({
   theme, 
   setTheme 
 }) {
+  const { user, isAuthenticated, logout, openAuthModal } = useAuthStore();
   const [apiKey, setApiKey] = useState('');
   const [showKey, setShowKey] = useState(false);
   const [preferredModel, setPreferredModel] = useState('deepseek-r1');
@@ -50,6 +52,79 @@ export default function SettingsModal({
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', margin: '16px 0' }}>
+          {/* Sovereign Account & Authentication */}
+          <div style={{ background: 'rgba(14,20,32,0.85)', border: '1px solid rgba(251, 191, 36, 0.25)', borderRadius: '14px', padding: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{
+                  width: 38,
+                  height: 38,
+                  borderRadius: '50%',
+                  background: 'linear-gradient(135deg, #fbbf24, #d97706)',
+                  color: '#000',
+                  fontWeight: 900,
+                  fontSize: 16,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  {user?.name ? user.name.charAt(0).toUpperCase() : 'S'}
+                </div>
+                <div>
+                  <h4 style={{ fontFamily: 'var(--font-display)', color: 'var(--accent-gold-bright)', margin: 0, fontSize: '0.95rem' }}>
+                    {user?.name || 'Samrudh'}
+                  </h4>
+                  <p style={{ fontSize: '0.74rem', color: '#94a3b8', margin: '2px 0 0' }}>
+                    {user?.email || 'sovereign@brahma.ai'} • <span style={{ color: '#10b981', fontWeight: 600 }}>{user?.tier || 'Sovereign Pioneer'}</span>
+                  </p>
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button
+                  type="button"
+                  onClick={() => { onClose(); openAuthModal(); }}
+                  style={{
+                    background: 'rgba(251, 191, 36, 0.1)',
+                    border: '1px solid rgba(251, 191, 36, 0.3)',
+                    color: '#fbbf24',
+                    borderRadius: 8,
+                    padding: '6px 12px',
+                    fontSize: '0.74rem',
+                    fontWeight: 700,
+                    cursor: 'pointer'
+                  }}
+                >
+                  {user?.isGuest ? 'Sign Up / In' : 'Switch Account'}
+                </button>
+                {user && (
+                  <button
+                    type="button"
+                    onClick={() => { logout(); onClose(); }}
+                    style={{
+                      background: 'rgba(239, 68, 68, 0.12)',
+                      border: '1px solid rgba(239, 68, 68, 0.3)',
+                      color: '#f87171',
+                      borderRadius: 8,
+                      padding: '6px 12px',
+                      fontSize: '0.74rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 4
+                    }}
+                  >
+                    <LogOut size={12} /> Log Out
+                  </button>
+                )}
+              </div>
+            </div>
+            <div style={{ fontSize: '0.72rem', color: '#64748b', display: 'flex', alignItems: 'center', gap: 6 }}>
+              <Shield size={13} color="#fbbf24" />
+              <span>Sovereign Identity Session Protected by Native Node.js Scrypt & SQLite WAL</span>
+            </div>
+          </div>
+
           {/* Replay Splash Screen Video Button (Rule #1) */}
           <div style={{ background: 'rgba(212,175,55,0.08)', border: '1px solid var(--accent-gold)', borderRadius: '14px', padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div>

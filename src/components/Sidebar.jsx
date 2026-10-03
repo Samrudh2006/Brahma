@@ -5,6 +5,7 @@ import {
   Plus, ChevronLeft, PanelLeftClose, PanelLeftOpen, Award, Image, Link2, Code, Smartphone, Shield, X
 } from 'lucide-react';
 import { getChatSessions } from '@utils/index';
+import { useAuthStore } from '@store/index';
 
 export default function Sidebar({
   activePage,
@@ -260,48 +261,59 @@ export default function Sidebar({
         </nav>
       </div>
 
-      {/* 3. Bottom User Profile (Samrudh · Online + Settings) */}
+      {/* 3. Bottom User Profile (Dynamic Sovereign Profile + Settings) */}
       <div className="sidebar-footer" style={{
         padding: '12px 14px',
         borderTop: '1px solid rgba(255,255,255,0.06)',
         background: '#040711'
       }}>
-        <div className="user-profile-widget" onClick={() => { onOpenSettings(); if (onMobileClose) onMobileClose(); }} title="User Profile & Settings" style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: collapsed ? 'center' : 'space-between',
-          cursor: 'pointer'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div className="user-avatar-circle" style={{
-              width: 32,
-              height: 32,
-              borderRadius: '50%',
-              background: 'linear-gradient(135deg, #fbbf24, #d97706)',
-              color: '#000',
-              fontWeight: 900,
-              fontSize: 14,
+        {(() => {
+          const { user, openAuthModal } = useAuthStore();
+          const userName = user?.name || 'Samrudh';
+          const userInitial = userName.charAt(0).toUpperCase();
+          const userStatus = user?.isGuest ? 'Guest Explorer' : 'Online';
+
+          return (
+            <div className="user-profile-widget" onClick={() => { onOpenSettings(); if (onMobileClose) onMobileClose(); }} title="User Profile & Settings" style={{
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center'
+              justifyContent: collapsed ? 'center' : 'space-between',
+              cursor: 'pointer'
             }}>
-              <span>S</span>
-            </div>
-            {!collapsed && (
-              <div className="user-text-info">
-                <span className="user-name" style={{ fontWeight: 800, fontSize: '0.84rem', color: '#f8fafc' }}>Samrudh</span>
-                <span className="user-status-online" style={{ fontSize: '0.68rem', color: '#10b981', display: 'flex', alignItems: 'center', gap: 4 }}>
-                  <span className="online-dot" /> Online
-                </span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div className="user-avatar-circle" style={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: '50%',
+                  background: 'linear-gradient(135deg, #fbbf24, #d97706)',
+                  color: '#000',
+                  fontWeight: 900,
+                  fontSize: 14,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  <span>{userInitial}</span>
+                </div>
+                {!collapsed && (
+                  <div className="user-text-info">
+                    <span className="user-name" style={{ fontWeight: 800, fontSize: '0.84rem', color: '#f8fafc' }}>
+                      {userName}
+                    </span>
+                    <span className="user-status-online" style={{ fontSize: '0.68rem', color: '#10b981', display: 'flex', alignItems: 'center', gap: 4 }}>
+                      <span className="online-dot" /> {userStatus}
+                    </span>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-          {!collapsed && (
-            <button className="user-settings-gear" onClick={onOpenSettings} title="Settings" style={{ background: 'transparent', border: 'none', color: '#64748b', cursor: 'pointer' }}>
-              <Settings size={15} />
-            </button>
-          )}
-        </div>
+              {!collapsed && (
+                <button className="user-settings-gear" onClick={(e) => { e.stopPropagation(); onOpenSettings(); }} title="Settings" style={{ background: 'transparent', border: 'none', color: '#64748b', cursor: 'pointer' }}>
+                  <Settings size={15} />
+                </button>
+              )}
+            </div>
+          );
+        })()}
         {!collapsed && (
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', fontSize: '0.68rem', color: '#64748b', marginTop: '10px', justifyContent: 'center', alignItems: 'center' }}>
             <button
