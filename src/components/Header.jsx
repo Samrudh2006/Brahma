@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, ChevronDown, Sun, Moon, Settings, Clock, Palette, Check, Menu, Volume2, VolumeX, Smartphone, Music, Mic } from 'lucide-react';
+import { Search, ChevronDown, Sun, Moon, Settings, Clock, Palette, Check, Menu, Volume2, VolumeX, Smartphone, Music, Mic, MessageSquareHeart } from 'lucide-react';
 import { toggleAmbientDrone, updateAmbientTheme, getDroneState, playTactileClick } from '@utils/soundEffects';
+import { useAppStore } from '@store/index';
 
 const LUXURY_THEMES = [
   { id: 'obsidian', name: '🌌 Cosmic Gold', color: '#fbbf24', desc: 'Obsidian & 432Hz Cosmic Pad', soundLabel: '🌌 Cosmic 432 Hz Deep Warmth' },
@@ -15,12 +16,18 @@ export default function Header({
   onOpenIdentityModal,
   onOpenCommandPalette,
   onOpenSettings,
-  theme,
-  setTheme,
+  onOpenFeedback,
+  theme: propTheme,
+  setTheme: propSetTheme,
   setActivePage,
   onToggleMobileSidebar,
   onOpenLiveVoice
 }) {
+  const storeTheme = useAppStore(state => state.theme);
+  const storeSetTheme = useAppStore(state => state.setTheme);
+
+  const theme = propTheme || storeTheme || 'obsidian';
+  const setTheme = propSetTheme || storeSetTheme;
 
   const [showThemeMenu, setShowThemeMenu] = useState(false);
   const [isDroneActive, setIsDroneActive] = useState(false);
@@ -77,11 +84,37 @@ export default function Header({
       e.stopPropagation();
     }
     playTactileClick();
-    setTheme(themeId);
-    updateAmbientTheme(themeId);
+
+    // 1. Store updates
+    if (setTheme) {
+      setTheme(themeId);
+    }
+
+    // 2. Direct DOM instant attribute updates
+    if (typeof document !== 'undefined') {
+      if (themeId === 'obsidian') {
+        document.documentElement.setAttribute('data-theme', 'obsidian');
+        document.body.setAttribute('data-theme', 'obsidian');
+      } else {
+        document.documentElement.setAttribute('data-theme', themeId);
+        document.body.setAttribute('data-theme', themeId);
+      }
+    }
+
+    // 3. LocalStorage persistence
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('brahma-theme', themeId);
+      } catch (_) {}
+    }
+
+    // 4. Acoustic drone tone alignment
+    try {
+      updateAmbientTheme(themeId);
+    } catch (_) {}
+
     setShowThemeMenu(false);
   };
-
 
   return (
     <header className="top-header" style={{ position: 'relative' }}>
@@ -104,11 +137,11 @@ export default function Header({
           title="Switch Active Deity Intelligence (13 Councils)"
         >
           <img
-            src={currentIdentity.portrait}
-            alt={currentIdentity.name}
+            src={currentIdentity?.portrait || '/avatars/brahma.png'}
+            alt={currentIdentity?.name || 'BRAHMA'}
             className="switcher-portrait"
           />
-          <span className="switcher-name">{currentIdentity.name} <span className="switcher-subtext">Intelligence</span></span>
+          <span className="switcher-name">{currentIdentity?.name || 'BRAHMA'} <span className="switcher-subtext">Intelligence</span></span>
           <ChevronDown size={14} style={{ color: 'var(--accent-gold)' }} />
         </div>
       </div>
@@ -136,10 +169,11 @@ export default function Header({
             title={`Switch Aesthetic Theme (Current: ${theme})`}
             style={{
               background: showThemeMenu ? 'rgba(251, 191, 36, 0.2)' : 'transparent',
-              borderColor: showThemeMenu ? '#fbbf24' : 'transparent'
+              borderColor: showThemeMenu ? '#fbbf24' : 'transparent',
+              color: LUXURY_THEMES.find(t => t.id === theme)?.color || 'var(--accent-gold)'
             }}
           >
-            <Palette size={17} style={{ color: 'var(--accent-gold)' }} />
+            <Palette size={17} />
           </button>
 
           {/* Theme Dropdown Popover */}
@@ -148,18 +182,18 @@ export default function Header({
               position: 'absolute',
               top: 42,
               right: 0,
-              width: 220,
-              background: '#0d1117',
-              border: '1px solid rgba(251, 191, 36, 0.3)',
+              width: 230,
+              background: '#090d16',
+              border: '1px solid rgba(251, 191, 36, 0.35)',
               borderRadius: 12,
               padding: 10,
-              boxShadow: '0 16px 40px rgba(0,0,0,0.8)',
-              zIndex: 1000,
+              boxShadow: '0 20px 50px rgba(0,0,0,0.9), 0 0 25px rgba(251, 191, 36, 0.15)',
+              zIndex: 99999,
               display: 'flex',
               flexDirection: 'column',
               gap: 4
             }}>
-              <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#fbbf24', padding: '4px 8px', textTransform: 'uppercase' }}>
+              <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#fbbf24', padding: '4px 8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                 Select Aesthetic Theme
               </div>
               {LUXURY_THEMES.map(t => (
@@ -173,19 +207,20 @@ export default function Header({
                     justifyContent: 'space-between',
                     padding: '8px 10px',
                     borderRadius: 8,
-                    background: theme === t.id ? 'rgba(251, 191, 36, 0.15)' : 'transparent',
-                    border: theme === t.id ? '1px solid rgba(251, 191, 36, 0.4)' : '1px solid transparent',
+                    background: theme === t.id ? 'rgba(251, 191, 36, 0.18)' : 'rgba(255, 255, 255, 0.02)',
+                    border: theme === t.id ? `1px solid ${t.color}` : '1px solid transparent',
                     color: theme === t.id ? t.color : '#e2e8f0',
                     cursor: 'pointer',
                     fontSize: '0.8rem',
                     fontWeight: 700,
                     textAlign: 'left',
                     width: '100%',
-                    boxSizing: 'border-box'
+                    boxSizing: 'border-box',
+                    transition: 'all 0.15s ease'
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, pointerEvents: 'none' }}>
-                    <div style={{ width: 12, height: 12, borderRadius: '50%', background: t.color, flexShrink: 0 }} />
+                    <div style={{ width: 12, height: 12, borderRadius: '50%', background: t.color, flexShrink: 0, boxShadow: theme === t.id ? `0 0 8px ${t.color}` : 'none' }} />
                     <span>{t.name}</span>
                   </div>
                   {theme === t.id && <Check size={14} color={t.color} style={{ pointerEvents: 'none' }} />}
@@ -195,7 +230,25 @@ export default function Header({
           )}
         </div>
 
-        {/* 3. Settings */}
+        {/* 3. Feedback & Improvement Modal Trigger */}
+        <button
+          type="button"
+          className="icon-action-btn"
+          onClick={() => {
+            playTactileClick();
+            if (onOpenFeedback) onOpenFeedback();
+          }}
+          title="Share Feedback & Report Bugs"
+          style={{
+            color: '#f59e0b',
+            background: 'rgba(245, 158, 11, 0.12)',
+            borderColor: 'rgba(245, 158, 11, 0.3)'
+          }}
+        >
+          <MessageSquareHeart size={17} />
+        </button>
+
+        {/* 4. Settings */}
         <button
           className="icon-action-btn"
           onClick={onOpenSettings}
@@ -222,7 +275,6 @@ export default function Header({
             </button>
           );
         })()}
-
 
         {/* Live Hands-Free Telugu Voice Mode Button */}
         <button
@@ -253,8 +305,7 @@ export default function Header({
           <Smartphone size={17} />
         </button>
 
-
-        {/* 4. Scheduled Tasks / History */}
+        {/* 5. Scheduled Tasks / History */}
         <button
           className="icon-action-btn"
           onClick={() => setActivePage('scheduled')}

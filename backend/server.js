@@ -45,6 +45,7 @@ app.use('/api/whisper',        require('./routes/whisper'));
 app.use('/api/autonomous',     require('./routes/autonomous'));
 app.use('/api/whatsapp',       require('./routes/whatsapp'));
 app.use('/api/laya',           require('./routes/laya'));
+app.use('/api/feedback',       require('./routes/feedback'));
 app.use('/auth',               require('./routes/auth'));
 
 

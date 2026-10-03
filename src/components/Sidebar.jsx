@@ -13,6 +13,7 @@ export default function Sidebar({
   onOpenSettings,
   onOpenPrivacy,
   onOpenTerms,
+  onOpenFeedback,
   onNewChat,
   currentIdentity,
   mobileOpen = false,
@@ -302,14 +303,23 @@ export default function Sidebar({
           )}
         </div>
         {!collapsed && (
-          <div style={{ display: 'flex', gap: '8px', fontSize: '0.68rem', color: '#64748b', marginTop: '10px', justifyContent: 'center', alignItems: 'center' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', fontSize: '0.68rem', color: '#64748b', marginTop: '10px', justifyContent: 'center', alignItems: 'center' }}>
+            <button
+              onClick={() => { if (onOpenFeedback) onOpenFeedback(); if (onMobileClose) onMobileClose(); }}
+              style={{ background: 'none', border: 'none', color: '#fbbf24', cursor: 'pointer', fontSize: '0.68rem', padding: 0, fontWeight: 700 }}
+              onMouseEnter={(e) => { e.currentTarget.style.textDecoration = 'underline'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.textDecoration = 'none'; }}
+            >
+              🌟 Feedback
+            </button>
+            <span style={{ opacity: 0.4 }}>•</span>
             <button
               onClick={() => { if (onOpenPrivacy) onOpenPrivacy(); if (onMobileClose) onMobileClose(); }}
               style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: '0.68rem', padding: 0 }}
               onMouseEnter={(e) => { e.currentTarget.style.color = '#fbbf24'; }}
               onMouseLeave={(e) => { e.currentTarget.style.color = '#94a3b8'; }}
             >
-              Privacy Policy
+              Privacy
             </button>
             <span style={{ opacity: 0.4 }}>•</span>
             <button
@@ -318,7 +328,7 @@ export default function Sidebar({
               onMouseEnter={(e) => { e.currentTarget.style.color = '#fbbf24'; }}
               onMouseLeave={(e) => { e.currentTarget.style.color = '#94a3b8'; }}
             >
-              Terms of Service
+              Terms
             </button>
           </div>
         )}

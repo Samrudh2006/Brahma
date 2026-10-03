@@ -5,7 +5,8 @@
 
 /* ── Google Fonts must be in index.html ─────────────────────────── */
 
-:root {
+:root,
+[data-theme='obsidian'] {
   /* ── Color Tokens ─────────────────────────────────────────────── */
   --bg-dark-master:    #06080c;
   --bg-dark-surface:   #0a0e17;

@@ -96,6 +96,20 @@ db.exec(`
     key   TEXT PRIMARY KEY,
     value TEXT
   );
+
+  CREATE TABLE IF NOT EXISTS user_feedback (
+    id                    TEXT PRIMARY KEY,
+    stars                 INTEGER NOT NULL,
+    rating_label          TEXT,
+    improve_regions       TEXT,
+    broken_issues         TEXT,
+    bug_description       TEXT,
+    suggestions           TEXT,
+    user_contact          TEXT,
+    session_duration_sec  INTEGER DEFAULT 0,
+    user_agent            TEXT,
+    created_at            TEXT DEFAULT (datetime('now'))
+  );
 `);
 
 // Seed initial notification if empty

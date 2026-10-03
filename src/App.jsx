@@ -39,6 +39,7 @@ import RemoteGatewayView from '@components/RemoteGatewayView';
 import CookieConsentBanner from '@components/CookieConsentBanner';
 import PrivacyPolicyModal from '@components/PrivacyPolicyModal';
 import TermsOfServiceModal from '@components/TermsOfServiceModal';
+import FeedbackModal from '@components/FeedbackModal';
 import NotFoundView from '@components/NotFoundView';
 import LiveVoiceOrbModal from '@components/LiveVoiceOrbModal';
 import RiskApprovalModal from '@components/RiskApprovalModal';
@@ -95,8 +96,29 @@ export default function App() {
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
   const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
+  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
+  const [sessionSeconds, setSessionSeconds] = useState(0);
   const [isLiveVoiceOpen, setIsLiveVoiceOpen] = useState(false);
   const [pendingRiskAction, setPendingRiskAction] = useState(null);
+
+  // ─── 5-Minute Auto-Prompt Feedback Session Timer ──────────────────────────
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setSessionSeconds(prev => {
+        const next = prev + 1;
+        // 5-minute mark (300 seconds) auto-popup
+        if (next === 300) {
+          const submitted = localStorage.getItem('brahma-feedback-submitted');
+          const snoozed = sessionStorage.getItem('brahma-feedback-snoozed');
+          if (!submitted && !snoozed) {
+            setIsFeedbackModalOpen(true);
+          }
+        }
+        return next;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
 
   // ─── Zustand store slices ────────────────────────────────────────────────
@@ -278,6 +300,7 @@ export default function App() {
         onOpenSettings={() => setSettingsModal(true)}
         onOpenPrivacy={() => setIsPrivacyModalOpen(true)}
         onOpenTerms={() => setIsTermsModalOpen(true)}
+        onOpenFeedback={() => setIsFeedbackModalOpen(true)}
         onNewChat={handleNewChat}
         currentIdentity={currentIdentity}
         mobileOpen={isMobileNavOpen}
@@ -291,6 +314,7 @@ export default function App() {
             onOpenIdentityModal={() => setIdentityModal(true)}
             onOpenCommandPalette={() => setCommandPalette(true)}
             onOpenSettings={() => setSettingsModal(true)}
+            onOpenFeedback={() => setIsFeedbackModalOpen(true)}
             theme={theme}
             setTheme={setTheme}
             backendOnline={backendOnline}
@@ -476,6 +500,13 @@ export default function App() {
       <TermsOfServiceModal
         isOpen={isTermsModalOpen}
         onClose={() => setIsTermsModalOpen(false)}
+      />
+
+      {/* 5-Minute Interactive Sovereign Feedback Modal */}
+      <FeedbackModal
+        isOpen={isFeedbackModalOpen}
+        onClose={() => setIsFeedbackModalOpen(false)}
+        sessionDurationSec={sessionSeconds}
       />
 
       {/* Cookie Consent Banner (Checklist #5) */}
