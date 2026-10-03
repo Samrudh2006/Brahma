@@ -70,7 +70,7 @@ function ThinkingIndicator({ identity }) {
 }
 
 // ─── Single Message ───────────────────────────────────────────────────────────
-function ChatMessage({ msg, identity, onCopy, onRerun, onFavorite, onSpeak, isSpeakingThis }) {
+function ChatMessage({ msg, identity, onCopy, onRerun, onFavorite, onSpeak, isSpeakingThis, onLayaTransform, onJeevTransform }) {
   const isUser = msg.sender === 'user';
   const avatarSrc = isUser ? '/assets/identities/brahma.png' : (msg.identity?.portrait || identity.portrait);
   const senderName = isUser ? 'You' : (msg.identity?.name || identity.name);
@@ -80,11 +80,39 @@ function ChatMessage({ msg, identity, onCopy, onRerun, onFavorite, onSpeak, isSp
       <img src={avatarSrc} alt={senderName} className="chat-msg-avatar"
         onError={(e) => { e.target.src = '/assets/identities/brahma.png'; }}
       />
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 4, maxWidth: 700 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 4, maxWidth: 700, width: '100%' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <span style={{ fontSize: 'var(--text-xs)', fontFamily: 'var(--font-display)', color: 'var(--accent-gold-bright)' }}>
             {senderName}
           </span>
+          {msg.mode === 'laya' && (
+            <span style={{
+              fontSize: '0.62rem',
+              fontWeight: 700,
+              padding: '1px 7px',
+              borderRadius: '10px',
+              background: 'rgba(56, 189, 248, 0.15)',
+              border: '1px solid rgba(56, 189, 248, 0.4)',
+              color: '#38bdf8',
+              letterSpacing: '0.04em'
+            }}>
+              🌀 LAYA DISTILLED
+            </span>
+          )}
+          {msg.mode === 'jeev' && (
+            <span style={{
+              fontSize: '0.62rem',
+              fontWeight: 700,
+              padding: '1px 7px',
+              borderRadius: '10px',
+              background: 'rgba(236, 72, 153, 0.15)',
+              border: '1px solid rgba(236, 72, 153, 0.4)',
+              color: '#ec4899',
+              letterSpacing: '0.04em'
+            }}>
+              ⚡ JĪVA CONSCIOUSNESS
+            </span>
+          )}
           <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>
             {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </span>
@@ -116,6 +144,24 @@ function ChatMessage({ msg, identity, onCopy, onRerun, onFavorite, onSpeak, isSp
           {/* Message actions */}
           {!isUser && (
             <div className="msg-actions" style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 8 }}>
+              {/* Integrated Laya & Jiva Quick Message Transformers */}
+              <button
+                className="msg-action-btn"
+                onClick={() => onLayaTransform && onLayaTransform(msg)}
+                title="लय (Laya): Distill this synthesis to its pure core essence & sutras"
+                style={{ color: '#38bdf8', background: 'rgba(56, 189, 248, 0.08)', borderColor: 'rgba(56, 189, 248, 0.3)' }}
+              >
+                🌀 Laya (Distill)
+              </button>
+              <button
+                className="msg-action-btn"
+                onClick={() => onJeevTransform && onJeevTransform(msg)}
+                title="जीव (Jīva): Enliven with full vitality, actionable blueprints & living consciousness"
+                style={{ color: '#ec4899', background: 'rgba(236, 72, 153, 0.08)', borderColor: 'rgba(236, 72, 153, 0.3)' }}
+              >
+                ⚡ Jīva (Enliven)
+              </button>
+
               <button
                 className="msg-action-btn"
                 onClick={() => onSpeak(msg)}
@@ -142,10 +188,11 @@ function ChatMessage({ msg, identity, onCopy, onRerun, onFavorite, onSpeak, isSp
   );
 }
 
+
 // ─── Main ChatView ────────────────────────────────────────────────────────────
 export default function ChatView({ currentIdentity, messages, onSendMessage, isThinking, onNewChat, onSelectIdentity }) {
   const [inputText, setInputText] = useState('');
-  const [activePills, setActivePills] = useState({ search: false, code: false, think: false });
+  const [activePills, setActivePills] = useState({ search: false, code: false, think: false, laya: false, jeev: false });
   const [showMentionPopover, setShowMentionPopover] = useState(false);
   const [mentionQuery, setMentionQuery] = useState('');
   const [mentionIndex, setMentionIndex] = useState(0);
@@ -157,7 +204,18 @@ export default function ChatView({ currentIdentity, messages, onSendMessage, isT
   const recognizerRef = useRef(null);
 
   const scrollRef = useAutoScroll([messages, isThinking]);
-  const togglePill = (p) => setActivePills((prev) => ({ ...prev, [p]: !prev[p] }));
+  
+  const togglePill = (p) => {
+    setActivePills((prev) => {
+      if (p === 'laya') {
+        return { ...prev, laya: !prev.laya, jeev: false };
+      }
+      if (p === 'jeev') {
+        return { ...prev, jeev: !prev.jeev, laya: false };
+      }
+      return { ...prev, [p]: !prev[p] };
+    });
+  };
 
   const handleInputChange = (e) => {
     const val = e.target.value;
@@ -228,10 +286,38 @@ export default function ChatView({ currentIdentity, messages, onSendMessage, isT
     if (!inputText.trim()) return;
     stopSpeaking();
     setSpeakingMsgId(null);
-    onSendMessage(inputText, activePills);
+
+    let query = inputText.trim();
+    let pillsToSend = { ...activePills };
+
+    // Auto slash-command detection inside chat
+    if (query.startsWith('/laya')) {
+      pillsToSend.laya = true;
+      pillsToSend.jeev = false;
+      query = query.replace(/^\/laya\s*/i, '').trim() || 'Distill current thread context to pure essence.';
+    } else if (query.startsWith('/jev') || query.startsWith('/jeev')) {
+      pillsToSend.jeev = true;
+      pillsToSend.laya = false;
+      query = query.replace(/^\/(jev|jeev)\s*/i, '').trim() || 'Enliven current thread with active living consciousness.';
+    }
+
+    onSendMessage(query, pillsToSend);
     setInputText('');
     setShowMentionPopover(false);
   };
+
+  const handleLayaTransform = (msg) => {
+    stopSpeaking();
+    setSpeakingMsgId(null);
+    onSendMessage(`[LAYA / लय]: Distill the essence of this synthesis into pure aphoristic sutras:\n\n"${msg.text.slice(0, 600)}"`, { laya: true });
+  };
+
+  const handleJeevTransform = (msg) => {
+    stopSpeaking();
+    setSpeakingMsgId(null);
+    onSendMessage(`[JĪVA / जीव]: Enliven this synthesis with profound living consciousness, proactive reasoning, and actionable execution blueprints:\n\n"${msg.text.slice(0, 600)}"`, { jeev: true });
+  };
+
 
   // TTS Reader
   const handleToggleSpeak = (msg) => {
@@ -446,9 +532,12 @@ export default function ChatView({ currentIdentity, messages, onSendMessage, isT
             onFavorite={handleFavorite}
             onSpeak={handleToggleSpeak}
             isSpeakingThis={speakingMsgId === m.timestamp}
+            onLayaTransform={handleLayaTransform}
+            onJeevTransform={handleJeevTransform}
           />
         ))}
         {isThinking && <ThinkingIndicator identity={currentIdentity} />}
+
       </div>
 
       {/* Floating Mention Autocomplete Popover */}
@@ -533,7 +622,7 @@ export default function ChatView({ currentIdentity, messages, onSendMessage, isT
         <div className="prompt-bar-wrapper" style={{ marginBottom: 0 }}>
           <textarea
             className="prompt-input"
-            placeholder={`Message ${currentIdentity.name}... (Type @ to summon councils, or speak in Telugu/Hindi/English)`}
+            placeholder={`Message ${currentIdentity.name}... (Type /laya to distill, /jev to enliven, @ for councils)`}
             value={inputText}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
@@ -542,6 +631,35 @@ export default function ChatView({ currentIdentity, messages, onSendMessage, isT
           />
           <div className="prompt-actions-row">
             <div className="prompt-pills-left" style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+              {/* Sacred Laya & Jiva Integrated Cognitive Pills */}
+              <button
+                className={`action-pill ${activePills.laya ? 'active' : ''}`}
+                onClick={() => togglePill('laya')}
+                title="लय (Laya Mode): Pure concentrated essence, zero fluff, sutra-level clarity"
+                style={{
+                  borderColor: activePills.laya ? '#38bdf8' : undefined,
+                  color: activePills.laya ? '#38bdf8' : undefined,
+                  background: activePills.laya ? 'rgba(56, 189, 248, 0.18)' : undefined,
+                  boxShadow: activePills.laya ? '0 0 12px rgba(56, 189, 248, 0.4)' : undefined
+                }}
+              >
+                🌀 Laya (लय)
+              </button>
+
+              <button
+                className={`action-pill ${activePills.jeev ? 'active' : ''}`}
+                onClick={() => togglePill('jeev')}
+                title="जीव (Jīva Mode): Living consciousness, proactive foresight, actionable vitality"
+                style={{
+                  borderColor: activePills.jeev ? '#ec4899' : undefined,
+                  color: activePills.jeev ? '#ec4899' : undefined,
+                  background: activePills.jeev ? 'rgba(236, 72, 153, 0.18)' : undefined,
+                  boxShadow: activePills.jeev ? '0 0 12px rgba(236, 72, 153, 0.4)' : undefined
+                }}
+              >
+                ⚡ Jīva (जीव)
+              </button>
+
               <button className={`action-pill ${activePills.search ? 'active' : ''}`} onClick={() => togglePill('search')}>
                 <Globe size={14} /> Search
               </button>
@@ -551,6 +669,7 @@ export default function ChatView({ currentIdentity, messages, onSendMessage, isT
               <button className={`action-pill ${activePills.think ? 'active' : ''}`} onClick={() => togglePill('think')}>
                 <Brain size={14} /> Think
               </button>
+
 
               {/* Multi-Lingual STT/TTS Selector */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 4, background: 'rgba(255,255,255,0.06)', borderRadius: 12, padding: '2px 8px' }}>

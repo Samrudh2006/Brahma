@@ -26,7 +26,7 @@ const QUICK_INDIC_PROMPTS = [
 
 export default function HeroSection({ currentIdentity, onSendPrompt, onOpenStudio, onSelectIdentity }) {
   const [inputText, setInputText] = useState('');
-  const [activePills, setActivePills] = useState({ attach: false, search: false, code: false, think: false });
+  const [activePills, setActivePills] = useState({ attach: false, search: false, code: false, think: false, laya: false, jeev: false });
   const [attachedFiles, setAttachedFiles] = useState([]);
   const [showActionMenu, setShowActionMenu] = useState(false);
   
@@ -43,6 +43,7 @@ export default function HeroSection({ currentIdentity, onSendPrompt, onOpenStudi
 
   const fileInputRef = useRef(null);
   const textareaRef = useRef(null);
+
 
   const toggleSpeechRecognition = () => {
     if (isListening) {
@@ -156,17 +157,40 @@ export default function HeroSection({ currentIdentity, onSendPrompt, onOpenStudi
   };
 
   const togglePill = (pill) => {
-    setActivePills((p) => ({ ...p, [pill]: !p[pill] }));
+    setActivePills((prev) => {
+      if (pill === 'laya') {
+        return { ...prev, laya: !prev.laya, jeev: false };
+      }
+      if (pill === 'jeev') {
+        return { ...prev, jeev: !prev.jeev, laya: false };
+      }
+      return { ...prev, [pill]: !prev[pill] };
+    });
   };
 
   const handleSend = () => {
     if (!inputText.trim() && attachedFiles.length === 0) return;
-    onSendPrompt(inputText, activePills);
+
+    let query = inputText.trim();
+    let pillsToSend = { ...activePills };
+
+    if (query.startsWith('/laya')) {
+      pillsToSend.laya = true;
+      pillsToSend.jeev = false;
+      query = query.replace(/^\/laya\s*/i, '').trim() || 'Distill current question to pure essence.';
+    } else if (query.startsWith('/jev') || query.startsWith('/jeev')) {
+      pillsToSend.jeev = true;
+      pillsToSend.laya = false;
+      query = query.replace(/^\/(jev|jeev)\s*/i, '').trim() || 'Enliven current question with active living consciousness.';
+    }
+
+    onSendPrompt(query, pillsToSend);
     setInputText('');
     setAttachedFiles([]);
     setSelectedIdentity(null);
-    setActivePills({ attach: false, search: false, code: false, think: false });
+    setActivePills({ attach: false, search: false, code: false, think: false, laya: false, jeev: false });
   };
+
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files || []);
@@ -433,6 +457,35 @@ export default function HeroSection({ currentIdentity, onSendPrompt, onOpenStudi
             >
               <Plus size={14} />
             </button>
+            {/* Sacred Laya & Jiva Integrated Cognitive Pills */}
+            <button
+              className={`action-pill ${activePills.laya ? 'active' : ''}`}
+              onClick={() => togglePill('laya')}
+              title="लय (Laya Mode): Pure concentrated essence, zero fluff, sutra-level clarity"
+              style={{
+                borderColor: activePills.laya ? '#38bdf8' : undefined,
+                color: activePills.laya ? '#38bdf8' : undefined,
+                background: activePills.laya ? 'rgba(56, 189, 248, 0.18)' : undefined,
+                boxShadow: activePills.laya ? '0 0 12px rgba(56, 189, 248, 0.4)' : undefined
+              }}
+            >
+              🌀 Laya (लय)
+            </button>
+
+            <button
+              className={`action-pill ${activePills.jeev ? 'active' : ''}`}
+              onClick={() => togglePill('jeev')}
+              title="जीव (Jīva Mode): Living consciousness, proactive foresight, actionable vitality"
+              style={{
+                borderColor: activePills.jeev ? '#ec4899' : undefined,
+                color: activePills.jeev ? '#ec4899' : undefined,
+                background: activePills.jeev ? 'rgba(236, 72, 153, 0.18)' : undefined,
+                boxShadow: activePills.jeev ? '0 0 12px rgba(236, 72, 153, 0.4)' : undefined
+              }}
+            >
+              ⚡ Jīva (जीव)
+            </button>
+
             <button
               className={`action-pill ${activePills.attach ? 'active' : ''}`}
               onClick={() => {
@@ -462,6 +515,7 @@ export default function HeroSection({ currentIdentity, onSendPrompt, onOpenStudi
             >
               <Sparkles size={14} /> Think
             </button>
+
 
             {/* Multi-Lingual Language Selector */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 4, background: 'rgba(255,255,255,0.06)', borderRadius: 12, padding: '2px 8px' }}>
