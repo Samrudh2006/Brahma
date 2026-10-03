@@ -39,6 +39,11 @@ const progressiveSkills = require('../backend/services/progressiveSkillRegistry'
 const approvalGate = require('../backend/services/sovereignApprovalGate');
 const driftProbe = require('../backend/services/adversarialDriftProbeService');
 const auditLedger = require('../backend/services/hashChainedAuditLedger');
+const serviceOps = require('../backend/services/brahmaServiceOpsEngine');
+const agronomy = require('../backend/services/brahmaAgronomyEngine');
+const civilEngine = require('../backend/services/brahmaCivilEngine');
+const fleetLogistics = require('../backend/services/brahmaFleetLogisticsEngine');
+const publicAdmin = require('../backend/services/brahmaPublicAdminEngine');
 
 const testResults = {
   total: 0,
@@ -970,6 +975,157 @@ async function runAllTests() {
     );
   } catch (err) {
     assertTest('integration', 'Indra 10-Category × 100-Point Vulnerability Scorecard & Benchmark Catalog', false, err.message);
+  }
+
+  // Test 4.36: Brahma ServiceOps (Personal & Local Services)
+  try {
+    const existing = [{ id: 'bk_01', stylistId: 'stylist_priya', chairId: 'chair_03', startTime: '2026-10-04T10:00:00Z', endTime: '2026-10-04T11:00:00Z' }];
+    const slotConflict = serviceOps.allocateServiceSlot({
+      serviceId: 'PRECISION_HAIRCUT',
+      requestedStartTime: '2026-10-04T10:30:00Z',
+      stylistId: 'stylist_priya',
+      chairId: 'chair_03',
+      existingBookings: existing
+    });
+    const consumption = serviceOps.calculateTreatmentConsumption({
+      serviceId: 'HAIR_COLOR_BALAYAGE',
+      hairLength: 'LONG',
+      hairDensity: 'THICK'
+    });
+    const dynamicPrice = serviceOps.calculateDynamicPrice({
+      serviceId: 'HAIR_COLOR_BALAYAGE',
+      requestedTime: '2026-10-10T12:00:00Z', // Saturday peak hour
+      salonOccupancyRate: 0.85
+    });
+
+    assertTest(
+      'integration',
+      'Brahma ServiceOps Chair Allocation, Treatment Consumption & Dynamic Yield',
+      slotConflict.conflict === true && consumption.estimatedConsumption.colorDyeMl > 60 && dynamicPrice.finalPrice > dynamicPrice.basePrice,
+      `Chair conflict resolved with next open slot; color consumption scaled (${consumption.multiplier}x); weekend peak surge applied (₹${dynamicPrice.finalPrice})`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma ServiceOps Chair Allocation, Treatment Consumption & Dynamic Yield', false, err.message);
+  }
+
+  // Test 4.37: Brahma Agronomy & Precision Agriculture
+  try {
+    const npk = agronomy.calculateNPKDosage({
+      crop: 'WHEAT',
+      soilTestValuesKgPerHa: { availableN: 210, availableP: 14, availableK: 180 },
+      fieldAreaAcres: 5
+    });
+    const irrigation = agronomy.calculateIrrigationSchedule({
+      crop: 'WHEAT',
+      cropGrowthStage: 'FLOWERING',
+      referenceET0MmDay: 4.5
+    });
+    const mandi = agronomy.analyzeMandiPrices({
+      commodity: 'WHEAT',
+      currentMandiPrice: 2450,
+      terminalMarketPrice: 2700,
+      distanceKm: 120
+    });
+
+    assertTest(
+      'integration',
+      'Brahma Agronomy Soil NPK Balance, Irrigation Budget & APMC Price Arbitrage',
+      npk.commercialBagRequirements.urea45kgBags > 0 && irrigation.waterVolumeLitersPerAcre > 100000 && mandi.arbitrageSpreadPerQtl > 0,
+      `Calculated ${npk.commercialBagRequirements.urea45kgBags} Urea bags for 5 acres; irrigation depth ${irrigation.irrigationDepthPerCycleMm}mm; APMC net spread ₹${mandi.arbitrageSpreadPerQtl}/qtl`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Agronomy Soil NPK Balance, Irrigation Budget & APMC Price Arbitrage', false, err.message);
+  }
+
+  // Test 4.38: Brahma Civil & Structural Engineering
+  try {
+    const rcBeam = civilEngine.designRCSinglyReinforcedBeam({
+      widthB: 300,
+      effectiveDepthD: 500,
+      factoredMomentMuKnm: 180,
+      fck: 25,
+      fy: 500
+    });
+    const cpm = civilEngine.calculateCPMSchedule([
+      { id: 'Excavation', duration: 5, predecessors: [] },
+      { id: 'Foundation', duration: 10, predecessors: ['Excavation'] },
+      { id: 'Columns', duration: 8, predecessors: ['Foundation'] },
+      { id: 'SlabCasting', duration: 7, predecessors: ['Columns'] }
+    ]);
+    const concreteBOM = civilEngine.estimateConcreteMixBOM({
+      wetVolumeCum: 100,
+      mixGrade: 'M25'
+    });
+
+    assertTest(
+      'integration',
+      'Brahma Civil IS 456 RC Beam Design, CPM Critical Path & Concrete BOM',
+      rcBeam.designStatus === 'SINGLY_REINFORCED_ADEQUATE' && cpm.totalProjectDurationDays === 30 && concreteBOM.billOfQuantities.cementBags50kg > 500,
+      `IS 456 RC beam adequate with ${rcBeam.steelRequirements.recommendedBarCount}T20 bars; CPM duration: 30 days (4 critical tasks); Concrete BOM: ${concreteBOM.billOfQuantities.cementBags50kg} bags`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Civil IS 456 RC Beam Design, CPM Critical Path & Concrete BOM', false, err.message);
+  }
+
+  // Test 4.39: Brahma Fleet Logistics & Transportation
+  try {
+    const dispatchValid = fleetLogistics.evaluateDispatchPlan({
+      vehicleClass: 'MEDIUM_FREIGHT',
+      stops: ['Hub_A', 'Warehouse_B'],
+      cargoItems: [{ weightTonnes: 6.0, volumeCum: 20 }]
+    });
+    const dispatchOverload = fleetLogistics.evaluateDispatchPlan({
+      vehicleClass: 'LIGHT_COMMERCIAL',
+      stops: ['Hub_A'],
+      cargoItems: [{ weightTonnes: 8.0, volumeCum: 25 }] // Overload > 3.5t
+    });
+    const hosCheck = fleetLogistics.verifyHOSCompliance({
+      driverId: 'drv_test_01',
+      continuousDrivingMinutes: 310,
+      lastRestBreakDurationMinutes: 15
+    });
+    const fuelModel = fleetLogistics.calculateTonneKmFuelBurn({
+      distanceKm: 450,
+      cargoWeightTonnes: 16.0
+    });
+
+    assertTest(
+      'integration',
+      'Brahma Fleet GVW Capacity Validation, Driver HOS Safety & Tonne-Km Fuel Burn',
+      dispatchValid.dispatchAllowed === true && dispatchOverload.dispatchAllowed === false && hosCheck.compliant === false && fuelModel.carbonEmissionsKg > 100,
+      `Standard cargo approved; overload rejected; driver fatigue violation flagged (4.5h rule); 450km journey: ${fuelModel.totalFuelLiters}L diesel (${fuelModel.carbonEmissionsKg}kg CO2)`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Fleet GVW Capacity Validation, Driver HOS Safety & Tonne-Km Fuel Burn', false, err.message);
+  }
+
+  // Test 4.40: Brahma Public Administration & Government Operations
+  try {
+    const rtiDraft = publicAdmin.generateRTIApplication({
+      applicantName: 'Ramesh Sharma',
+      publicAuthority: 'Department of Telecommunications',
+      informationQueries: [
+        'Furnish certified copy of 5G spectrum allocation tender guidelines.',
+        'Provide all confidential cabinet papers on spectrum reserve pricing.'
+      ]
+    });
+    const tenderEval = publicAdmin.evaluateTenderCompliance({
+      tenderCriteria: { minTurnoverLakhs: 50, minYearsExperience: 3, mandatoryCertifications: ['ISO_9001'] },
+      bidderProfile: { averageTurnoverLakhs: 75, yearsInOperation: 5, certifications: ['ISO_9001', 'ISO_27001'], isMSMERegistered: true }
+    });
+    const grievance = publicAdmin.classifyCitizenGrievance({
+      grievanceCategory: 'POTABLE_WATER_SUPPLY_CONTAMINATION',
+      citizenLocation: 'Ward 14'
+    });
+
+    assertTest(
+      'integration',
+      'Brahma Public Admin RTI Section 6(1) Draft, GeM Tender & Citizen Grievance SLA',
+      rtiDraft.hasExemptionRisk === true && tenderEval.isTechnicallyQualified === true && tenderEval.emdExemptionEligible === true && grievance.priorityLevel === 'URGENT',
+      `RTI Form A generated with Section 8(1)(i) cabinet paper warning; GeM tender responsive (MSME EMD exempt); contamination assigned urgent 24h SLA`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Public Admin RTI Section 6(1) Draft, GeM Tender & Citizen Grievance SLA', false, err.message);
   }
 
   // ═════════════════════════════════════════════════════════════════════════════

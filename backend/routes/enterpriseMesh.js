@@ -445,4 +445,154 @@ router.get('/ledger/verify', (req, res) => {
   }
 });
 
+// ─── 14. Brahma ServiceOps (Personal & Local Services) ────────────────────────
+const serviceOps = require('../services/brahmaServiceOpsEngine');
+
+router.post('/serviceops/booking', (req, res) => {
+  try {
+    const result = serviceOps.allocateServiceSlot(req.body);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/serviceops/consumption', (req, res) => {
+  try {
+    const result = serviceOps.calculateTreatmentConsumption(req.body);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/serviceops/pricing', (req, res) => {
+  try {
+    const result = serviceOps.calculateDynamicPrice(req.body);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ─── 15. Brahma Agronomy & Rural Intelligence ─────────────────────────────────
+const agronomy = require('../services/brahmaAgronomyEngine');
+
+router.post('/agronomy/npk', (req, res) => {
+  try {
+    const result = agronomy.calculateNPKDosage(req.body);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/agronomy/irrigation', (req, res) => {
+  try {
+    const result = agronomy.calculateIrrigationSchedule(req.body);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/agronomy/mandi-spread', (req, res) => {
+  try {
+    const result = agronomy.analyzeMandiPrices(req.body);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ─── 16. Brahma Civil & Structural Engineering ────────────────────────────────
+const civilEngine = require('../services/brahmaCivilEngine');
+
+router.post('/civil/is456-design', (req, res) => {
+  try {
+    const result = civilEngine.designRCSinglyReinforcedBeam(req.body);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/civil/cpm-schedule', (req, res) => {
+  try {
+    const result = civilEngine.calculateCPMSchedule(req.body.tasks);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/civil/concrete-bom', (req, res) => {
+  try {
+    const result = civilEngine.estimateConcreteMixBOM(req.body);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ─── 17. Brahma Fleet Logistics & Transportation ──────────────────────────────
+const fleetLogistics = require('../services/brahmaFleetLogisticsEngine');
+
+router.post('/fleet/dispatch', (req, res) => {
+  try {
+    const result = fleetLogistics.evaluateDispatchPlan(req.body);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/fleet/hos-compliance', (req, res) => {
+  try {
+    const result = fleetLogistics.verifyHOSCompliance(req.body);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/fleet/fuel-burn', (req, res) => {
+  try {
+    const result = fleetLogistics.calculateTonneKmFuelBurn(req.body);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ─── 18. Brahma Public Administration & Government Operations ─────────────────
+const publicAdmin = require('../services/brahmaPublicAdminEngine');
+
+router.post('/publicadmin/rti-draft', (req, res) => {
+  try {
+    const result = publicAdmin.generateRTIApplication(req.body);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/publicadmin/tender-compliance', (req, res) => {
+  try {
+    const result = publicAdmin.evaluateTenderCompliance(req.body);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/publicadmin/grievance', (req, res) => {
+  try {
+    const result = publicAdmin.classifyCitizenGrievance(req.body);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 module.exports = router;
