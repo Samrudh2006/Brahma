@@ -2,7 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import {
   ArrowUp, Mic, Plus, Paperclip, Globe, Code, Brain,
   Check, Copy, Trash2, RefreshCw, ThumbsUp, ThumbsDown, X, Clock,
-  Volume2, VolumeX, Star, Sparkles, Languages, Download, Printer, FileDown
+  Volume2, VolumeX, Star, Sparkles, Languages, Download, Printer, FileDown,
+  FileText, Presentation
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -12,6 +13,7 @@ import { useAutoScroll } from '@hooks/index';
 import { IDENTITIES } from '@data/identities';
 import { lsGet, lsSet } from '@utils/index';
 import { SUPPORTED_LANGUAGES, speakText, stopSpeaking, createSpeechRecognizer } from '@utils/speech';
+import { exportToWordDocx, exportToPowerPoint } from '../utils/documentExport';
 
 // ─── Thought Block with Laya System-1 Intelligence ──────────────────────────
 function ThoughtBlock({ text }) {
@@ -93,7 +95,7 @@ function ThinkingIndicator({ identity }) {
 }
 
 // ─── Single Message ───────────────────────────────────────────────────────────
-function ChatMessage({ msg, identity, onCopy, onRerun, onFavorite, onSpeak, isSpeakingThis }) {
+function ChatMessage({ msg, identity, onCopy, onRerun, onFavorite, onSpeak, isSpeakingThis, onExportDocx, onExportPptx }) {
   const isUser = msg.sender === 'user';
   const avatarSrc = isUser ? '/assets/identities/brahma.png' : (msg.identity?.portrait || identity.portrait);
   const senderName = isUser ? 'You' : (msg.identity?.name || identity.name);
@@ -149,6 +151,22 @@ function ChatMessage({ msg, identity, onCopy, onRerun, onFavorite, onSpeak, isSp
               </button>
               <button className="msg-action-btn" onClick={() => onCopy(msg.text)} title="Copy">
                 <Copy size={12} /> Copy
+              </button>
+              <button 
+                className="msg-action-btn" 
+                onClick={() => onExportDocx(msg)} 
+                title="Download as Microsoft Word (.docx)"
+                style={{ color: '#93c5fd' }}
+              >
+                <FileText size={12} /> Word
+              </button>
+              <button 
+                className="msg-action-btn" 
+                onClick={() => onExportPptx(msg)} 
+                title="Download as PowerPoint Slides (.pptx)"
+                style={{ color: '#fcd34d' }}
+              >
+                <Presentation size={12} /> PPT
               </button>
               <button className="msg-action-btn" onClick={() => onRerun(msg)} title="Regenerate">
                 <RefreshCw size={12} /> Regenerate
@@ -362,6 +380,39 @@ export default function ChatView({ currentIdentity, messages, onSendMessage, isT
     URL.revokeObjectURL(url);
   };
 
+  const handleExportDocx = (msg) => {
+    const title = currentIdentity?.name ? `${currentIdentity.name} Document` : 'Brahma AI Document';
+    exportToWordDocx(msg.text, title);
+  };
+
+  const handleExportPptx = (msg) => {
+    const title = currentIdentity?.name ? `${currentIdentity.name} Presentation` : 'Brahma AI Presentation';
+    exportToPowerPoint(msg.text, title);
+  };
+
+  const handleExportSessionDocx = () => {
+    let docText = `# BRAHMA AI — Executive Intelligence Session\n\n`;
+    docText += `**Date:** ${new Date().toLocaleString()}\n`;
+    docText += `**Primary Intelligence:** ${currentIdentity.name}\n\n---\n\n`;
+
+    messages.forEach((m, idx) => {
+      const sender = m.sender === 'user' ? 'User Inquiry' : (m.identity?.name || currentIdentity.name);
+      docText += `## ${idx + 1}. ${sender}\n\n`;
+      docText += `${m.text}\n\n`;
+    });
+
+    exportToWordDocx(docText, `Brahma_Session_${Date.now()}`);
+  };
+
+  const handleExportSessionPptx = () => {
+    const aiResponses = messages
+      .filter((m) => m.sender !== 'user')
+      .map((m, idx) => `## Slide ${idx + 1}: ${m.identity?.name || currentIdentity.name}\n\n${m.text}`)
+      .join('\n\n');
+
+    exportToPowerPoint(aiResponses || '## Welcome to Brahma AI\n* Start a conversation to generate slide decks.', `Brahma_Slides_${Date.now()}`);
+  };
+
   const handlePrintChat = () => {
     window.print();
   };
@@ -437,6 +488,46 @@ export default function ChatView({ currentIdentity, messages, onSendMessage, isT
           </button>
 
           <button
+            onClick={handleExportSessionDocx}
+            style={{
+              background: 'transparent',
+              border: '1px solid rgba(59, 130, 246, 0.25)',
+              color: '#93c5fd',
+              borderRadius: 6,
+              padding: '4px 8px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 4,
+              fontSize: '0.72rem',
+              fontWeight: 600
+            }}
+            title="Download session as Microsoft Word (.docx)"
+          >
+            <FileText size={12} /> Word (.docx)
+          </button>
+
+          <button
+            onClick={handleExportSessionPptx}
+            style={{
+              background: 'transparent',
+              border: '1px solid rgba(245, 158, 11, 0.25)',
+              color: '#fcd34d',
+              borderRadius: 6,
+              padding: '4px 8px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 4,
+              fontSize: '0.72rem',
+              fontWeight: 600
+            }}
+            title="Download session as PowerPoint Deck (.pptx)"
+          >
+            <Presentation size={12} /> Slides (.pptx)
+          </button>
+
+          <button
             onClick={handlePrintChat}
             style={{
               background: 'transparent',
@@ -469,6 +560,8 @@ export default function ChatView({ currentIdentity, messages, onSendMessage, isT
             onFavorite={handleFavorite}
             onSpeak={handleToggleSpeak}
             isSpeakingThis={speakingMsgId === m.timestamp}
+            onExportDocx={handleExportDocx}
+            onExportPptx={handleExportPptx}
           />
         ))}
         {isThinking && <ThinkingIndicator identity={currentIdentity} />}
