@@ -40,6 +40,9 @@ import CookieConsentBanner from '@components/CookieConsentBanner';
 import PrivacyPolicyModal from '@components/PrivacyPolicyModal';
 import TermsOfServiceModal from '@components/TermsOfServiceModal';
 import NotFoundView from '@components/NotFoundView';
+import LiveVoiceOrbModal from '@components/LiveVoiceOrbModal';
+
+
 
 // Code-Split Heavyweight Studios for Maximum Performance & Instant Page Load Speed (Checklist #12)
 const AppBuilderStudio = lazy(() => import('@components/AppBuilderStudio'));
@@ -90,6 +93,8 @@ export default function App() {
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
   const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
+  const [isLiveVoiceOpen, setIsLiveVoiceOpen] = useState(false);
+
 
   // ─── Zustand store slices ────────────────────────────────────────────────
   const {
@@ -288,6 +293,7 @@ export default function App() {
             ollamaOnline={ollamaOnline}
             setActivePage={setActivePage}
             onToggleMobileSidebar={() => setIsMobileNavOpen(!isMobileNavOpen)}
+            onOpenLiveVoice={() => setIsLiveVoiceOpen(true)}
           />
         )}
 
@@ -304,8 +310,10 @@ export default function App() {
               onSendPrompt={handleSendPrompt}
               onOpenStudio={setActiveStudioModal}
               onSelectIdentity={setIdentity}
+              onOpenLiveVoice={() => setIsLiveVoiceOpen(true)}
             />
           )}
+
 
           {activePage === 'chat' && messages.length > 0 && (
             <ChatView
@@ -433,6 +441,15 @@ export default function App() {
       <CookieConsentBanner
         onOpenPrivacy={() => setIsPrivacyModalOpen(true)}
       />
+
+      {/* Live Hands-Free Telugu Voice Mode Modal */}
+      <LiveVoiceOrbModal
+        isOpen={isLiveVoiceOpen}
+        onClose={() => setIsLiveVoiceOpen(false)}
+        currentIdentity={currentIdentity}
+        onSendPrompt={handleSendPrompt}
+      />
     </div>
   );
+
 }

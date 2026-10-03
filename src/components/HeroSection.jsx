@@ -24,7 +24,14 @@ const QUICK_INDIC_PROMPTS = [
   { id: 'telugu-voice', label: '🗣️ తెలుగు వాడండి (Speak Telugu)', isVoice: true, lang: 'te-IN' }
 ];
 
-export default function HeroSection({ currentIdentity, onSendPrompt, onOpenStudio, onSelectIdentity }) {
+export default function HeroSection({
+  currentIdentity,
+  onSendPrompt,
+  onOpenStudio,
+  onSelectIdentity,
+  onOpenLiveVoice
+}) {
+
   const [inputText, setInputText] = useState('');
   const [activePills, setActivePills] = useState({ attach: false, search: false, code: false, think: false });
   const [attachedFiles, setAttachedFiles] = useState([]);
@@ -178,29 +185,15 @@ export default function HeroSection({ currentIdentity, onSendPrompt, onOpenStudi
 
   const handleChipClick = (chip) => {
     if (chip.isVoice) {
-      setSelectedVoiceLang('te-IN');
-      if (!isListening) {
-        const recognizer = createSpeechRecognizer(
-          'te-IN',
-          (res) => {
-            if (res.text) {
-              setInputText(prev => {
-                const cleaned = prev.replace(/\(Listening\.\.\.\)/g, '').trim();
-                return cleaned ? `${cleaned} ${res.text}` : res.text;
-              });
-            }
-          },
-          (listeningState) => setIsListening(listeningState),
-          (err) => console.warn('Telugu STT Error:', err)
-        );
-        if (recognizer) {
-          recognizerRef.current = recognizer;
-          recognizer.start();
-          setIsListening(true);
-        }
+      if (onOpenLiveVoice) {
+        onOpenLiveVoice();
+      } else {
+        setSelectedVoiceLang('te-IN');
+        toggleSpeechRecognition();
       }
       return;
     }
+
 
     if (chip.action === 'studio') {
       if (onOpenStudio) onOpenStudio('genesis');

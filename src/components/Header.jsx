@@ -18,8 +18,10 @@ export default function Header({
   theme,
   setTheme,
   setActivePage,
-  onToggleMobileSidebar
+  onToggleMobileSidebar,
+  onOpenLiveVoice
 }) {
+
   const [showThemeMenu, setShowThemeMenu] = useState(false);
   const [isDroneActive, setIsDroneActive] = useState(false);
   const [installPrompt, setInstallPrompt] = useState(null);
@@ -193,6 +195,23 @@ export default function Header({
         })()}
 
 
+        {/* Live Hands-Free Telugu Voice Mode Button */}
+        <button
+          className="icon-action-btn"
+          onClick={() => {
+            playTactileClick();
+            if (onOpenLiveVoice) onOpenLiveVoice();
+          }}
+          title="Open Hands-Free Continuous Telugu Voice Mode (No Buttons Needed)"
+          style={{
+            background: 'rgba(56, 189, 248, 0.15)',
+            border: '1px solid rgba(56, 189, 248, 0.45)',
+            color: '#38bdf8'
+          }}
+        >
+          <Mic size={17} />
+        </button>
+
         {/* PWA Install Native App Button */}
         <button
           className="icon-action-btn"
@@ -204,6 +223,7 @@ export default function Header({
         >
           <Smartphone size={17} />
         </button>
+
 
         {/* 4. Scheduled Tasks / History */}
         <button
