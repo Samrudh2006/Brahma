@@ -23,6 +23,18 @@ router.post('/synthesize', async (req, res) => {
   }
 });
 
+// POST /api/voice/stream — Low-latency streaming speech chunks (<80ms first chunk)
+router.post('/stream', async (req, res) => {
+  try {
+    const { text, deity = 'brahma', language = 'te', speed = 1.0, chunkSizeWords = 4 } = req.body;
+    if (!text) return res.status(400).json({ error: 'Text is required for streaming voice synthesis' });
+    const streamData = await voxCpmVoiceEngine.synthesizeStreamingSpeech({ text, deity, language, speed, chunkSizeWords });
+    res.json(streamData);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // POST /api/voice/clone — Zero-shot clone voice from reference sample
 router.post('/clone', async (req, res) => {
   try {

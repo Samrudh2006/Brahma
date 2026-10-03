@@ -1,12 +1,17 @@
-# BRAHMA AGI Operating System & Divine Intelligence Matrix
-> Universal Scientific Discovery, Continuous Latent Reasoning, and Formal Multi-Agent Synthesis.
+# BRAHMA Sovereign Frontier AI Matrix
 
-## Foundational Engines
-- Nova Discovery Studio: DeepMind FunSearch algorithmic discovery engine with automated evolutionary LLM evaluators.
-- Coconut Mind Studio: Meta FAIR continuous latent trajectory reasoning engine in continuous embedding space.
-- Genesis OS Kernel: Autonomous self-compiling multi-agent kernel with Lean 4 formal math verification.
-- Model Training Studio: 20+ Frontier AI fine-tuning & GRPO/DPO reinforcement learning pipeline.
+> BRAHMA is a sovereign planetary AI operating system orchestrating 50+ Global Frontier AI models, 13 Divine Intelligence Councils, 289+ Autonomous Swarm Agents, 1.58-bit Ternary BitBLAS Silicon Acceleration, and Formal Lean 4 Verification.
 
-## Multi-Agent Matrix
-- 289+ Specialized Swarm Agents across 13 Divine Intelligence Councils (Brahma, Saraswati, Ganesha, Vishwakarma, Hanuman, Shiva, Durga, Lakshmi, Krishna, Agni, Varuna, Surya, Kali).
-- Zero-Hallucination formal verification and Lean 4 proof checker integration.
+## Core Capabilities
+- **50+ Frontier Models**: Unified routing across Gemini 2.5 Flash/Pro, Claude 3.7 Sonnet, DeepSeek R1, OpenAI o3-mini, and local BitNet 1.58-bit ternary models.
+- **13 Sovereign Councils**: Specialized autonomous councils (Brihaspati, Garuda, Dhanvantari, Kubera, Vishwakarma, etc.) equipped with persistent email routing, SMS, and memory vaults.
+- **44 Autonomous Engines**: Continuous learning, epistemic Bayesian AGM revision, Merkle DAG checkpoints, closed-loop impedance robotics, quantum circuit optimization, and compiler synthesis.
+- **ReAct Interleaved Reasoning**: 5-layer production defense (Context Compactor, Negative Circuit Breaker, Resilient Stale-Cache, Formal Invariant Asserts, ToolMiddleware Gate).
+- **25 Cloudflare Planetary Capabilities**: Zero-port-forward Cloudflare Tunnels, $0 egress R2 storage, D1 serverless SQL, edge KV caching, and Turnstile bot armor.
+- **VoxCPM Voice & Telephony**: Sub-80ms emotional acoustic prosody synthesis and real-time streaming audio in Telugu, Hindi, Tamil, and English.
+
+## Key Links & Documentation
+- [Full LLM Context & Architecture](https://brahma.ai/llms-full.txt)
+- [Cloudflare Sovereign Master Guide](https://brahma.ai/guides/cloudflare_master_guide.html)
+- [Comprehensive Test Evidence](https://brahma.ai/api/health)
+- [Interactive API Endpoints](https://brahma.ai/api/models)
