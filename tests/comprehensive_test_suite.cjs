@@ -101,6 +101,12 @@ const symplecticPhysics = require('../backend/services/brahmaSymplecticHamiltoni
 const omniModalPerceiver = require('../backend/services/brahmaOmniModalPerceiverFusionEngine');
 const selfHealingHotPatch = require('../backend/services/brahmaSelfHealingHotPatchEngine');
 const didIdentityMesh = require('../backend/services/brahmaDidIdentityMeshEngine');
+const activeInference = require('../backend/services/brahmaActiveInferenceFepEngine');
+const blindRag = require('../backend/services/brahmaHomomorphicBlindRagEngine');
+const quantumAnnealingQubo = require('../backend/services/brahmaQuantumAnnealingQuboEngine');
+const tdaEngine = require('../backend/services/brahmaTopologicalDataAnalysisEngine');
+const quadraticGov = require('../backend/services/brahmaLiquidQuadraticGovernanceEngine');
+const dreamConsolidation = require('../backend/services/brahmaSynapticDreamConsolidationEngine');
 const goalCompiler = require('../backend/services/brahmaGoalCompilerEngine');
 const skillLibrary = require('../backend/services/brahmaSkillLibraryService');
 const crossExperimenter = require('../backend/services/brahmaCrossDomainExperimenter');
@@ -299,6 +305,30 @@ async function runAllTests() {
   // Test 1.25: Decentralized Identity (DID) & W3C Verifiable Credentials (W3C / Cambridge)
   const didRes = didIdentityMesh.issueVerifiableCredential({});
   assertTest('unit', 'Self-Sovereign Decentralized Identity (W3C DID)', didRes.success === true && didRes.isCryptographicallyValid === true, `Issued signed credential from ${didRes.issuerDid}`);
+
+  // Test 1.26: Active Inference & Free Energy Principle (Karl Friston Cybernetic Homeostasis)
+  const fepRes = activeInference.evaluateActiveInferenceLoop({});
+  assertTest('unit', 'Active Inference Free Energy Minimization (FEP)', fepRes.success === true && fepRes.variationalFreeEnergy > 0, `Variational free energy: ${fepRes.variationalFreeEnergy} (Action: ${fepRes.homeostaticAction})`);
+
+  // Test 1.27: Fully Homomorphic Blind Vector RAG (Microsoft Research CKKS Confidential Retrieval)
+  const blindRes = blindRag.searchBlindHomomorphicRAG({});
+  assertTest('unit', 'Fully Homomorphic Blind Vector RAG (FHE-Vector)', blindRes.success === true && blindRes.topMatches.length > 0, `Searched ${blindRes.totalEncryptedDocsSearched} encrypted documents with 100% blind privacy`);
+
+  // Test 1.28: Quantum Annealing QUBO Combinatorial Optimizer (D-Wave / MIT Ising Ground State)
+  const quboRes = quantumAnnealingQubo.solveQuboCombinatorialOptimization({});
+  assertTest('unit', 'Quantum Annealing QUBO Combinatorial Optimizer', quboRes.success === true && quboRes.optimalScheduledNodes.length > 0, `Solved ${quboRes.quboMatrixDimension} matrix in ${quboRes.solvingDurationMs}ms (Energy: ${quboRes.groundStateEnergy})`);
+
+  // Test 1.29: Topological Data Analysis & Persistent Homology (Stanford TDA Early-Warning Radar)
+  const tdaRes = tdaEngine.computePersistentHomology({});
+  assertTest('unit', 'Topological Data Analysis (TDA) Persistent Homology', tdaRes.success === true && tdaRes.bettiNumbers.beta_0 > 0, `Topological entropy: ${tdaRes.topologicalEntropy} (Betti numbers: beta_0=${tdaRes.bettiNumbers.beta_0}, beta_1=${tdaRes.bettiNumbers.beta_1})`);
+
+  // Test 1.30: Multi-Agent Liquid Quadratic Governance (Harvard / Vitalik Quadratic Voting)
+  const quadRes = quadraticGov.evaluateQuadraticProposalVote({});
+  assertTest('unit', 'Liquid Democracy Quadratic Voting Governance', quadRes.success === true && quadRes.proposalRecord.proposalPassed === true, `Quadratic proposal passed with ${quadRes.proposalRecord.totalForVotes} FOR votes (${quadRes.proposalRecord.totalCreditsConsumed} credits)`);
+
+  // Test 1.31: Synaptic Dream Memory Consolidation (DeepMind / Nature Neuroscience Replay)
+  const dreamRes = dreamConsolidation.executeSyntheticSleepConsolidation({});
+  assertTest('unit', 'Synaptic Sleep Memory Consolidation & Dreaming', dreamRes.success === true && dreamRes.crystallizedInsights.length > 0, `Consolidated ${dreamRes.totalTracesConsolidated} traces with ${dreamRes.memoryBloatReduction}`);
 
   // ═════════════════════════════════════════════════════════════════════════════
   // 2. WHITEBOX TESTING (AST Invariants, Code Paths & Branch Coverage)
