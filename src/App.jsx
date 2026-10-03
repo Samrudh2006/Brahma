@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, Suspense, lazy } from 'react';
 
 // Zustand stores (Phase 1 — centralized state)
 import { useAppStore, useIdentityStore, useChatStore, useNotificationsStore } from '@store/index';
@@ -10,11 +10,13 @@ import { useKeyPress, useBackendHealth } from '@hooks/index';
 import { saveChatSession, saveRecentPrompt } from '@utils/index';
 import { sendChatStream } from '@api/client';
 import { playDivineChime, playTactileClick } from '@utils/soundEffects';
+import { telemetry } from '@utils/telemetry';
+import { validatePromptInput, checkRateLimit } from '@utils/securityGuard';
 
 // Data
 import { INITIAL_NOTIFICATIONS } from '@data/notificationsData';
 
-// Components
+// Core UI Components
 import SplashScreen from '@components/SplashScreen';
 import Sidebar from '@components/Sidebar';
 import Header from '@components/Header';
@@ -32,26 +34,67 @@ import CommandPaletteModal from '@components/CommandPaletteModal';
 import SettingsModal from '@components/SettingsModal';
 import LivingBackground from '@components/LivingBackground';
 import BoardMembersView from '@components/BoardMembersView';
-import AppBuilderStudio from '@components/AppBuilderStudio';
-import LovableAppStudio from '@components/LovableAppStudio';
-import RemoteGatewayView from '@components/RemoteGatewayView';
-import ImageGenerationStudio from '@components/ImageGenerationStudio';
 import DharmaGovernanceView from '@components/DharmaGovernanceView';
-import NovaDiscoveryStudio from '@components/NovaDiscoveryStudio';
-import CoconutMindStudio from '@components/CoconutMindStudio';
-import GenesisOSStudio from '@components/GenesisOSStudio';
-import ModelTrainingStudio from '@components/ModelTrainingStudio';
+import RemoteGatewayView from '@components/RemoteGatewayView';
+import CookieConsentBanner from '@components/CookieConsentBanner';
+import PrivacyPolicyModal from '@components/PrivacyPolicyModal';
+import TermsOfServiceModal from '@components/TermsOfServiceModal';
+import NotFoundView from '@components/NotFoundView';
+
+// Code-Split Heavyweight Studios for Maximum Performance & Instant Page Load Speed (Checklist #12)
+const AppBuilderStudio = lazy(() => import('@components/AppBuilderStudio'));
+const LovableAppStudio = lazy(() => import('@components/LovableAppStudio'));
+const ImageGenerationStudio = lazy(() => import('@components/ImageGenerationStudio'));
+const NovaDiscoveryStudio = lazy(() => import('@components/NovaDiscoveryStudio'));
+const CoconutMindStudio = lazy(() => import('@components/CoconutMindStudio'));
+const GenesisOSStudio = lazy(() => import('@components/GenesisOSStudio'));
+const ModelTrainingStudio = lazy(() => import('@components/ModelTrainingStudio'));
 
 import '@styles/index.css';
 
+// Lightweight fallback loader for studios
+function StudioLoader() {
+  return (
+    <div style={{
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      minHeight: '60vh',
+      color: '#d4af37',
+      fontFamily: "'Cinzel', serif",
+      letterSpacing: '0.1em',
+      fontSize: '0.95rem'
+    }}>
+      <div style={{
+        width: 32,
+        height: 32,
+        border: '2px solid rgba(212, 175, 55, 0.2)',
+        borderTopColor: '#d4af37',
+        borderRadius: '50%',
+        animation: 'spin 0.8s linear infinite',
+        marginRight: 16
+      }} />
+      Materializing Sovereign Studio Matrix...
+    </div>
+  );
+}
+
+const VALID_PAGES = [
+  'chat', 'notifications', 'board', 'app-builder', 'remote-gateway',
+  'image-studio', 'skills', 'projects', 'tools', 'favorites',
+  'scheduled', 'connections', 'governance'
+];
+
 export default function App() {
-  const [activeStudioModal, setActiveStudioModal] = React.useState(null); // 'discovery' | 'coconut' | 'genesis' | 'training' | null
-  const [isMobileNavOpen, setIsMobileNavOpen] = React.useState(false);
+  const [activeStudioModal, setActiveStudioModal] = useState(null); // 'discovery' | 'coconut' | 'genesis' | 'training' | null
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+  const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
+  const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
 
   // ─── Zustand store slices ────────────────────────────────────────────────
   const {
     activePage, setActivePage,
-    theme,
+    theme, setTheme,
     isIdentityModalOpen, setIdentityModal,
     isCommandPaletteOpen, setCommandPalette,
     isSettingsModalOpen, setSettingsModal,
@@ -60,18 +103,23 @@ export default function App() {
   } = useAppStore();
 
   const { currentIdentity, setIdentity } = useIdentityStore();
-
   const { messages, isThinking, addMessage, clearMessages, setThinking } = useChatStore();
-
-  const {
-    notifications, setNotifications, markAllRead, unreadCount,
-  } = useNotificationsStore();
+  const { notifications, setNotifications, markAllRead, unreadCount } = useNotificationsStore();
 
   // ─── Backend health check ─────────────────────────────────────────────────
   const { backendOnline, ollamaOnline } = useBackendHealth();
   useEffect(() => {
     setBackendStatus(backendOnline, ollamaOnline);
   }, [backendOnline, ollamaOnline, setBackendStatus]);
+
+  // ─── Theme Synchronization ───────────────────────────────────────────────
+  useEffect(() => {
+    if (theme && theme !== 'obsidian') {
+      document.documentElement.setAttribute('data-theme', theme);
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
+  }, [theme]);
 
   // ─── Seed notifications if empty ─────────────────────────────────────────
   useEffect(() => {
@@ -80,25 +128,74 @@ export default function App() {
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // ─── Telemetry Page View & Title Synchronization ────────────────────────
+  useEffect(() => {
+    telemetry.trackPageView(activePage);
+    const titleBase = 'BRAHMA — Supreme Frontier AI Ecosystem';
+    if (activePage === 'chat') {
+      document.title = `${titleBase} & Workspace`;
+    } else {
+      const pageTitle = activePage.charAt(0).toUpperCase() + activePage.slice(1).replace('-', ' ');
+      document.title = `${pageTitle} | ${titleBase}`;
+    }
+  }, [activePage]);
+
+  // ─── URL Hash Navigation (#privacy, #terms, #governance, etc.) ─────────────
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '');
+      if (hash === 'privacy') {
+        setIsPrivacyModalOpen(true);
+      } else if (hash === 'terms') {
+        setIsTermsModalOpen(true);
+      } else if (hash && VALID_PAGES.includes(hash)) {
+        setActivePage(hash);
+      }
+    };
+    handleHashChange();
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, [setActivePage]);
+
   // ─── Keyboard shortcuts ───────────────────────────────────────────────────
   useKeyPress('k', () => setCommandPalette(true), true);   // Ctrl+K
   useKeyPress('Escape', () => {
     setIdentityModal(false);
     setCommandPalette(false);
     setSettingsModal(false);
+    setIsPrivacyModalOpen(false);
+    setIsTermsModalOpen(false);
+    setActiveStudioModal(null);
   });
 
-  // ─── Core chat handler (Live SSE streaming with backend) ─────────────────
+  // ─── Core chat handler (Live SSE streaming with validation & anti-spam) ───
   const handleSendPrompt = (text, pills = {}) => {
-    if (!text.trim()) return;
+    // Anti-spam / Burst Rate Limiting (Checklist #18)
+    const rateCheck = checkRateLimit();
+    if (!rateCheck.allowed) {
+      alert(rateCheck.error || 'Please wait a moment before sending more queries.');
+      return;
+    }
 
+    // Input Validation & Script Sanitization (Checklist #17)
+    const val = validatePromptInput(text, { minLength: 1, maxLength: 10000 });
+    if (!val.valid) {
+      alert(val.error);
+      return;
+    }
+
+    const cleanText = val.sanitized;
     playTactileClick();
-    const userMsg = { sender: 'user', text, timestamp: new Date().toISOString() };
+
+    // Telemetry Event
+    telemetry.track('prompt_dispatched', { identity: currentIdentity?.id, length: cleanText.length });
+
+    const userMsg = { sender: 'user', text: cleanText, timestamp: new Date().toISOString() };
     const updatedMessages = [...messages, userMsg];
     addMessage(userMsg);
     setActivePage('chat');
     setThinking(true);
-    saveRecentPrompt(text);
+    saveRecentPrompt(cleanText);
 
     let accumulatedText = '';
     let thoughtText = `[${currentIdentity.name} REASONING] Processing via ${currentIdentity.id} intelligence council...`;
@@ -136,7 +233,7 @@ export default function App() {
         // Fallback response if offline
         const fallbackMsg = {
           sender: 'assistant',
-          text: `**[${currentIdentity.name} Synthesis]**\n\n${currentIdentity.philosophy}\n\n*Query:* "${text}"\n\nI have analyzed this through the **${currentIdentity.name} Intelligence** domain. The 289+ Specialized Swarm Agents are active across all 13 Councils. Connect a local Ollama instance or set \`HF_API_TOKEN\` in \`backend/.env\` for full uncapped neural generation.`,
+          text: `**[${currentIdentity.name} Synthesis]**\n\n${currentIdentity.philosophy}\n\n*Query:* "${cleanText}"\n\nI have analyzed this through the **${currentIdentity.name} Intelligence** domain. The 289+ Specialized Swarm Agents are active across all 13 Councils. Connect a local Ollama instance or set \`HF_API_TOKEN\` in \`backend/.env\` for full uncapped neural generation.`,
           identity: currentIdentity,
           thought: `[${currentIdentity.name} INVARIANCE] Verification checks passed across 289 domain agents.`,
           timestamp: new Date().toISOString(),
@@ -155,6 +252,8 @@ export default function App() {
     setActivePage('chat');
   };
 
+  const isKnownPage = VALID_PAGES.includes(activePage);
+
   return (
     <div className="brahma-app-container">
       {/* Living Dynamic Background */}
@@ -169,6 +268,8 @@ export default function App() {
         setActivePage={setActivePage}
         unreadNotificationsCount={unreadCount()}
         onOpenSettings={() => setSettingsModal(true)}
+        onOpenPrivacy={() => setIsPrivacyModalOpen(true)}
+        onOpenTerms={() => setIsTermsModalOpen(true)}
         onNewChat={handleNewChat}
         currentIdentity={currentIdentity}
         mobileOpen={isMobileNavOpen}
@@ -182,6 +283,7 @@ export default function App() {
             onOpenIdentityModal={() => setIdentityModal(true)}
             onOpenCommandPalette={() => setCommandPalette(true)}
             theme={theme}
+            setTheme={setTheme}
             backendOnline={backendOnline}
             ollamaOnline={ollamaOnline}
             setActivePage={setActivePage}
@@ -189,100 +291,109 @@ export default function App() {
           />
         )}
 
-        {/* Page Views */}
-        {activePage === 'chat' && messages.length === 0 && (
-          <HeroSection
-            currentIdentity={currentIdentity}
-            onSendPrompt={handleSendPrompt}
-            onOpenStudio={setActiveStudioModal}
-            onSelectIdentity={setIdentity}
-          />
+        {/* Dynamic Fallback 404 View (Checklist #15) */}
+        {!isKnownPage && (
+          <NotFoundView onGoHome={() => setActivePage('chat')} />
         )}
 
-        {activePage === 'chat' && messages.length > 0 && (
-          <ChatView
-            currentIdentity={currentIdentity}
-            messages={messages}
-            onSendMessage={handleSendPrompt}
-            isThinking={isThinking}
-            onNewChat={handleNewChat}
-            onSelectIdentity={setIdentity}
-          />
-        )}
+        {/* Page Views with Suspense */}
+        <Suspense fallback={<StudioLoader />}>
+          {activePage === 'chat' && messages.length === 0 && (
+            <HeroSection
+              currentIdentity={currentIdentity}
+              onSendPrompt={handleSendPrompt}
+              onOpenStudio={setActiveStudioModal}
+              onSelectIdentity={setIdentity}
+            />
+          )}
 
-        {activePage === 'notifications' && (
-          <NotificationsView
-            notifications={notifications}
-            onMarkAllRead={markAllRead}
-          />
-        )}
+          {activePage === 'chat' && messages.length > 0 && (
+            <ChatView
+              currentIdentity={currentIdentity}
+              messages={messages}
+              onSendMessage={handleSendPrompt}
+              isThinking={isThinking}
+              onNewChat={handleNewChat}
+              onSelectIdentity={setIdentity}
+            />
+          )}
 
-        {activePage === 'board' && (
-          <BoardMembersView
-            onSelectIdentity={setIdentity}
-            onSendPrompt={handleSendPrompt}
-            setActivePage={setActivePage}
-          />
-        )}
-        {activePage === 'app-builder' && (
-          <LovableAppStudio onClose={() => setActivePage('chat')} />
-        )}
-        {activePage === 'remote-gateway' && (
-          <RemoteGatewayView />
-        )}
-        {activePage === 'image-studio' && (
-          <ImageGenerationStudio onClose={() => setActivePage('chat')} />
-        )}
-        {activePage === 'skills' && <SkillsView onLaunchStudio={setActiveStudioModal} />}
-        {activePage === 'projects' && <ProjectsView onOpenDiscovery={() => setActiveStudioModal('discovery')} />}
-        {activePage === 'tools' && <ToolsView onOpenStudio={setActiveStudioModal} />}
-        {activePage === 'favorites' && <FavoritesView />}
-        {activePage === 'scheduled' && <ScheduledTasksView onOpenGenesis={() => setActiveStudioModal('genesis')} />}
-        {activePage === 'connections' && <ConnectionsView />}
-        {activePage === 'governance' && <DharmaGovernanceView />}
+          {activePage === 'notifications' && (
+            <NotificationsView
+              notifications={notifications}
+              onMarkAllRead={markAllRead}
+            />
+          )}
+
+          {activePage === 'board' && (
+            <BoardMembersView
+              onSelectIdentity={setIdentity}
+              onSendPrompt={handleSendPrompt}
+              setActivePage={setActivePage}
+            />
+          )}
+          {activePage === 'app-builder' && (
+            <LovableAppStudio onClose={() => setActivePage('chat')} />
+          )}
+          {activePage === 'remote-gateway' && (
+            <RemoteGatewayView />
+          )}
+          {activePage === 'image-studio' && (
+            <ImageGenerationStudio onClose={() => setActivePage('chat')} />
+          )}
+          {activePage === 'skills' && <SkillsView onLaunchStudio={setActiveStudioModal} />}
+          {activePage === 'projects' && <ProjectsView onOpenDiscovery={() => setActiveStudioModal('discovery')} />}
+          {activePage === 'tools' && <ToolsView onOpenStudio={setActiveStudioModal} />}
+          {activePage === 'favorites' && <FavoritesView />}
+          {activePage === 'scheduled' && <ScheduledTasksView onOpenGenesis={() => setActiveStudioModal('genesis')} />}
+          {activePage === 'connections' && <ConnectionsView />}
+          {activePage === 'governance' && <DharmaGovernanceView />}
+        </Suspense>
       </main>
 
-      {/* AGI Frontier Engine Studios */}
-      {activeStudioModal === 'discovery' && (
-        <NovaDiscoveryStudio onClose={() => setActiveStudioModal(null)} />
-      )}
-      {activeStudioModal === 'coconut' && (
-        <CoconutMindStudio onClose={() => setActiveStudioModal(null)} />
-      )}
-      {activeStudioModal === 'genesis' && (
-        <GenesisOSStudio onClose={() => setActiveStudioModal(null)} />
-      )}
-      {activeStudioModal === 'builder' && (
-        <AppBuilderStudio onClose={() => setActiveStudioModal(null)} />
-      )}
-      {(activeStudioModal === 'image-studio' || activeStudioModal === 'image') && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(1,2,4,0.85)', backdropFilter: 'blur(12px)', padding: 30, overflowY: 'auto' }}>
-          <div style={{ maxWidth: 1400, margin: '0 auto', position: 'relative' }}>
-            <button
-              onClick={() => setActiveStudioModal(null)}
-              style={{ position: 'absolute', right: 0, top: 0, background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', padding: '6px 14px', borderRadius: 8, cursor: 'pointer', zIndex: 10 }}
-            >
-              ✕ Close Studio
-            </button>
-            <ImageGenerationStudio onClose={() => setActiveStudioModal(null)} />
+      {/* AGI Frontier Engine Studios (Code-Split Lazy Modals) */}
+      <Suspense fallback={<StudioLoader />}>
+        {activeStudioModal === 'discovery' && (
+          <NovaDiscoveryStudio onClose={() => setActiveStudioModal(null)} />
+        )}
+        {activeStudioModal === 'coconut' && (
+          <CoconutMindStudio onClose={() => setActiveStudioModal(null)} />
+        )}
+        {activeStudioModal === 'genesis' && (
+          <GenesisOSStudio onClose={() => setActiveStudioModal(null)} />
+        )}
+        {activeStudioModal === 'builder' && (
+          <AppBuilderStudio onClose={() => setActiveStudioModal(null)} />
+        )}
+        {(activeStudioModal === 'image-studio' || activeStudioModal === 'image') && (
+          <div style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(1,2,4,0.85)', backdropFilter: 'blur(12px)', padding: 30, overflowY: 'auto' }}>
+            <div style={{ maxWidth: 1400, margin: '0 auto', position: 'relative' }}>
+              <button
+                onClick={() => setActiveStudioModal(null)}
+                style={{ position: 'absolute', right: 0, top: 0, background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', padding: '6px 14px', borderRadius: 8, cursor: 'pointer', zIndex: 10 }}
+              >
+                ✕ Close Studio
+              </button>
+              <ImageGenerationStudio onClose={() => setActiveStudioModal(null)} />
+            </div>
           </div>
-        </div>
-      )}
-      {activeStudioModal === 'training' && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(1,2,4,0.85)', backdropFilter: 'blur(12px)', padding: 40, overflowY: 'auto' }}>
-          <div style={{ maxWidth: 1200, margin: '0 auto', position: 'relative' }}>
-            <button
-              onClick={() => setActiveStudioModal(null)}
-              style={{ position: 'absolute', right: 0, top: 0, background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', padding: '6px 14px', borderRadius: 8, cursor: 'pointer', zIndex: 10 }}
-            >
-              ✕ Close Studio
-            </button>
-            <ModelTrainingStudio />
+        )}
+        {activeStudioModal === 'training' && (
+          <div style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(1,2,4,0.85)', backdropFilter: 'blur(12px)', padding: 40, overflowY: 'auto' }}>
+            <div style={{ maxWidth: 1200, margin: '0 auto', position: 'relative' }}>
+              <button
+                onClick={() => setActiveStudioModal(null)}
+                style={{ position: 'absolute', right: 0, top: 0, background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', padding: '6px 14px', borderRadius: 8, cursor: 'pointer', zIndex: 10 }}
+              >
+                ✕ Close Studio
+              </button>
+              <ModelTrainingStudio />
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </Suspense>
 
-      {/* Modals */}
+      {/* Core Modals */}
       {isIdentityModalOpen && (
         <IdentitySelectorModal
           currentIdentity={currentIdentity}
@@ -305,6 +416,23 @@ export default function App() {
           onReplaySplash={replaySplash}
         />
       )}
+
+      {/* Privacy Policy Modal (Checklist #1) */}
+      <PrivacyPolicyModal
+        isOpen={isPrivacyModalOpen}
+        onClose={() => setIsPrivacyModalOpen(false)}
+      />
+
+      {/* Terms of Service Modal (Checklist #2) */}
+      <TermsOfServiceModal
+        isOpen={isTermsModalOpen}
+        onClose={() => setIsTermsModalOpen(false)}
+      />
+
+      {/* Cookie Consent Banner (Checklist #5) */}
+      <CookieConsentBanner
+        onOpenPrivacy={() => setIsPrivacyModalOpen(true)}
+      />
     </div>
   );
 }

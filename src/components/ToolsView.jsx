@@ -7,10 +7,10 @@ import {
   HardDrive, Filter, Dna, Cloud, Flame, Globe, Compass, Radio, CreditCard, HeartPulse
 } from 'lucide-react';
 import { INITIAL_TOOLS } from '@data/toolsData';
-import NovaDiscoveryStudio from './NovaDiscoveryStudio';
-import CoconutMindStudio from './CoconutMindStudio';
-import GenesisOSStudio from './GenesisOSStudio';
-import ModelTrainingStudio from './ModelTrainingStudio';
+const NovaDiscoveryStudio = React.lazy(() => import('./NovaDiscoveryStudio'));
+const CoconutMindStudio = React.lazy(() => import('./CoconutMindStudio'));
+const GenesisOSStudio = React.lazy(() => import('./GenesisOSStudio'));
+const ModelTrainingStudio = React.lazy(() => import('./ModelTrainingStudio'));
 
 // ─── ICON MAPPING ─────────────────────────────────────────────────────────────
 const ICON_MAP = {
@@ -437,15 +437,17 @@ export default function ToolsView() {
         </div>
       ) : (
         <div style={{ background: 'var(--bg-dark-card)', border: '1px solid var(--bg-glass-border)', borderRadius: 'var(--r-lg)', padding: 20 }}>
-          {activeToolId === 'training' && <ModelTrainingStudio />}
-          {activeToolId === 'nova' && <NovaDiscoveryStudio />}
-          {activeToolId === 'coconut' && <CoconutMindStudio />}
-          {activeToolId === 'genesis' && <GenesisOSStudio />}
-          {activeToolId === 'json' && <JsonFormatter />}
-          {activeToolId === 'regex' && <RegexTester />}
-          {activeToolObj && !['training', 'nova', 'coconut', 'genesis', 'json', 'regex'].includes(activeToolId) && (
-            <LiveEngineSandbox tool={activeToolObj} onClose={() => setActiveToolId(null)} />
-          )}
+          <React.Suspense fallback={<div style={{ padding: 30, textAlign: 'center', color: '#d4af37', fontFamily: "'Cinzel', serif" }}>Materializing Tool Matrix...</div>}>
+            {activeToolId === 'training' && <ModelTrainingStudio />}
+            {activeToolId === 'nova' && <NovaDiscoveryStudio />}
+            {activeToolId === 'coconut' && <CoconutMindStudio />}
+            {activeToolId === 'genesis' && <GenesisOSStudio />}
+            {activeToolId === 'json' && <JsonFormatter />}
+            {activeToolId === 'regex' && <RegexTester />}
+            {activeToolObj && !['training', 'nova', 'coconut', 'genesis', 'json', 'regex'].includes(activeToolId) && (
+              <LiveEngineSandbox tool={activeToolObj} onClose={() => setActiveToolId(null)} />
+            )}
+          </React.Suspense>
         </div>
       )}
     </div>

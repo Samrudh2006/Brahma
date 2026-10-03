@@ -11,6 +11,8 @@ export default function Sidebar({
   setActivePage,
   unreadNotificationsCount = 3,
   onOpenSettings,
+  onOpenPrivacy,
+  onOpenTerms,
   onNewChat,
   currentIdentity,
   mobileOpen = false,
@@ -282,6 +284,27 @@ export default function Sidebar({
             </button>
           )}
         </div>
+        {!collapsed && (
+          <div style={{ display: 'flex', gap: '8px', fontSize: '0.68rem', color: '#64748b', marginTop: '10px', justifyContent: 'center', alignItems: 'center' }}>
+            <button
+              onClick={() => { if (onOpenPrivacy) onOpenPrivacy(); if (onMobileClose) onMobileClose(); }}
+              style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: '0.68rem', padding: 0 }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = '#fbbf24'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = '#94a3b8'; }}
+            >
+              Privacy Policy
+            </button>
+            <span style={{ opacity: 0.4 }}>•</span>
+            <button
+              onClick={() => { if (onOpenTerms) onOpenTerms(); if (onMobileClose) onMobileClose(); }}
+              style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: '0.68rem', padding: 0 }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = '#fbbf24'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = '#94a3b8'; }}
+            >
+              Terms of Service
+            </button>
+          </div>
+        )}
       </div>
     </aside>
     </>

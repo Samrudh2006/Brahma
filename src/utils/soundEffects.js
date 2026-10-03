@@ -1,16 +1,17 @@
 /**
- * BRAHMA Soundscape & Sacred Acoustic Frequency Synthesizer
- * Built entirely with native Web Audio API (Zero external audio files, Zero latency).
- * Features:
- * - 432 Hz "AUM / Pranava" Harmonic Meditative Drone with Binaural Beat (432Hz + 434Hz)
- * - Divine Crystal Chime on Message Send / Response
- * - Subtle Micro-Haptic Click on UI interactions
+ * BRAHMA Sacred Soundscape & Cinematic Ambient Synthesizer
+ * Built with native Web Audio API (Zero external audio files, Zero latency).
+ *
+ * Sound Architecture:
+ * - 136.1 Hz "Anahata / Cosmic Om" Harmonic Foundation (Sa-Pa Vedic Tanpura Chord)
+ * - Binaural Alpha-Theta Entrainment with gentle micro-detuned phase waves
+ * - LFO-driven Resonant Filter Swell (Slow meditative breathing cycle)
+ * - Stereo Spatial Reverb/Delay Simulation for temple acoustic depth
+ * - Crystalline Solfeggio Chimes on interactive events
  */
 
 let audioCtx = null;
-let droneOsc1 = null;
-let droneOsc2 = null;
-let droneSub = null;
+let activeNodes = [];
 let droneGain = null;
 let isDronePlaying = false;
 
@@ -41,19 +42,17 @@ export function playTactileClick() {
 
     osc.type = 'sine';
     osc.frequency.setValueAtTime(800, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + 0.03);
+    osc.frequency.exponentialRampToValueAtTime(160, ctx.currentTime + 0.035);
 
-    gain.gain.setValueAtTime(0.06, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.03);
+    gain.gain.setValueAtTime(0.05, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.035);
 
     osc.connect(gain);
     gain.connect(ctx.destination);
 
     osc.start();
-    osc.stop(ctx.currentTime + 0.03);
-  } catch (_) {
-    // Ignore audio autoplay restrictions
-  }
+    osc.stop(ctx.currentTime + 0.035);
+  } catch (_) {}
 }
 
 /**
@@ -65,31 +64,30 @@ export function playDivineChime() {
     if (!ctx) return;
 
     const now = ctx.currentTime;
-    const freqs = [528, 660, 792]; // Solfeggio 528Hz Transformation chord
+    // Solfeggio 528Hz (Love/Transformation) & 852Hz (Spiritual Intuition)
+    const freqs = [528, 660, 792, 1056];
 
     freqs.forEach((freq, idx) => {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
 
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, now + idx * 0.04);
+      osc.frequency.setValueAtTime(freq, now + idx * 0.05);
 
-      gain.gain.setValueAtTime(0.05, now + idx * 0.04);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.04 + 0.8);
+      gain.gain.setValueAtTime(0.04, now + idx * 0.05);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.05 + 1.2);
 
       osc.connect(gain);
       gain.connect(ctx.destination);
 
-      osc.start(now + idx * 0.04);
-      osc.stop(now + idx * 0.04 + 0.85);
+      osc.start(now + idx * 0.05);
+      osc.stop(now + idx * 0.05 + 1.25);
     });
-  } catch (_) {
-    // Ignore
-  }
+  } catch (_) {}
 }
 
 /**
- * Toggle Sacred 432 Hz Drone (Continuous meditative acoustic grounding)
+ * Toggle Sacred Meditative Ambient Drone
  */
 export function toggleAmbientDrone(callback) {
   try {
@@ -106,75 +104,109 @@ export function toggleAmbientDrone(callback) {
       return true;
     }
   } catch (err) {
-    console.warn('Drone toggle error:', err);
+    console.warn('Ambient drone error:', err);
     return false;
   }
 }
 
+/**
+ * Start Rich Multi-Layered Vedic Temple Soundscape
+ */
 export function startAmbientDrone() {
   const ctx = getAudioContext();
   if (!ctx || isDronePlaying) return;
 
   const now = ctx.currentTime;
+  activeNodes = [];
 
-  // Master Drone Gain Node with soft fade-in
+  // Master Gain with 2.5s silky fade-in
   droneGain = ctx.createGain();
   droneGain.gain.setValueAtTime(0.0001, now);
-  droneGain.gain.linearRampToValueAtTime(0.045, now + 2.0); // Gentle 2s fade-in
+  droneGain.gain.linearRampToValueAtTime(0.055, now + 2.5);
 
-  // Lowpass filter for warm temple acoustic resonance
+  // Warm Temple Lowpass Filter with gentle resonance
   const filter = ctx.createBiquadFilter();
   filter.type = 'lowpass';
-  filter.frequency.setValueAtTime(450, now);
+  filter.frequency.setValueAtTime(380, now);
+  filter.Q.setValueAtTime(1.8, now);
 
-  // Oscillator 1: 432 Hz (Universal Harmonic Resonance)
-  droneOsc1 = ctx.createOscillator();
-  droneOsc1.type = 'sine';
-  droneOsc1.frequency.setValueAtTime(216, now); // Sub-octave 216 Hz
+  // LFO: Slow breathing filter sweep (0.08 Hz = 12.5 second breath cycle)
+  const lfo = ctx.createOscillator();
+  const lfoGain = ctx.createGain();
+  lfo.frequency.setValueAtTime(0.08, now);
+  lfoGain.gain.setValueAtTime(120, now);
+  lfo.connect(lfoGain);
+  lfoGain.connect(filter.frequency);
+  lfo.start(now);
+  activeNodes.push(lfo);
 
-  // Oscillator 2: 432 Hz root
-  droneOsc2 = ctx.createOscillator();
-  droneOsc2.type = 'sine';
-  droneOsc2.frequency.setValueAtTime(432, now);
+  // Delay / Echo node for vast spatial temple resonance
+  const delay = ctx.createDelay();
+  delay.delayTime.setValueAtTime(0.38, now);
+  const delayFeedback = ctx.createGain();
+  delayFeedback.gain.setValueAtTime(0.28, now);
+  delay.connect(delayFeedback);
+  delayFeedback.connect(delay);
+  delay.connect(droneGain);
 
-  // Oscillator 3: Sub-bass 108 Hz (Sacred 108)
-  droneSub = ctx.createOscillator();
-  droneSub.type = 'sine';
-  droneSub.frequency.setValueAtTime(108, now);
+  // ─── Harmonic Tanpura Voicing (Root Om 136.1 Hz, Pa 204.15 Hz, Octave 272.2 Hz) ───
+  const harmonics = [
+    { freq: 68.05,  type: 'sine',     detune: 0,    vol: 0.70 }, // Deep Root Earth Sub
+    { freq: 136.10, type: 'triangle', detune: -1.5, vol: 0.60 }, // Fundamental Sa (Om)
+    { freq: 136.10, type: 'sine',     detune: 2.0,  vol: 0.50 }, // Binaural phase movement
+    { freq: 204.15, type: 'sine',     detune: -1.0, vol: 0.40 }, // Sacred Pa (Divine Fifth)
+    { freq: 272.20, type: 'triangle', detune: 1.5,  vol: 0.35 }, // Higher Octave Sa
+    { freq: 408.30, type: 'sine',     detune: -2.0, vol: 0.20 }, // Shimmer Upper Fifth
+    { freq: 544.40, type: 'sine',     detune: 3.0,  vol: 0.15 }, // Celestial Crystal Overtones
+  ];
 
-  // Connect nodes
-  droneOsc1.connect(filter);
-  droneOsc2.connect(filter);
-  droneSub.connect(filter);
+  harmonics.forEach(({ freq, type, detune, vol }) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, now);
+    osc.detune.setValueAtTime(detune, now);
+
+    gain.gain.setValueAtTime(vol, now);
+
+    osc.connect(gain);
+    gain.connect(filter);
+
+    osc.start(now);
+    activeNodes.push(osc);
+  });
+
+  // Connect filter to delay and master gain
   filter.connect(droneGain);
+  filter.connect(delay);
   droneGain.connect(ctx.destination);
-
-  droneOsc1.start();
-  droneOsc2.start();
-  droneSub.start();
 
   isDronePlaying = true;
 }
 
+/**
+ * Stop Soundscape with smooth 1.5s fade-out
+ */
 export function stopAmbientDrone() {
   if (!isDronePlaying || !droneGain) return;
   const ctx = getAudioContext();
   if (!ctx) return;
 
   const now = ctx.currentTime;
-  droneGain.gain.linearRampToValueAtTime(0.0001, now + 1.2); // 1.2s smooth fade-out
+  droneGain.gain.linearRampToValueAtTime(0.0001, now + 1.5);
 
   setTimeout(() => {
     try {
-      droneOsc1?.stop();
-      droneOsc2?.stop();
-      droneSub?.stop();
-      droneOsc1?.disconnect();
-      droneOsc2?.disconnect();
-      droneSub?.disconnect();
+      activeNodes.forEach(node => {
+        try { node.stop(); } catch (_) {}
+        try { node.disconnect(); } catch (_) {}
+      });
+      activeNodes = [];
+      droneGain?.disconnect();
     } catch (_) {}
     isDronePlaying = false;
-  }, 1300);
+  }, 1600);
 }
 
 export function getDroneState() {

@@ -14,11 +14,11 @@ const ACTION_MENU_ITEMS = [
 ];
 
 const QUICK_INDIC_PROMPTS = [
-  { id: 'mawa', label: '🔥 ఏం ప్లాన్ చేద్దాం మవా?', prompt: 'ఏం ప్లాన్ చేద్దాం మవా? Tell me what frontier ideas we can build today in full high-energy Telugu punch!', lang: 'te-IN' },
-  { id: 'sristi', label: '⚡ Sṛṣṭi Web Synthesis', prompt: 'Synthesize a high-performance reactive web application using Sṛṣṭi architecture', action: 'studio' },
-  { id: 'councils', label: '🏛️ 13 Supreme Councils', prompt: 'Summon all 13 Supreme Intelligence Councils to audit system architecture and provide multidimensional synthesis' },
-  { id: 'panini', label: '🧬 Panini Generative Rules', prompt: 'Explain the generative grammar rules of Pāṇini and how they map to modern context-free grammars and AI tokens' },
-  { id: 'telugu-voice', label: '🎙️ తెలుగు వాయిస్ (Speak Telugu)', isVoice: true, lang: 'te-IN' }
+  { id: 'medha', label: '✦ ఏం స్టార్ట్ చేద్దాం మేధా?', prompt: 'నమస్కారం! ఏం స్టార్ట్ చేద్దాం మేధా? ఈరోజు మనం ఏ నూతన సాంకేతిక ప్రాజెక్ట్ లేదా పరిశోధన ప్రారంభిద్దాం?', lang: 'te-IN' },
+  { id: 'sristi', label: '🌐 Sṛṣṭi Web Synthesis', prompt: 'Synthesize a high-performance reactive web application using Sṛṣṭi architecture', action: 'studio' },
+  { id: 'councils', label: '♔ 13 Supreme Councils', prompt: 'Summon all 13 Supreme Intelligence Councils to audit system architecture and provide multidimensional synthesis' },
+  { id: 'panini', label: '📜 Panini Generative Rules', prompt: 'Explain the generative grammar rules of Pāṇini and how they map to modern context-free grammars and AI tokens' },
+  { id: 'telugu-voice', label: '🗣️ తెలుగు వాడండి (Speak Telugu)', isVoice: true, lang: 'te-IN' }
 ];
 
 export default function HeroSection({ currentIdentity, onSendPrompt, onOpenStudio, onSelectIdentity }) {
@@ -499,24 +499,24 @@ export default function HeroSection({ currentIdentity, onSendPrompt, onOpenStudi
             key={chip.id}
             onClick={() => handleChipClick(chip)}
             style={{
-              background: chip.id === 'mawa'
-                ? 'linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(239, 68, 68, 0.15))'
+              background: chip.id === 'medha'
+                ? 'linear-gradient(135deg, rgba(212, 175, 55, 0.22), rgba(245, 158, 11, 0.12))'
                 : 'rgba(255, 255, 255, 0.04)',
-              border: chip.id === 'mawa'
-                ? '1px solid rgba(245, 158, 11, 0.6)'
+              border: chip.id === 'medha'
+                ? '1px solid rgba(212, 175, 55, 0.65)'
                 : '1px solid rgba(212, 175, 55, 0.25)',
               borderRadius: '20px',
               padding: '6px 14px',
               fontSize: '0.78rem',
               fontWeight: 600,
-              color: chip.id === 'mawa' ? '#fbbf24' : 'var(--text-secondary)',
+              color: chip.id === 'medha' ? '#fbbf24' : 'var(--text-secondary)',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
               gap: '6px',
               transition: 'all 0.2s ease',
               backdropFilter: 'blur(8px)',
-              boxShadow: chip.id === 'mawa' ? '0 0 12px rgba(245, 158, 11, 0.2)' : 'none'
+              boxShadow: chip.id === 'medha' ? '0 0 14px rgba(212, 175, 55, 0.25)' : 'none'
             }}
           >
             <span>{chip.label}</span>

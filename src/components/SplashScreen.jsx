@@ -3,7 +3,6 @@ import { Play, Volume2, VolumeX, FastForward, Sparkles } from 'lucide-react';
 
 export default function SplashScreen({ onComplete }) {
   const videoRef = useRef(null);
-  const ambientRef = useRef(null);
   const [isFading, setIsFading] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const [showPlayFallback, setShowPlayFallback] = useState(false);
@@ -13,18 +12,12 @@ export default function SplashScreen({ onComplete }) {
 
   useEffect(() => {
     const videoEl = videoRef.current;
-    const ambientEl = ambientRef.current;
     if (!videoEl) return;
 
-    // Strict mobile-friendly setup: ensure muted property is set in DOM before play
+    // Direct browser properties for rock-solid iOS/Android/Desktop autoplay
     videoEl.defaultMuted = true;
     videoEl.muted = true;
-    if (ambientEl) {
-      ambientEl.defaultMuted = true;
-      ambientEl.muted = true;
-    }
 
-    // Autoplay attempt
     const attemptPlay = () => {
       const playPromise = videoEl.play();
       if (playPromise !== undefined) {
@@ -32,10 +25,9 @@ export default function SplashScreen({ onComplete }) {
           .then(() => {
             setIsPlaying(true);
             setShowPlayFallback(false);
-            if (ambientEl) ambientEl.play().catch(() => {});
           })
           .catch((err) => {
-            console.warn('Autoplay restricted on device. Showing enter button:', err);
+            console.warn('Autoplay waiting for user gesture:', err);
             setShowPlayFallback(true);
           });
       }
@@ -43,29 +35,24 @@ export default function SplashScreen({ onComplete }) {
 
     attemptPlay();
 
-    // Fallback timer: If after 3 seconds the video is stalled or blocked, reveal Enter button
+    // Fallback timer: if video paused after 2.5s, show enter button
     const fallbackTimer = setTimeout(() => {
-      if (videoEl.paused || videoEl.currentTime === 0) {
+      if (videoEl.paused) {
         setShowPlayFallback(true);
       }
-    }, 2800);
+    }, 2500);
 
     const handleTimeUpdate = () => {
       if (videoEl.duration) {
         const curProgress = (videoEl.currentTime / videoEl.duration) * 100;
         setProgress(curProgress);
         setIsPlaying(true);
-        // Sync ambient video if slight drift
-        if (ambientEl && Math.abs(ambientEl.currentTime - videoEl.currentTime) > 0.3) {
-          ambientEl.currentTime = videoEl.currentTime;
-        }
       }
     };
 
     const handlePlay = () => {
       setIsPlaying(true);
       setShowPlayFallback(false);
-      if (ambientEl) ambientEl.play().catch(() => {});
     };
 
     videoEl.addEventListener('timeupdate', handleTimeUpdate);
@@ -138,25 +125,9 @@ export default function SplashScreen({ onComplete }) {
         </p>
       </div>
 
-      {/* ── 2. Video Player System with Mobile Ambient Fill ── */}
+      {/* ── 2. Video Player Stage with Full Edge-to-Edge Fitting ── */}
       {!videoError ? (
         <div className="splash-video-stage">
-          {/* Ambient blurred background video for full-screen seamless glow on tall phones */}
-          <video
-            ref={ambientRef}
-            src="/assets/splash_video.mp4"
-            className="splash-video-ambient"
-            autoPlay
-            playsInline
-            webkit-playsinline="true"
-            x5-playsinline="true"
-            muted={true}
-            loop
-            preload="auto"
-            aria-hidden="true"
-          />
-
-          {/* Main crisp video with object-fit: contain (Guarantees zero text cropping on mobile) */}
           <video
             ref={videoRef}
             src="/assets/splash_video.mp4"
