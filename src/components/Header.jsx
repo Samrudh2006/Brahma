@@ -5,7 +5,7 @@ import {
   MoreVertical, Sparkles, Sliders
 } from 'lucide-react';
 import { toggleAmbientDrone, updateAmbientTheme, getDroneState, playTactileClick } from '@utils/soundEffects';
-import { useAppStore } from '@store/index';
+import { useAppStore, useAuthStore } from '@store/index';
 
 const LUXURY_THEMES = [
   { id: 'surya', name: '🌅 Sūrya Solarized', color: '#f59e0b', desc: 'Solar Om & Sacred Tanpura', soundLabel: '🌅 Sūrya 136.1 Hz Tanpura' },
@@ -28,6 +28,8 @@ export default function Header({
 }) {
   const storeTheme = useAppStore(state => state.theme);
   const storeSetTheme = useAppStore(state => state.setTheme);
+  const user = useAuthStore(state => state.user);
+  const isSupremeAdmin = user?.email?.toLowerCase() === 'samrudhdwivvedula12@gmail.com' || user?.isAdmin || user?.hasDotsOfficeAccess;
 
   const rawTheme = propTheme || storeTheme || 'surya';
   const theme = rawTheme === 'obsidian' ? 'surya' : rawTheme;
@@ -154,6 +156,36 @@ export default function Header({
 
       <div className="header-right" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         
+        {/* Supreme Architect Virtual Office Direct Access */}
+        {isSupremeAdmin && (
+          <button
+            type="button"
+            onClick={() => {
+              playTactileClick();
+              if (setActivePage) setActivePage('dots-office');
+            }}
+            title="Open Indra Dots Virtual Office Matrix"
+            style={{
+              background: 'linear-gradient(135deg, rgba(251, 191, 36, 0.25), rgba(217, 119, 6, 0.25))',
+              border: '1px solid rgba(251, 191, 36, 0.5)',
+              color: '#fbbf24',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '5px 12px',
+              borderRadius: '8px',
+              fontSize: '0.74rem',
+              fontWeight: 800,
+              cursor: 'pointer',
+              boxShadow: '0 0 12px rgba(251, 191, 36, 0.25)',
+              transition: 'all 0.2s ease'
+            }}
+          >
+            <span>🏢</span>
+            <span>Virtual Office</span>
+          </button>
+        )}
+
         {/* 1. Search / Command Palette Pill */}
         <button
           type="button"

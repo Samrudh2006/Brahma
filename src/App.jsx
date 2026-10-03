@@ -44,6 +44,7 @@ import FeedbackModal from '@components/FeedbackModal';
 import NotFoundView from '@components/NotFoundView';
 import LiveVoiceOrbModal from '@components/LiveVoiceOrbModal';
 import RiskApprovalModal from '@components/RiskApprovalModal';
+import VirtualOfficeCanvas from '@components/VirtualOfficeCanvas';
 import { evaluateActionRisk } from '@utils/securityGuard';
 
 
@@ -428,6 +429,37 @@ export default function App() {
           {activePage === 'scheduled' && <ScheduledTasksView onOpenGenesis={() => setActiveStudioModal('genesis')} />}
           {activePage === 'connections' && <ConnectionsView />}
           {activePage === 'governance' && <DharmaGovernanceView />}
+          {activePage === 'dots-office' && (
+            (user?.email?.toLowerCase() === 'samrudhdwivvedula12@gmail.com' || user?.isAdmin || user?.hasDotsOfficeAccess) ? (
+              <VirtualOfficeCanvas onSelectIdentity={setIdentity} />
+            ) : (
+              <div style={{ padding: '80px 20px', textAlign: 'center', color: '#f43f5e' }}>
+                <div style={{ fontSize: '3rem', marginBottom: 16 }}>🔒</div>
+                <h2 style={{ fontSize: '1.6rem', fontWeight: 800, marginBottom: 10, color: '#f8fafc' }}>
+                  Restricted Sovereign Clearance
+                </h2>
+                <p style={{ color: '#94a3b8', maxWidth: 480, margin: '0 auto 24px', lineHeight: 1.6 }}>
+                  The Indra Dots Virtual Office Canvas is restricted exclusively to the Supreme Sovereign Architect. Please log in with supreme credentials.
+                </p>
+                <button
+                  onClick={() => openAuthModal()}
+                  style={{
+                    background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                    color: '#090d16',
+                    border: 'none',
+                    padding: '12px 28px',
+                    borderRadius: 10,
+                    fontWeight: 800,
+                    fontSize: '0.85rem',
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 20px rgba(245, 158, 11, 0.4)'
+                  }}
+                >
+                  🔱 Log In With Supreme Clearance
+                </button>
+              </div>
+            )
+          )}
         </Suspense>
       </main>
 

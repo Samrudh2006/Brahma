@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
   MessageSquare, Bell, Sparkles, Briefcase, Wrench,
   Star, Calendar, Settings, ChevronRight,
-  Plus, ChevronLeft, PanelLeftClose, PanelLeftOpen, Award, Image, Link2, Code, Smartphone, Shield, X
+  Plus, ChevronLeft, PanelLeftClose, PanelLeftOpen, Award, Image, Link2, Code, Smartphone, Shield, X, LayoutGrid
 } from 'lucide-react';
 import { getChatSessions } from '@utils/index';
 import { useAuthStore } from '@store/index';
@@ -43,8 +43,25 @@ export default function Sidebar({
     };
   }, [mobileOpen]);
 
-  // Exact 13 Sacred Sanskrit Navigation Matrix
+  const user = useAuthStore(state => state.user);
+  const isSupremeAdmin = user?.email?.toLowerCase() === 'samrudhdwivvedula12@gmail.com' || user?.isAdmin || user?.hasDotsOfficeAccess;
+
+  // Exact 13 Sacred Sanskrit Navigation Matrix + Supreme Dots Office Canvas
+  const supremeItems = isSupremeAdmin ? [
+    { 
+      id: 'dots-office',    
+      glyph: '🏢', 
+      title: 'INDRA DOTS',      
+      subtitle: 'Virtual Office Canvas (13 Councils)', 
+      icon: LayoutGrid,    
+      badge: '👑 SUPREME', 
+      hasChevron: true,
+      isSupreme: true
+    }
+  ] : [];
+
   const navItems = [
+    ...supremeItems,
     { id: 'chat',           glyph: '◈', title: 'SAMVĀDA',      subtitle: 'Chat',                   icon: MessageSquare, hasChevron: false },
     { id: 'app-builder',    glyph: '✦', title: 'SṚṢṬI',        subtitle: 'Full-Stack Builder',     icon: Code,          hasChevron: true },
     { id: 'image-studio',   glyph: '▧', title: 'CHITRA',       subtitle: 'AI Image Studio',        icon: Image,         hasChevron: true },
@@ -181,13 +198,13 @@ export default function Sidebar({
                   width: '100%',
                   padding: collapsed ? '10px 0' : '8px 12px',
                   borderRadius: 10,
-                  border: isActive ? '1px solid #fbbf24' : '1px solid transparent',
-                  background: isActive ? 'linear-gradient(135deg, rgba(251, 191, 36, 0.18), rgba(217, 119, 6, 0.12))' : 'transparent',
-                  color: isActive ? '#fbbf24' : '#94a3b8',
+                  border: isActive ? '1px solid #fbbf24' : (item.isSupreme ? '1px solid rgba(251, 191, 36, 0.4)' : '1px solid transparent'),
+                  background: isActive ? 'linear-gradient(135deg, rgba(251, 191, 36, 0.22), rgba(217, 119, 6, 0.15))' : (item.isSupreme ? 'rgba(251, 191, 36, 0.08)' : 'transparent'),
+                  color: isActive ? '#fbbf24' : (item.isSupreme ? '#fef08a' : '#94a3b8'),
                   cursor: 'pointer',
                   textAlign: 'left',
                   transition: 'all 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
-                  boxShadow: isActive ? '0 0 15px rgba(251, 191, 36, 0.25)' : 'none'
+                  boxShadow: isActive ? '0 0 15px rgba(251, 191, 36, 0.25)' : (item.isSupreme ? '0 0 10px rgba(251, 191, 36, 0.15)' : 'none')
                 }}
                 onMouseEnter={(e) => {
                   if (!isActive) {
