@@ -1,0 +1,38 @@
+[
+  {
+    "index": 0,
+    "timestamp": "2026-01-01T00:00:00.000Z",
+    "councilId": "GENESIS",
+    "action": "SOVEREIGN_ROOT_GENESIS",
+    "payload": {
+      "system": "BRAHMA_SOVEREIGN_MATRIX_INITIALIZED"
+    },
+    "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
+    "entryHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "index": 1,
+    "timestamp": "2026-10-03T07:23:27.013Z",
+    "councilId": "chanakya_legal",
+    "action": "CONTRACT_REDLINE_COMMITTED",
+    "payload": {
+      "contractId": "ctr_771",
+      "redlines": 3
+    },
+    "prevHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "entryHash": "ad443cb9d39edb61a0577daef6355ddcb30d469bbb09d085434139cd01101fb3"
+  },
+  {
+    "index": 2,
+    "timestamp": "2026-10-03T07:23:27.014Z",
+    "councilId": "kuvera_quant",
+    "action": "PAPER_TRADE_EXECUTED",
+    "payload": {
+      "symbol": "NVDA",
+      "quantity": 10,
+      "notional": 1250
+    },
+    "prevHash": "ad443cb9d39edb61a0577daef6355ddcb30d469bbb09d085434139cd01101fb3",
+    "entryHash": "0b6c7bfd00a0e4440e0e890cf709cf306f87e9501ca01568c86db4f6af8a8864"
+  }
+]
