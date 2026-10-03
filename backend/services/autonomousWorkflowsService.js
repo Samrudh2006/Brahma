@@ -38,20 +38,40 @@ class AutonomousWorkflowsService {
       return `Paper ${i+1}: ${p.title}\nAuthors: ${authStr}\nSummary: ${(p.summary || '').slice(0, 300)}...\nLink: ${p.url || p.link || p.pdfUrl || 'https://arxiv.org'}`;
     }).join('\n\n');
 
-    const prompt = `You are BRAHMA's Daily 8:00 AM Sovereign Research Anchor.
-Generate an energetic, high-IQ, entertaining, and deeply insightful MORNING RESEARCH DIGEST in natural Telugu-English (Tanglish) for an ambitious AI engineer/founder.
+    const prompt = `You are BRAHMA's Daily 8:00 AM Sovereign Research & Media Producer.
+Generate a complete, high-IQ, entertaining, and deeply insightful MORNING RESEARCH DIGEST with PODCAST AUDIO SCRIPT & 2x 2-MINUTE VIDEO STORYBOARDS in natural Telugu-English (Tanglish).
 
-Format:
-🌅 BRAHMA 8:00 AM DAILY RESEARCH BRIEFING (తేదీ & సమయం)
-🎯 నేటి Top AI & Frontier Research Papers (Tanglish Breakdown):
-
+═══════════════════════════════════════════════════════════════════════════════
+SECTION 1: 🌅 8:00 AM TANGLISH RESEARCH PAPERS BREAKDOWN
+═══════════════════════════════════════════════════════════════════════════════
 For each paper:
 - 📌 Paper Name & Link
 - 💡 వాళ్ళు కనిపెట్టింది ఏంటి? (Simple Tanglish Core Discovery)
 - 🚀 Real-World Impact (మన ప్రాజెక్ట్స్‌లో దీన్ని ఎలా వాడొచ్చు?)
 - ⚡ 1-Line Key Takeaway
 
-Infuse lively Telugu camaraderie ("శుభోదయం మవా!", "కిర్రాక్ రీసెర్చ్!", "తగ్గేదే లే!").
+═══════════════════════════════════════════════════════════════════════════════
+SECTION 2: 🎧 5-MINUTE NOTEBOOKLM-STYLE AI PODCAST EPISODE (Tanglish Dialogue)
+═══════════════════════════════════════════════════════════════════════════════
+A charismatic two-host conversational podcast (Host A: "బ్రహ్మ", Host B: "సరస్వతి"):
+- Host A: "నమస్కారం ఫ్రెండ్స్! ఈ రోజు పాడ్‌కాస్ట్‌లో మనం మాట్లాడబోయే టాపిక్..."
+- Host B: "అవును బ్రహ్మ, ఈ పేపర్ చూడగానే నాకు మైండ్ బ్లోయింగ్ అనిపించింది ఎందుకంటే..."
+- Full 5-minute conversational breakdown with humor, analogies, and technical depth.
+
+═══════════════════════════════════════════════════════════════════════════════
+SECTION 3: 🎬 2x 2-MINUTE REELS / EXPLAINER VIDEO STORYBOARDS
+═══════════════════════════════════════════════════════════════════════════════
+• 🎥 VIDEO 1 (120s): "The Core Breakthrough & Architectural Secrets"
+  - ⏱️ 0-5s Hook
+  - 🖼️ Scene 1-4 Visual Storyboards & Animations
+  - 🎙️ Telugu/English Voiceover Text
+  - 🚀 Call to Action
+
+• 🎥 VIDEO 2 (120s): "How to Code & Implement It in Your Stack"
+  - ⏱️ 0-5s Hook
+  - 🖼️ Code B-Roll & PyTorch/CUDA Architecture Visuals
+  - 🎙️ Step-by-Step Implementation Voiceover
+  - 🚀 Call to Action
 
 PAPERS DATA:
 ${papersSummary}`;
@@ -62,7 +82,7 @@ ${papersSummary}`;
         {
           messages: [{ role: 'user', content: prompt }],
           model: 'deepseek-r1',
-          identity: { name: 'Brahma Sovereign Research Anchor' },
+          identity: { name: 'Brahma Media & Research Producer' },
           pills: {}
         },
         (chunk) => {
@@ -70,7 +90,7 @@ ${papersSummary}`;
         },
         resolve,
         () => {
-          digestText = `🌅 BRAHMA 8:00 AM DAILY RESEARCH BRIEFING\n\nశుభోదయం మవా! ఈ రోజు టాప్ పేపర్స్ మీకోసం సిద్ధంగా ఉన్నాయి:\n\n${papersSummary}`;
+          digestText = `🌅 BRAHMA 8:00 AM DAILY RESEARCH & PODCAST BRIEFING\n\n${papersSummary}`;
           resolve();
         }
       );
@@ -83,6 +103,9 @@ ${papersSummary}`;
       papersCount: arxivPapers.length,
       rawPapers: arxivPapers,
       tanglishDigest: digestText,
+      hasPodcast: true,
+      hasVideoStoryboards: true,
+      videoCount: 2,
       generatedAt: new Date().toISOString(),
       latencyMs: Date.now() - startTime
     };
