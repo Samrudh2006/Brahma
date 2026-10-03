@@ -698,4 +698,312 @@ router.post('/science/lean4-proof', (req, res) => {
   }
 });
 
+// ─── 22. Brahma SMT Formal Verification Engine ───────────────────────────────
+const smtProver = require('../services/brahmaSmtVerificationEngine');
+
+router.post('/smt/solve-sat', (req, res) => {
+  try {
+    const result = smtProver.solvePropositionalCNF(req.body.clauses || []);
+    res.json({ success: true, ...result });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/smt/verify-lra', (req, res) => {
+  try {
+    const result = smtProver.verifyLinearRealInequalities(req.body.inequalities || []);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/smt/verify-temporal-order', (req, res) => {
+  try {
+    const result = smtProver.verifyTemporalDifferenceLogic(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/smt/prove-safety', (req, res) => {
+  try {
+    const result = smtProver.proveStateSafety(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ─── 23. Brahma Chaos Resilience & Self-Healing Engine ───────────────────────
+const chaosResilience = require('../services/brahmaChaosResilienceEngine');
+
+router.post('/chaos/snapshot', (req, res) => {
+  try {
+    const result = chaosResilience.captureConsistentSnapshot(req.body.state || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/chaos/restore/:id', (req, res) => {
+  try {
+    const result = chaosResilience.restoreSnapshot(req.params.id);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/chaos/inject', async (req, res) => {
+  try {
+    const result = await chaosResilience.injectChaosExperiment(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.get('/chaos/circuit-health/:subsystem', (req, res) => {
+  try {
+    const result = chaosResilience.evaluateCircuitHealth(req.params.subsystem);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ─── 24. Brahma BIM Computational Geometry Engine ───────────────────────────
+const bimGeometry = require('../services/brahmaBimGeometryEngine');
+
+router.post('/bim/convex-hull', (req, res) => {
+  try {
+    const result = bimGeometry.calculateConvexHull(req.body.points || []);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/bim/line-collision', (req, res) => {
+  try {
+    const result = bimGeometry.checkLineIntersection(req.body.seg1, req.body.seg2);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/bim/ifc-inspect', (req, res) => {
+  try {
+    const result = bimGeometry.inspectIfcModelElements(req.body.elements || []);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/bim/zoning-setbacks', (req, res) => {
+  try {
+    const result = bimGeometry.auditZoningSetbacks(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ─── 25. Indra Purple Team Adversary Simulator ───────────────────────────────
+const adversarySimulator = require('../services/indraAdversarySimulator');
+
+router.post('/adversary/run-campaign', (req, res) => {
+  try {
+    const result = adversarySimulator.runAdversaryCampaign(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/adversary/cvss4-score', (req, res) => {
+  try {
+    const result = adversarySimulator.calculateCVSSv4(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ─── 26. Statutory Taxation, GST E-Invoicing & Benford Audit ──────────────────
+const statutoryTax = require('../services/brahmaStatutoryTaxEngine');
+
+router.post('/tax/gst-invoice', (req, res) => {
+  try {
+    const result = statutoryTax.generateGSTEInvoicePayload(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/tax/benford-audit', (req, res) => {
+  try {
+    const result = statutoryTax.auditExpenseLedgerBenford(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/tax/tds-calculate', (req, res) => {
+  try {
+    const result = statutoryTax.calculateTDS(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ─── 27. P2P Edge CRDT Mesh State Replication ────────────────────────────────
+const edgeMeshSync = require('../services/brahmaEdgeMeshSync');
+
+router.post('/edge/add', (req, res) => {
+  try {
+    const result = edgeMeshSync.addElement(req.body.element, req.body.timestamp);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/edge/remove', (req, res) => {
+  try {
+    const result = edgeMeshSync.removeElement(req.body.element, req.body.timestamp);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.get('/edge/state', (req, res) => {
+  try {
+    const result = edgeMeshSync.readActiveState();
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/edge/merge', (req, res) => {
+  try {
+    const result = edgeMeshSync.mergeRemotePeerState(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ─── 28. Advanced Multi-Domain Frontier Engines ──────────────────────────────
+const microstructure = require('../services/kuveraMicrostructureEngine');
+const regulatoryDossier = require('../services/dhanvantariRegulatoryDossier');
+const voxDsp = require('../services/voxDspAudioPipeline');
+const satelliteAgro = require('../services/brahmaSatelliteAgroEngine');
+const continuousGrc = require('../services/brahmaContinuousGrcEngine');
+const sweRefactor = require('../services/brahmaSweRefactorEngine');
+const zkProof = require('../services/brahmaZkProofEngine');
+const digitalTwin = require('../services/vishwakarmaDigitalTwin');
+const metaOrchestrator = require('../services/brahmaMetaOrchestrator');
+
+router.post('/hft/limit-order', (req, res) => {
+  try {
+    const result = microstructure.submitLimitOrder(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/samd/510k-dossier', (req, res) => {
+  try {
+    const result = regulatoryDossier.generateFDA510kDossier(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/dsp/spectral-filter', (req, res) => {
+  try {
+    const result = voxDsp.processSpectralNoiseSuppression(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/agro/satellite-ndvi', (req, res) => {
+  try {
+    const result = satelliteAgro.calculateNDVI(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.get('/grc/soc2-status', (req, res) => {
+  try {
+    const result = continuousGrc.evaluateSOC2Compliance(req.query || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/swe/code-metrics', (req, res) => {
+  try {
+    const result = sweRefactor.analyzeCodeMetrics(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/zk/quorum-proof', (req, res) => {
+  try {
+    const result = zkProof.proveConfidentialCouncilConsensus(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/twin/simulate-supply', (req, res) => {
+  try {
+    const result = digitalTwin.simulateDiscreteEventSupplyChain(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.get('/meta/singularity-status', (req, res) => {
+  try {
+    const result = metaOrchestrator.evaluateSingularityConvergence();
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/meta/borda-consensus', (req, res) => {
+  try {
+    const result = metaOrchestrator.executeBordaCountConsensus(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 module.exports = router;
