@@ -1541,6 +1541,108 @@ router.post('/experiments/universal-epistemic-solve', (req, res) => {
   }
 });
 
+// ─── 40. Brahma Breakthrough Transcendence Set 2 ─────────────────────────────
+const horizonCheckpoint = require('../services/brahmaDecentralizedHorizonCheckpointEngine');
+const fuzzyIntuition = require('../services/brahmaNeuroSymbolicFuzzyIntuitionEngine');
+const impedanceRobotics = require('../services/brahmaClosedLoopImpedanceRoboticsEngine');
+const dynamicMetaGradient = require('../services/brahmaDynamicMetaGradientEngine');
+const hierarchicalBft = require('../services/brahmaHierarchicalBftSwarmEngine');
+const nativeClang = require('../services/brahmaNativeClangCompilerEngine');
+const unsupervisedSensor = require('../services/brahmaUnsupervisedSensorRecalibrationEngine');
+const lemmaLibrary = require('../services/brahmaLemmaLibraryExtractionEngine');
+const neuralProsody = require('../services/brahmaNeuralProsodyModulationEngine');
+const nisqOptimizer = require('../services/brahmaNisqQuantumCircuitOptimizerEngine');
+
+router.post('/experiments/horizon-checkpoint', (req, res) => {
+  try {
+    const result = horizonCheckpoint.runMassiveHorizonSimulation(req.body?.steps || 10000);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/experiments/fuzzy-intuition', (req, res) => {
+  try {
+    const result = fuzzyIntuition.evaluateIntuitiveState(req.body?.signals || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/experiments/impedance-robotics', (req, res) => {
+  try {
+    const result = impedanceRobotics.computeImpedanceTorque(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/experiments/dynamic-meta-gradient', (req, res) => {
+  try {
+    const result = dynamicMetaGradient.adaptWeightsOnline(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/experiments/hierarchical-bft-swarm', (req, res) => {
+  try {
+    const result = hierarchicalBft.executeSwarmConsensus(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/experiments/native-clang-compile', (req, res) => {
+  try {
+    const result = nativeClang.compileAndExecuteNative(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/experiments/sensor-recalibration', (req, res) => {
+  try {
+    const result = unsupervisedSensor.processStreamBatch(req.body?.measurements || []);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/experiments/lemma-library-extract', (req, res) => {
+  try {
+    const result = lemmaLibrary.harvestLean4Lemmas(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/experiments/neural-prosody', (req, res) => {
+  try {
+    const result = neuralProsody.synthesizeProsodyContour(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/experiments/nisq-circuit-optimize', (req, res) => {
+  try {
+    const result = nisqOptimizer.optimizeCircuit(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 module.exports = router;
 
 

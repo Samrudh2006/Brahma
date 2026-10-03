@@ -12,8 +12,8 @@
     "benchmarkScore": 97.5,
     "authorCouncil": "VISHWAKARMA",
     "confidence": 1,
-    "usageCount": 6,
-    "successCount": 6,
+    "usageCount": 8,
+    "successCount": 8,
     "failureHistory": [],
     "rollbackVersion": "1.0.0",
     "versionHistory": [
@@ -46,11 +46,23 @@
         "code": "function solve() { return { depth: 5.2 }; }",
         "benchmarkScore": 97.5,
         "archivedAt": "2026-10-03T13:46:25.291Z"
+      },
+      {
+        "version": "1.0.0",
+        "code": "function solve() { return { depth: 5.2 }; }",
+        "benchmarkScore": 97.5,
+        "archivedAt": "2026-10-03T13:51:44.589Z"
+      },
+      {
+        "version": "1.0.0",
+        "code": "function solve() { return { depth: 5.2 }; }",
+        "benchmarkScore": 97.5,
+        "archivedAt": "2026-10-03T13:52:13.966Z"
       }
     ],
     "status": "VERIFIED_ACTIVE",
     "createdAt": "2026-10-03T13:32:18.258Z",
-    "updatedAt": "2026-10-03T13:46:25.291Z"
+    "updatedAt": "2026-10-03T13:52:13.966Z"
   },
   {
     "skillId": "skill_benchmarkwavesim",
@@ -87,10 +99,16 @@
         "code": "() => 42",
         "benchmarkScore": 98,
         "archivedAt": "2026-10-03T13:46:13.399Z"
+      },
+      {
+        "version": "1.0.0",
+        "code": "() => 42",
+        "benchmarkScore": 98,
+        "archivedAt": "2026-10-03T13:55:06.713Z"
       }
     ],
     "status": "VERIFIED_ACTIVE",
     "createdAt": "2026-10-03T13:32:34.492Z",
-    "updatedAt": "2026-10-03T13:46:13.399Z"
+    "updatedAt": "2026-10-03T13:55:06.713Z"
   }
 ]

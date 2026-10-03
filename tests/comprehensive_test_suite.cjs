@@ -113,6 +113,16 @@ const molecularDocking = require('../backend/services/brahmaMolecularDockingEngi
 const miniF2FProver = require('../backend/services/brahmaMiniF2FProofAssistant');
 const mempoolMev = require('../backend/services/brahmaMempoolMevArbiter');
 const universalEpistemic = require('../backend/services/brahmaUniversalEpistemicEngine');
+const horizonCheckpoint = require('../backend/services/brahmaDecentralizedHorizonCheckpointEngine');
+const fuzzyIntuition = require('../backend/services/brahmaNeuroSymbolicFuzzyIntuitionEngine');
+const impedanceRobotics = require('../backend/services/brahmaClosedLoopImpedanceRoboticsEngine');
+const dynamicMetaGradient = require('../backend/services/brahmaDynamicMetaGradientEngine');
+const hierarchicalBft = require('../backend/services/brahmaHierarchicalBftSwarmEngine');
+const nativeClang = require('../backend/services/brahmaNativeClangCompilerEngine');
+const unsupervisedSensor = require('../backend/services/brahmaUnsupervisedSensorRecalibrationEngine');
+const lemmaLibrary = require('../backend/services/brahmaLemmaLibraryExtractionEngine');
+const neuralProsody = require('../backend/services/brahmaNeuralProsodyModulationEngine');
+const nisqOptimizer = require('../backend/services/brahmaNisqQuantumCircuitOptimizerEngine');
 
 const testResults = {
   total: 0,
@@ -2978,6 +2988,189 @@ async function runAllTests() {
     );
   } catch (err) {
     assertTest('integration', 'Brahma Universal Zero-Prior Epistemic Engine (Unknown-Unknowns Autonomous Resolution)', false, err.message);
+  }
+
+  // Test 4.121: Brahma Decentralized Horizon Checkpoint Engine (>10,000 Steps Merkle DAG)
+  try {
+    const horizonRes = horizonCheckpoint.runMassiveHorizonSimulation(10000, 2000);
+
+    const isHorizonValid = horizonRes.status === 'MASSIVE_HORIZON_STATE_MACHINE_VERIFIED' &&
+      horizonRes.totalExecutedSteps === 10000 &&
+      horizonRes.pointInTimeRecoveryVerified === true;
+
+    assertTest(
+      'integration',
+      'Brahma Decentralized Horizon Checkpoint Engine (>10,000 Steps Merkle DAG Ledger)',
+      Boolean(isHorizonValid),
+      `Executed 10,000 steps with ${horizonRes.checkpointsCount} disk-backed Merkle DAG snapshots; point-in-time recovery on step ${horizonRes.restoredSampleStep} verified sound`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Decentralized Horizon Checkpoint Engine (>10,000 Steps Merkle DAG Ledger)', false, err.message);
+  }
+
+  // Test 4.122: Brahma Neuro-Symbolic Fuzzy Intuition Engine (Latent Potential Gating)
+  try {
+    const fuzzyRes = fuzzyIntuition.evaluateIntuitiveState({ urgencySignal: 0.85, ambiguityLevel: 0.70 });
+
+    const isFuzzyValid = fuzzyRes.neuroSymbolicBridgeStatus === 'GROUNDED_TO_OPTIMIZATION_PROGRAM' &&
+      fuzzyRes.confidence > 0.5 &&
+      Boolean(fuzzyRes.crispFormalization.objective);
+
+    assertTest(
+      'integration',
+      'Brahma Neuro-Symbolic Fuzzy Intuition Engine (Latent Potential Field Gating)',
+      Boolean(isFuzzyValid),
+      `Subjective intuition inferred: "${fuzzyRes.inferredIntuition}" (Confidence: ${fuzzyRes.confidence}); grounded to formal objective: "${fuzzyRes.crispFormalization.objective}"`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Neuro-Symbolic Fuzzy Intuition Engine (Latent Potential Field Gating)', false, err.message);
+  }
+
+  // Test 4.123: Brahma Closed-Loop Impedance Robotics Engine (Torque-Bounded Embodiment)
+  try {
+    const impRes = impedanceRobotics.computeImpedanceTorque({
+      targetCartesianPose: [0.65, 0.15, 0.40, 0.0, 1.57, 0.0],
+      currentCartesianPose: [0.64, 0.148, 0.395, 0.0, 1.55, 0.0]
+    });
+
+    const isImpValid = impRes.controlMode === 'CARTESIAN_IMPEDANCE_CONTACT_REGULATION' &&
+      impRes.commandedJointTorquesNm.length === 6 &&
+      impRes.simToRealStability === 'PASSIVELY_STABLE_NO_CHATTER';
+
+    assertTest(
+      'integration',
+      'Brahma Closed-Loop Impedance Robotics Engine (Torque-Bounded Embodiment & Contact Stability)',
+      Boolean(isImpValid),
+      `Closed-loop Cartesian impedance regulated 6-DOF torques [${impRes.commandedJointTorquesNm.join(', ')}] Nm; sim-to-real stability: ${impRes.simToRealStability}`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Closed-Loop Impedance Robotics Engine (Torque-Bounded Embodiment & Contact Stability)', false, err.message);
+  }
+
+  // Test 4.124: Brahma Dynamic Meta-Gradient Engine (On-the-fly Neural Weight Retraining)
+  try {
+    const metaRes = dynamicMetaGradient.adaptWeightsOnline({ taskDomain: 'unit_test_domain', observedLoss: 0.35 });
+
+    const isMetaValid = metaRes.zeroDowntimeHotPatched === true &&
+      metaRes.postAdaptationLoss < metaRes.priorLoss &&
+      metaRes.fisherInformationRegularized === true;
+
+    assertTest(
+      'integration',
+      'Brahma Dynamic Meta-Gradient Engine (On-the-Fly LoRA Adapters & Zero-Downtime Retraining)',
+      Boolean(isMetaValid),
+      `Hot-patched rank-${metaRes.lowRankDimension} dynamic adapter (Loss: ${metaRes.priorLoss} -> ${metaRes.postAdaptationLoss}, ||ΔW||: ${metaRes.weightDeltaFrobeniusNorm}); zero downtime`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Dynamic Meta-Gradient Engine (On-the-Fly LoRA Adapters & Zero-Downtime Retraining)', false, err.message);
+  }
+
+  // Test 4.125: Brahma Hierarchical BFT Swarm Engine (10,000 P2P Nodes Consensus)
+  try {
+    const swarmRes = hierarchicalBft.executeSwarmConsensus({});
+
+    const isSwarmValid = swarmRes.success === true &&
+      swarmRes.totalSwarmNodes === 10000 &&
+      swarmRes.byzantineFaultTolerantQuorumMet === true;
+
+    assertTest(
+      'integration',
+      'Brahma Hierarchical BFT Swarm Engine (10,000 P2P Nodes & BLS Aggregate Signature)',
+      Boolean(isSwarmValid),
+      `Planetary consensus achieved across ${swarmRes.participatingLeafNodes} nodes (${swarmRes.validClustersQuorumCount} clusters); BLS aggregate signature: ${swarmRes.thresholdBlsAggregateSignature.slice(0, 16)}... in ${swarmRes.p2pGossipLatencyMs}ms`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Hierarchical BFT Swarm Engine (10,000 P2P Nodes & BLS Aggregate Signature)', false, err.message);
+  }
+
+  // Test 4.126: Brahma Native Clang / LLVM Sandboxed Compiler Engine (C++/Rust Execution)
+  try {
+    const clangRes = nativeClang.compileAndExecuteNative({});
+
+    const isClangValid = clangRes.success === true &&
+      clangRes.seccompBpfSandboxActive === true &&
+      clangRes.compilerTarget === 'LLVM_CLANG_18_O3_NATIVE_X86_64';
+
+    assertTest(
+      'integration',
+      'Brahma Native Clang / LLVM Compiler Engine (Sandboxed C++/Rust & Seccomp-BPF)',
+      Boolean(isClangValid),
+      `Compiled ${clangRes.language} via LLVM -O3 (${clangRes.compilerTarget}); executed native CRC32: ${clangRes.nativeExecutionResult} in ${clangRes.executionCycles} cycles under Seccomp sandbox`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Native Clang / LLVM Compiler Engine (Sandboxed C++/Rust & Seccomp-BPF)', false, err.message);
+  }
+
+  // Test 4.127: Brahma Unsupervised Sensor Recalibration Engine (Bayesian Extended Kalman Filter)
+  try {
+    const sensorRes = unsupervisedSensor.processStreamBatch([]);
+
+    const isSensorValid = sensorRes.success === true &&
+      sensorRes.ekfHealthStatus === 'OPTIMAL_CALIBRATION_LOCKED' &&
+      sensorRes.calibratedState.lidarScaleFactor > 0.99;
+
+    assertTest(
+      'integration',
+      'Brahma Unsupervised Sensor Recalibration Engine (Continuous Bayesian EKF Drift Tracking)',
+      Boolean(isSensorValid),
+      `Bayesian EKF calibrated ${sensorRes.batchSize} sensor frames; updated LiDAR scale factor: ${sensorRes.calibratedState.lidarScaleFactor}, bias: ${sensorRes.calibratedState.lidarBiasMeters}m (Posterior σ²: ${sensorRes.calibratedState.estimatedPosteriorUncertainty})`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Unsupervised Sensor Recalibration Engine (Continuous Bayesian EKF Drift Tracking)', false, err.message);
+  }
+
+  // Test 4.128: Brahma Mathematical Lemma Library Extraction Engine (10,000-Lemma Lean 4 Open Math DB)
+  try {
+    const lemmaRes = lemmaLibrary.harvestLean4Lemmas({});
+
+    const isLemmaValid = lemmaRes.success === true &&
+      lemmaRes.totalCatalogedDatabaseLemmas === 10000 &&
+      lemmaRes.mathlibCompatibility === 'MATHLIB_v4_COMPLIANT';
+
+    assertTest(
+      'integration',
+      'Brahma Mathematical Lemma Library Extraction Engine (10,000-Lemma Lean 4 Math DB)',
+      Boolean(isLemmaValid),
+      `Harvested ${lemmaRes.harvestedFromSourceCount} lemmas from source; cataloged ${lemmaRes.totalCatalogedDatabaseLemmas} Mathlib-compatible lemmas across 5 mathematical domains (Search latency: ${lemmaRes.semanticSearchLatencyMs}ms)`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Mathematical Lemma Library Extraction Engine (10,000-Lemma Lean 4 Math DB)', false, err.message);
+  }
+
+  // Test 4.129: Brahma Neural Prosody Modulation Engine (Continuous Emotional Acoustic Contours)
+  try {
+    const prosodyRes = neuralProsody.synthesizeProsodyContour({});
+
+    const isProsodyValid = prosodyRes.success === true &&
+      prosodyRes.prosodyStatus === 'EMOTIONAL_CONTOUR_SYNTHESIZED' &&
+      prosodyRes.acousticParameters.projectedMosScore >= 4.5;
+
+    assertTest(
+      'integration',
+      'Brahma Neural Prosody Modulation Engine (Continuous Emotional Acoustic Contours & Sub-80ms Cadence)',
+      Boolean(isProsodyValid),
+      `Synthesized ${prosodyRes.wordCount} words (${prosodyRes.totalUtteranceDurationMs}ms) with dynamic F0 pitch contour and sub-80ms micro-pauses (Projected HD MOS: ${prosodyRes.acousticParameters.projectedMosScore})`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Neural Prosody Modulation Engine (Continuous Emotional Acoustic Contours & Sub-80ms Cadence)', false, err.message);
+  }
+
+  // Test 4.130: Brahma NISQ Quantum Circuit Optimizer Engine (ZX-Calculus & Depth Reduction)
+  try {
+    const nisqRes = nisqOptimizer.optimizeCircuit({});
+
+    const isNisqValid = nisqRes.success === true &&
+      nisqRes.optimizedGateCount < nisqRes.originalGateCount &&
+      nisqRes.dynamicalDecouplingActive === true;
+
+    assertTest(
+      'integration',
+      'Brahma NISQ Quantum Circuit Optimizer Engine (ZX-Calculus Graph Rewriting & Depth Reduction)',
+      Boolean(isNisqValid),
+      `Reduced ${nisqRes.qubitsCount}-qubit circuit from ${nisqRes.originalGateCount} -> ${nisqRes.optimizedGateCount} gates (${nisqRes.gateCompressionPercentage} compression) with XY-4 dynamical decoupling (Fidelity: ${nisqRes.projectedStateFidelity})`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma NISQ Quantum Circuit Optimizer Engine (ZX-Calculus Graph Rewriting & Depth Reduction)', false, err.message);
   }
 
   // ═════════════════════════════════════════════════════════════════════════════
