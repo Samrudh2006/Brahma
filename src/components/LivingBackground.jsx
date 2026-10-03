@@ -114,17 +114,17 @@ export default function LivingBackground({ theme }) {
   }, []);
 
   return (
-    <div className="living-bg-root">
-      {/* 1. Interactive Parallax Temple Artwork Layer (Clean, No Watermark) */}
-      <div ref={bgLayerRef} className="living-bg-image" />
+    <div className="living-bg-root" style={{ background: '#000000' }}>
+      {/* 1. Background Artwork Layer (Full Black, Ready for Custom Images) */}
+      <div ref={bgLayerRef} className="living-bg-image" style={{ background: '#000000' }} />
 
-      {/* 2. Central Archway Cosmic Breathing Aura */}
+      {/* 2. Central Subtle Breathing Aura */}
       <div ref={auraLayerRef} className="living-bg-aura" />
 
-      {/* 3. Floating Sacred Light Embers / Stardust */}
+      {/* 3. Floating Subtle Golden Embers / Stardust Particles */}
       <canvas ref={canvasRef} className="living-bg-canvas" />
 
-      {/* 4. Sacred Vignette Overlay */}
+      {/* 4. Vignette Overlay */}
       <div className="living-bg-vignette" />
 
       {/* 5. Sacred Ornate Framing System (Matching Original Reference) */}
