@@ -1337,5 +1337,108 @@ router.post('/autonomy/generalization-firewall', (req, res) => {
   }
 });
 
+// ─── 38. Frontier Super-Intelligence Adaptation & Transfer Mesh ────────────
+const curriculumGen = require('../services/brahmaCurriculumGeneratorEngine');
+const skillComposition = require('../services/brahmaSkillCompositionEngine');
+const causalExperiment = require('../services/brahmaCausalExperimentationEngine');
+const counterfactualSim = require('../services/brahmaCounterfactualSimulator');
+const confidenceCalibration = require('../services/brahmaConfidenceCalibrationEngine');
+const problemReformulation = require('../services/brahmaProblemReformulationEngine');
+const debateAdjudicator = require('../services/brahmaMultiAgentDebateAdjudicator');
+const computeOptimizer = require('../services/brahmaComputeResourceOptimizer');
+const openWorldLearner = require('../services/brahmaOpenWorldEnvironmentLearner');
+const zeroCodeTransfer = require('../services/brahmaZeroCodeTransferEngine');
+
+router.post('/superintelligence/curriculum-generate', (req, res) => {
+  try {
+    const result = curriculumGen.generateCurriculum(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/superintelligence/skill-compose', (req, res) => {
+  try {
+    const result = skillComposition.synthesizeCompositeSkill(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/superintelligence/causal-experiment', (req, res) => {
+  try {
+    const result = causalExperiment.runCausalExperiment(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/superintelligence/counterfactual-simulate', (req, res) => {
+  try {
+    const result = counterfactualSim.simulateCounterfactualScenarios(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/superintelligence/confidence-calibrate', (req, res) => {
+  try {
+    const result = confidenceCalibration.calibrateClaim(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/superintelligence/problem-reformulate', (req, res) => {
+  try {
+    const result = problemReformulation.reformulateProblem(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/superintelligence/debate-adjudicate', (req, res) => {
+  try {
+    const result = debateAdjudicator.adjudicateDebate(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/superintelligence/compute-optimize', (req, res) => {
+  try {
+    const result = computeOptimizer.optimizeComputePlan(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/superintelligence/open-world-adapt', (req, res) => {
+  try {
+    const result = openWorldLearner.adaptToEnvironmentDrift(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/superintelligence/zero-code-transfer', (req, res) => {
+  try {
+    const result = zeroCodeTransfer.executeZeroCodeTransfer(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 module.exports = router;
+
 
