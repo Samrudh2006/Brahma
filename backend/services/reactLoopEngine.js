@@ -62,6 +62,27 @@ class ReactLoopEngine {
     this.actionHistory = new Set();
     this.blacklistedActions = new Set();
     this.snapshotCache = new Map(); // Stale-while-revalidate offline resilience
+    this.middlewares = []; // DEFENSE 5: Tool-call Gate (Allow, Modify, Deny)
+    this.mockProvider = null; // Deterministic offline mock testing
+  }
+
+  /**
+   * Register a ToolMiddleware gate (Allow, Modify, or Deny tool calls)
+   * @param {Function} middlewareFn - (toolName, args, context) => { action: 'ALLOW'|'MODIFY'|'DENY', modifiedArgs, reason }
+   */
+  addMiddleware(middlewareFn) {
+    if (typeof middlewareFn === 'function') {
+      this.middlewares.push(middlewareFn);
+    }
+    return this;
+  }
+
+  /**
+   * Set or clear a deterministic MockProvider for offline testing
+   */
+  setMockProvider(provider) {
+    this.mockProvider = provider;
+    return this;
   }
 
   // ─── DEFENSE 1: Context Compactor & Token Limiter ─────────────────────────
@@ -296,6 +317,39 @@ class ReactLoopEngine {
       }
 
       if (chosenAction && actionRegistry[chosenAction]) {
+        // DEFENSE 5: ToolMiddleware Gate (Allow, Modify, Deny)
+        let middlewareBlocked = false;
+        for (const mw of this.middlewares) {
+          try {
+            const decision = await mw(chosenAction, actionArgs, {
+              taskPrompt,
+              step: currentStep,
+              trace
+            });
+            if (decision && decision.action === 'DENY') {
+              trace.push({
+                step: currentStep,
+                type: 'ToolMiddlewareDenied',
+                tool: chosenAction,
+                reason: decision.reason || 'Blocked by ToolMiddleware policy gate',
+                timestamp: new Date().toISOString()
+              });
+              middlewareBlocked = true;
+              break;
+            }
+            if (decision && decision.action === 'MODIFY' && decision.modifiedArgs) {
+              actionArgs = decision.modifiedArgs;
+            }
+          } catch (mwErr) {
+            // Middleware error handling
+          }
+        }
+
+        if (middlewareBlocked) {
+          currentStep++;
+          continue;
+        }
+
         // DEFENSE 2: Check infinite loop trap
         const loopCheck = this.checkActionLoop(chosenAction, actionArgs);
         if (!loopCheck.allowed) {

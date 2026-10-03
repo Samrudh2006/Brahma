@@ -8,6 +8,8 @@
  * - Automated Executive Digest & One-Click Draft Generation
  */
 
+const agentIdentityService = require('./agentIdentityService');
+
 class AgenticInboxService {
   constructor() {
     this.inboxThreads = [
@@ -38,55 +40,68 @@ class AgenticInboxService {
         isRead: true
       }
     ];
+
+    // Seed default threads into the Kuvera and Indra agent identities
+    try {
+      agentIdentityService.receiveEmail('kuvera', {
+        from: this.inboxThreads[0].from,
+        subject: this.inboxThreads[0].subject,
+        body: this.inboxThreads[0].body
+      });
+      agentIdentityService.receiveEmail('indra', {
+        from: this.inboxThreads[1].from,
+        subject: this.inboxThreads[1].subject,
+        body: this.inboxThreads[1].body
+      });
+    } catch (_) {
+      // Safe fallback
+    }
   }
 
   /**
-   * Get all triaged inbox threads
+   * Get all triaged inbox threads across all agents
    */
   getInboxThreads() {
+    // Gather dynamic threads from agent identities as well
+    const allAgentMails = [];
+    for (const identity of agentIdentityService.identities.values()) {
+      allAgentMails.push(...identity.mailbox.inbox);
+    }
+
+    // Merge static baseline and agent mails with unique IDs
+    const seen = new Set();
+    const combined = [];
+
+    for (const item of [...this.inboxThreads, ...allAgentMails]) {
+      if (!seen.has(item.id)) {
+        seen.add(item.id);
+        combined.push(item);
+      }
+    }
+
     return {
-      engine: 'Cloudflare Agentic Inbox Sovereign Gateway',
-      totalEmails: this.inboxThreads.length,
-      unreadCount: this.inboxThreads.filter(m => !m.isRead).length,
-      threads: this.inboxThreads
+      engine: 'BRAHMA Sovereign Agentic Inbox Gateway',
+      totalEmails: combined.length,
+      unreadCount: combined.filter(m => !m.isRead).length,
+      threads: combined
     };
   }
 
   /**
    * Triage an incoming email message
    */
-  async triageIncomingEmail({ from, subject, body }) {
+  async triageIncomingEmail({ from, subject, body, targetAgent = 'brihaspati' }) {
     if (!from || !body) throw new Error('From and Body are required for email triage');
 
-    const isSecurity = /security|breach|mTLS|threat|audit/i.test(subject + ' ' + body);
-    const isFinancial = /index|trading|portfolio|rebalance|fund|bank/i.test(subject + ' ' + body);
-    const isUrgent = /urgent|critical|action required|immediate/i.test(subject + ' ' + body);
+    // Deliver directly to the designated agent identity
+    const target = agentIdentityService.getIdentity(targetAgent) ? targetAgent : 'brihaspati';
+    const delivery = await agentIdentityService.receiveEmail(target, { from, subject, body });
 
-    const category = isSecurity ? 'SECURITY_AUDIT' : (isFinancial ? 'FINANCIAL_TELEMETRY' : (isUrgent ? 'CRITICAL_ACTION' : 'GENERAL_INQUIRY'));
-    const priority = isUrgent ? 'HIGH' : 'NORMAL';
-
-    const summary = `Automated Agentic Triage: ${from} sent inquiry regarding "${subject}". Categorized as ${category} with ${priority} priority.`;
-    const suggestedReply = `Greetings. BRAHMA Autonomous Executive Assistant has received your transmission regarding "${subject}". Our agents have prioritized this item and will dispatch required telemetry shortly.`;
-
-    const newEmail = {
-      id: 'msg_' + Date.now().toString(36),
-      from,
-      senderName: from.split('@')[0],
-      subject: subject || 'Untitled Notification',
-      body,
-      receivedAt: new Date().toISOString(),
-      category,
-      priority,
-      summary,
-      suggestedReply,
-      isRead: false
-    };
-
-    this.inboxThreads.unshift(newEmail);
+    this.inboxThreads.unshift(delivery.email);
 
     return {
       success: true,
-      email: newEmail,
+      email: delivery.email,
       triagedAt: new Date().toISOString()
     };
   }

@@ -13,6 +13,15 @@ const BASE_HEADERS = {
 const CIRCUIT_BREAKER_TIMEOUT_MS = 3500;
 const STALE_SNAPSHOT_CACHE = new Map();
 
+// Seed baseline verified snapshots for core telemetry resilience
+STALE_SNAPSHOT_CACHE.set('wiki:Quantum computing', {
+  title: 'Quantum computing',
+  description: 'Area of computer science',
+  extract: 'Quantum computing is a rapidly-emerging technology that harnesses the laws of quantum mechanics to solve problems too complex for classical computers.',
+  url: 'https://en.wikipedia.org/wiki/Quantum_computing',
+  source: 'Wikipedia REST API'
+});
+
 const timeout = (ms = CIRCUIT_BREAKER_TIMEOUT_MS) => ({ signal: AbortSignal.timeout(ms) });
 
 async function withResilientSnapshotCache(cacheKey, fetchFn) {

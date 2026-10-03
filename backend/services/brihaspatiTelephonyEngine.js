@@ -99,6 +99,30 @@ class BrihaspatiTelephonyEngine {
       audioEncoding: 'opus/ogg'
     };
   }
+
+  /**
+   * Receive an inbound SMS to Brihaspati's virtual phone with auto-extracted 2FA OTP
+   */
+  async receiveInboundSms({ from = 'Service Alert', text = '' }) {
+    const agentIdentity = require('./agentIdentityService');
+    return agentIdentity.receiveSms('brihaspati', { from, text });
+  }
+
+  /**
+   * Dispatch an outbound SMS from Brihaspati's virtual phone
+   */
+  async sendOutboundSms({ to, text }) {
+    const agentIdentity = require('./agentIdentityService');
+    return agentIdentity.sendSms('brihaspati', { to, text });
+  }
+
+  /**
+   * Get the latest verified OTP received by Brihaspati
+   */
+  getLatestOtp() {
+    const agentIdentity = require('./agentIdentityService');
+    return agentIdentity.getLatestOtp('brihaspati');
+  }
 }
 
 module.exports = new BrihaspatiTelephonyEngine();
