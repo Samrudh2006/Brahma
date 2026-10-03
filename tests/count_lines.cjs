@@ -1,8 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
-const ROOT_DIR = 'C:\\Users\\HP\\.gemini\\antigravity-ide\\scratch\\brahma-app';
-const IGNORE_DIRS = ['node_modules', '.git', 'dist', '.vscode', 'uploads'];
+const ROOT_DIR = path.join(__dirname, '..');
+const IGNORE_DIRS = ['node_modules', '.git', 'dist', '.vscode', 'uploads', '.gemini'];
 const EXTENSIONS = ['.js', '.jsx', '.css', '.html', '.json', '.md', '.sql', '.yaml', '.yml'];
 
 let totalLines = 0;
