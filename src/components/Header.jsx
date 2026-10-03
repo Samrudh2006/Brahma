@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Search, ChevronDown, Sun, Moon, Settings, Clock, Palette, Check, Menu, Volume2, VolumeX, Smartphone } from 'lucide-react';
-import { toggleAmbientDrone, getDroneState, playTactileClick } from '@utils/soundEffects';
+import { Search, ChevronDown, Sun, Moon, Settings, Clock, Palette, Check, Menu, Volume2, VolumeX, Smartphone, Music } from 'lucide-react';
+import { toggleAmbientDrone, updateAmbientTheme, getDroneState, playTactileClick } from '@utils/soundEffects';
 
 const LUXURY_THEMES = [
-  { id: 'obsidian', name: '🌌 Cosmic Gold', color: '#fbbf24', desc: 'Obsidian & Gold' },
-  { id: 'teal', name: '🦚 Mayūra Teal', color: '#2bb6bd', desc: 'Peacock & Emerald' },
-  { id: 'cyberpunk', name: '🌆 Cyberpunk Kashi', color: '#ec4899', desc: 'Neon Violet & Cyan' },
-  { id: 'surya', name: '🌅 Sūrya Solarized', color: '#f59e0b', desc: 'Crimson Amber' },
-  { id: 'zen', name: '❄️ Himālaya Zen', color: '#38bdf8', desc: 'Frost & Midnight' }
+  { id: 'obsidian', name: '🌌 Cosmic Gold', color: '#fbbf24', desc: 'Obsidian & 432Hz Cosmic Pad', soundLabel: '🌌 Cosmic 432 Hz Deep Warmth' },
+  { id: 'teal', name: '🦚 Mayūra Teal', color: '#2bb6bd', desc: 'Peacock & 528Hz Solfeggio', soundLabel: '🦚 Mayūra 528 Hz Healing Water' },
+  { id: 'cyberpunk', name: '🌆 Cyberpunk Kashi', color: '#ec4899', desc: 'Neon Violet & Vangelis Synth', soundLabel: '🌆 Cyber Kashi Analog Synth Pad' },
+  { id: 'surya', name: '🌅 Sūrya Solarized', color: '#f59e0b', desc: 'Solar Om & Sacred Tanpura', soundLabel: '🌅 Sūrya 136.1 Hz Solar Tanpura' },
+  { id: 'zen', name: '❄️ Himālaya Zen', color: '#38bdf8', desc: 'Tibetan Bowl & Mountain Air', soundLabel: '❄️ Himālaya 396 Hz Tibetan Bowl' }
 ];
 
 export default function Header({
@@ -36,7 +36,7 @@ export default function Header({
 
   const handleToggleDrone = () => {
     playTactileClick();
-    const active = toggleAmbientDrone((state) => setIsDroneActive(state));
+    const active = toggleAmbientDrone((state) => setIsDroneActive(state), theme);
     setIsDroneActive(active);
   };
 
@@ -56,8 +56,10 @@ export default function Header({
   const handleSelectTheme = (themeId) => {
     playTactileClick();
     setTheme(themeId);
+    updateAmbientTheme(themeId);
     setShowThemeMenu(false);
   };
+
 
   return (
     <header className="top-header" style={{ position: 'relative' }}>
@@ -171,19 +173,25 @@ export default function Header({
           <Settings size={17} />
         </button>
 
-        {/* Sacred 432 Hz Ambient Soundscape Toggle */}
-        <button
-          className="icon-action-btn"
-          onClick={handleToggleDrone}
-          title={isDroneActive ? '432 Hz Sacred Harmonic Drone Active (Click to Mute)' : 'Play 432 Hz Sacred Meditative Soundscape'}
-          style={{
-            background: isDroneActive ? 'rgba(251, 191, 36, 0.2)' : 'transparent',
-            borderColor: isDroneActive ? '#fbbf24' : 'transparent',
-            color: isDroneActive ? '#fbbf24' : 'var(--text-secondary)'
-          }}
-        >
-          {isDroneActive ? <Volume2 size={17} /> : <VolumeX size={17} />}
-        </button>
+        {/* Sacred Procedural Ambient Soundscape Toggle with Theme Awareness */}
+        {(() => {
+          const activeThemeObj = LUXURY_THEMES.find(t => t.id === theme) || LUXURY_THEMES[0];
+          return (
+            <button
+              className="icon-action-btn"
+              onClick={handleToggleDrone}
+              title={isDroneActive ? `${activeThemeObj.soundLabel} • Active (Click to Mute)` : `Play ${activeThemeObj.soundLabel}`}
+              style={{
+                background: isDroneActive ? 'rgba(251, 191, 36, 0.2)' : 'transparent',
+                borderColor: isDroneActive ? activeThemeObj.color : 'transparent',
+                color: isDroneActive ? activeThemeObj.color : 'var(--text-secondary)'
+              }}
+            >
+              {isDroneActive ? <Volume2 size={17} /> : <VolumeX size={17} />}
+            </button>
+          );
+        })()}
+
 
         {/* PWA Install Native App Button */}
         <button
