@@ -1,7 +1,7 @@
 [
   {
-    "id": "pred_1791042569508_399f8f",
-    "timestamp": "2026-10-03T15:49:29.508Z",
+    "id": "pred_1791042912680_341b96",
+    "timestamp": "2026-10-03T15:55:12.680Z",
     "symbol": "NIFTY_50",
     "forecastProbability": 0.85,
     "marketImpliedProbability": 0.6,
@@ -13,14 +13,14 @@
     "convictionMultiplier": 1,
     "status": "SETTLED",
     "outcome": 1,
-    "settledAt": "2026-10-03T15:49:29.510Z",
+    "settledAt": "2026-10-03T15:55:12.681Z",
     "brierError": 0.0225,
     "marketBrierError": 0.16,
     "brierDelta": -0.1375
   },
   {
-    "id": "pred_1791042569509_0b0416",
-    "timestamp": "2026-10-03T15:49:29.509Z",
+    "id": "pred_1791042912680_8a0edb",
+    "timestamp": "2026-10-03T15:55:12.681Z",
     "symbol": "RELIANCE",
     "forecastProbability": 0.15,
     "marketImpliedProbability": 0.35,
@@ -32,14 +32,14 @@
     "convictionMultiplier": 1,
     "status": "SETTLED",
     "outcome": 0,
-    "settledAt": "2026-10-03T15:49:29.510Z",
+    "settledAt": "2026-10-03T15:55:12.682Z",
     "brierError": 0.0225,
     "marketBrierError": 0.1225,
     "brierDelta": -0.1
   },
   {
-    "id": "pred_1791042569511_5f6b2c",
-    "timestamp": "2026-10-03T15:49:29.511Z",
+    "id": "pred_1791042912682_621119",
+    "timestamp": "2026-10-03T15:55:12.683Z",
     "symbol": "BANKNIFTY",
     "forecastProbability": 0.95,
     "marketImpliedProbability": 0.5,
@@ -51,7 +51,7 @@
     "convictionMultiplier": 1.15,
     "status": "SETTLED",
     "outcome": 0,
-    "settledAt": "2026-10-03T15:49:29.512Z",
+    "settledAt": "2026-10-03T15:55:12.683Z",
     "brierError": 0.9025,
     "marketBrierError": 0.25,
     "brierDelta": 0.6525

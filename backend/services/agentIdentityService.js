@@ -81,6 +81,69 @@ class AgentIdentityService {
         email: 'indra@brahma.matrix',
         phoneNumber: '+1-800-463-7201',
         capabilities: ['threat_intel', 'public_tunnel', 'secops_alerts']
+      },
+      {
+        id: 'vishwakarma',
+        name: 'Vishwakarma Engineering & Supply Council',
+        handle: 'vishwakarma',
+        role: 'High-Performance Engineering & Automated Supply Chains',
+        email: 'vishwakarma@brahma.matrix',
+        phoneNumber: '+1-800-847-4925',
+        capabilities: ['cad_bim', 'logistics', 'supply_audit']
+      },
+      {
+        id: 'varuna',
+        name: 'Varuna Planetary Edge Council',
+        handle: 'varuna',
+        role: 'Planetary Zero-Trust Networks & Edge Ingress Gateways',
+        email: 'varuna@brahma.matrix',
+        phoneNumber: '+1-800-827-8621',
+        capabilities: ['edge_routing', 'cloudflare_mesh', 'dns_sec']
+      },
+      {
+        id: 'agni',
+        name: 'Agni Silicon & Compute Council',
+        handle: 'agni',
+        role: '1.58-Bit Ternary BitBLAS Silicon Acceleration & High Throughput',
+        email: 'agni@brahma.matrix',
+        phoneNumber: '+1-800-246-4261',
+        capabilities: ['bitblas', 'cuda_quant', 'silicon_ops']
+      },
+      {
+        id: 'saraswati',
+        name: 'Saraswati Divine Logic & Prosody Council',
+        handle: 'saraswati',
+        role: 'Neural Speech Prosody, Linguistics & Epistemic Reasoning',
+        email: 'saraswati@brahma.matrix',
+        phoneNumber: '+1-800-727-2792',
+        capabilities: ['voxcpm', 'linguistics', 'formal_logic']
+      },
+      {
+        id: 'yama',
+        name: 'Yama Formal Verification & Audit Council',
+        handle: 'yama',
+        role: 'Lean 4 Theorem Proving, SMT Solvers & Soundness Verification',
+        email: 'yama@brahma.matrix',
+        phoneNumber: '+1-800-926-2483',
+        capabilities: ['lean4_proofs', 'smt_soundness', 'audit_ledger']
+      },
+      {
+        id: 'vayu',
+        name: 'Vayu Real-Time Low-Latency Communications',
+        handle: 'vayu',
+        role: 'Sub-80ms WebSocket Telephony & Planetary Streaming Ingress',
+        email: 'vayu@brahma.matrix',
+        phoneNumber: '+1-800-829-8298',
+        capabilities: ['streaming_audio', 'websocket_mesh', 'telephony']
+      },
+      {
+        id: 'surya',
+        name: 'Surya Quantum & Energy Optimization Council',
+        handle: 'surya',
+        role: 'NISQ Quantum Circuit Depth Reduction & Energy Efficiency',
+        email: 'surya@brahma.matrix',
+        phoneNumber: '+1-800-787-9201',
+        capabilities: ['quantum_zx', 'energy_opf', 'grid_telemetry']
       }
     ];
 
