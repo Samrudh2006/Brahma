@@ -20,15 +20,23 @@ class AutonomousWorkflowsService {
     // Fetch live arXiv papers
     let arxivPapers = [];
     try {
-      arxivPapers = await publicApis.searchArxiv(topic, 5);
+      const arxivRes = await publicApis.searchArxiv(topic, 5);
+      arxivPapers = Array.isArray(arxivRes) ? arxivRes : (arxivRes.papers || []);
     } catch (_) {
+      arxivPapers = [];
+    }
+
+    if (!arxivPapers || arxivPapers.length === 0) {
       arxivPapers = [
-        { title: 'DeepSeek-V3 Technical Report', summary: 'Multi-head Latent Attention and DualPipe for efficient FP8 training.', authors: ['DeepSeek AI'], link: 'https://arxiv.org/abs/2412.19437' },
-        { title: 'FlashAttention-3: Fast and Accurate Attention with FP8', summary: 'Asynchronous GEMM and hardware acceleration on Hopper GPUs.', authors: ['Tri Dao'], link: 'https://arxiv.org/abs/2407.08608' }
+        { title: 'DeepSeek-V3 Technical Report', summary: 'Multi-head Latent Attention and DualPipe for efficient FP8 training.', authors: 'DeepSeek AI', link: 'https://arxiv.org/abs/2412.19437' },
+        { title: 'FlashAttention-3: Fast and Accurate Attention with FP8', summary: 'Asynchronous GEMM and hardware acceleration on Hopper GPUs.', authors: 'Tri Dao', link: 'https://arxiv.org/abs/2407.08608' }
       ];
     }
 
-    const papersSummary = arxivPapers.map((p, i) => `Paper ${i+1}: ${p.title}\nAuthors: ${p.authors.join(', ')}\nSummary: ${p.summary.slice(0, 300)}...\nLink: ${p.link || p.pdfUrl}`).join('\n\n');
+    const papersSummary = arxivPapers.map((p, i) => {
+      const authStr = Array.isArray(p.authors) ? p.authors.join(', ') : (p.authors || 'Unknown');
+      return `Paper ${i+1}: ${p.title}\nAuthors: ${authStr}\nSummary: ${(p.summary || '').slice(0, 300)}...\nLink: ${p.url || p.link || p.pdfUrl || 'https://arxiv.org'}`;
+    }).join('\n\n');
 
     const prompt = `You are BRAHMA's Daily 8:00 AM Sovereign Research Anchor.
 Generate an energetic, high-IQ, entertaining, and deeply insightful MORNING RESEARCH DIGEST in natural Telugu-English (Tanglish) for an ambitious AI engineer/founder.
