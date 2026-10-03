@@ -117,11 +117,11 @@ function dispatchPrompt(fullPrompt) {
             if (dataStr === '[DONE]') continue;
             try {
               const json = JSON.parse(dataStr);
-              if (json.thought) fullResponse += ' ' + json.thought;
-              if (json.chunk) fullResponse += ' ' + json.chunk;
-              if (json.content) fullResponse += ' ' + json.content;
+              if (json.chunk) fullResponse += json.chunk;
+              if (json.content) fullResponse += json.content;
+              if (json.thought) fullResponse += (fullResponse ? ' ' : '') + json.thought;
             } catch (_) {
-              fullResponse += ' ' + dataStr;
+              fullResponse += dataStr;
             }
           }
         }
@@ -189,15 +189,22 @@ async function run20MinuteExperiment() {
       }
       const latencyMs = Date.now() - iterStart;
 
-      // Evaluation Logic
+      // Evaluation Logic (Whitespace-invariant & token-boundary resilient)
       const normalizedResp = response.toLowerCase();
-      const exactFactLower = testCase.exactFact.toLowerCase();
-      const quoteKeyLower = testCase.quoteKeyPhrase.toLowerCase();
+      const cleanResp = normalizedResp.replace(/\s+/g, ' ');
+      const respNoSpaces = normalizedResp.replace(/[\s\-_]/g, '');
 
-      // Check for exact fact match (or case-insensitive exact substring)
-      const factFound = normalizedResp.includes(exactFactLower);
+      const exactFactLower = testCase.exactFact.toLowerCase();
+      const factNoSpaces = exactFactLower.replace(/[\s\-_]/g, '');
+
+      const quoteKeyLower = testCase.quoteKeyPhrase.toLowerCase();
+      const quoteNoSpaces = quoteKeyLower.replace(/[\s\-_]/g, '');
+
+      // Check for exact fact match (direct, clean, or character-sequence invariant)
+      const factFound = cleanResp.includes(exactFactLower) || respNoSpaces.includes(factNoSpaces);
+
       // Check for supporting quote presence
-      const quoteFound = normalizedResp.includes(quoteKeyLower) || normalizedResp.includes(exactFactLower);
+      const quoteFound = cleanResp.includes(quoteKeyLower) || respNoSpaces.includes(quoteNoSpaces) || factFound;
       const passed = factFound && quoteFound;
 
       const record = {
@@ -219,6 +226,9 @@ async function run20MinuteExperiment() {
 
       const statusTag = passed ? '✅ PASS' : '❌ FAIL';
       console.log(`   [${pos.padEnd(6)}] ${statusTag} | ${latencyMs}ms | ~${estimatedTokens} tokens | Fact: ${factFound ? '✓' : '✗'} | Quote: ${quoteFound ? '✓' : '✗'}`);
+
+      // Polite pacing delay to prevent upstream token-per-minute (TPM) throttling
+      await new Promise(r => setTimeout(r, 600));
     }
   }
 

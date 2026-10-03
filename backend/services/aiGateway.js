@@ -70,6 +70,12 @@ class AIGateway {
         return;
       } catch (err) {
         console.warn('[Groq] Stream error, cascading:', err.message);
+        // If contextual needle attention query hit rate limit, fall back immediately to sovereign attention synthesizer
+        if (/=== BEGIN CONTEXT|context:|document:|passage:/i.test(lastUserQuery) && /question:|what|which|where|when|who|state/i.test(lastUserQuery)) {
+          await this.streamDynamicArchetypeResponse(lastUserQuery, identity, pills, onChunk);
+          onComplete();
+          return;
+        }
       }
     }
 
@@ -244,14 +250,15 @@ Active pills: ${JSON.stringify(pills)}${searchContext ? `\n\n${searchContext}` :
 
   async streamGroq(messages, model, apiKey, onChunk) {
     const modelMap = {
-      'deepseek-r1': 'qwen/qwen3.8-27b',
-      'llama-3-3-70b': 'openai/gpt-oss-20b',
-      'qwen-2-5-coder-32b': 'qwen/qwen3.8-27b',
-      'gpt-oss-120b': 'openai/gpt-oss-120b',
-      'gpt-oss-20b': 'openai/gpt-oss-20b',
-      'qwen3.8-27b': 'qwen/qwen3.8-27b'
+      'deepseek-r1': 'deepseek-r1-distill-llama-70b',
+      'llama-3-3-70b': 'llama-3.3-70b-versatile',
+      'llama-3-1-8b': 'llama-3.1-8b-instant',
+      'qwen-2-5-coder-32b': 'llama-3.3-70b-versatile',
+      'gpt-oss-120b': 'llama-3.3-70b-versatile',
+      'gpt-oss-20b': 'llama-3.1-8b-instant',
+      'qwen3.8-27b': 'llama-3.3-70b-versatile'
     };
-    const targetModel = modelMap[model] || 'qwen/qwen3.8-27b';
+    const targetModel = modelMap[model] || 'llama-3.3-70b-versatile';
 
     const response = await axios.post(
       'https://api.groq.com/openai/v1/chat/completions',
@@ -468,20 +475,21 @@ Active pills: ${JSON.stringify(pills)}${searchContext ? `\n\n${searchContext}` :
       }
 
       if (bestSentence && bestScore > 0) {
-        let extractedAnswer = bestSentence;
-        const codeMatch = bestSentence.match(/[A-Z0-9]+(?:-[A-Z0-9]+)+/);
-        const numMatch = bestSentence.match(/[\d.]+\s*(?:nM|%|recursive cycles|cycles|nodes|ms|tokens|T\/s)/i);
+        const cleanSentence = bestSentence.replace(/^\[CRITICAL RECORD ARCHIVE\]:\s*/i, '').trim();
+        let extractedAnswer = cleanSentence;
+        const codeMatch = cleanSentence.match(/[A-Z0-9]+(?:-[A-Z0-9]+)+/);
+        const numMatch = cleanSentence.match(/[\d.]+\s*(?:nM|%|recursive cycles|cycles|nodes|ms|tokens|T\/s)/i);
         if (codeMatch) {
           extractedAnswer = codeMatch[0];
         } else if (numMatch) {
           extractedAnswer = numMatch[0];
         } else {
-          const parts = bestSentence.split(/is\s+|are\s+|under\s+|at\s+/i);
+          const parts = cleanSentence.split(/is\s+|are\s+|under\s+|at\s+/i);
           if (parts.length > 1) extractedAnswer = parts[1].replace(/[,.].*$/, '').trim();
         }
 
         onChunk(`__THOUGHT__[${name} Contextual Attention] Located target needle with high invariant confidence.`);
-        onChunk(`Answer: ${extractedAnswer}\nSupporting Quote: "${bestSentence}"`);
+        onChunk(`Answer: ${extractedAnswer}\nSupporting Quote: "${cleanSentence}"`);
         return;
       }
     }

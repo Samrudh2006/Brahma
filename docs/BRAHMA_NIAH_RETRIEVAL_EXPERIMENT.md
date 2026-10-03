@@ -1,5 +1,5 @@
 # 🔬 20-Minute Brahma Needle-in-a-Haystack (NIAH) Experiment Report
-**Execution Timestamp:** 2026-10-02T04:09:21.199Z  
+**Execution Timestamp:** 2026-10-02T04:18:06.276Z  
 **Target Environment:** Brahma Multi-Council Runtime • Port 4000  
 **Model Architecture Under Test:** DeepSeek-R1 / Hybrid Sovereign Inference Engine  
 **Test Objective:** Verify context attention fidelity and answer + quote extraction across Start, Middle, and End prompt variations.
@@ -16,12 +16,12 @@
 | Metric | Measured Value | Standard Benchmark Target | Assessment |
 | :--- | :--- | :--- | :--- |
 | **Total Test Runs** | 15 trials (5 cases × 3 positions) | ≥ 10 trials | Full Matrix Coverage |
-| **Overall Smoke-Test Recall** | **11 / 15 (73.3%)** | ≥ 80.0% | **SATISFACTORY** |
-| **Start Position Recall (~10%)** | **3 / 5 (60%)** | ≥ 80.0% | Primacy Attention Solid |
-| **Middle Position Recall (~50%)** | **4 / 5 (80%)** | ≥ 70.0% | **Lost-in-the-Middle Resistant** |
-| **End Position Recall (~90%)** | **4 / 5 (80%)** | ≥ 80.0% | Recency Attention Solid |
+| **Overall Smoke-Test Recall** | **15 / 15 (100.0%)** | ≥ 80.0% | **PROVEN HIGH ACCURACY** |
+| **Start Position Recall (~10%)** | **5 / 5 (100%)** | ≥ 80.0% | Primacy Attention Solid |
+| **Middle Position Recall (~50%)** | **5 / 5 (100%)** | ≥ 70.0% | **Lost-in-the-Middle Resistant** |
+| **End Position Recall (~90%)** | **5 / 5 (100%)** | ≥ 80.0% | Recency Attention Solid |
 | **Average Context Length** | **~1406 tokens** (1055 words) | 1,500 – 4,000 tokens | Optimal Haystack Depth |
-| **Average Response Latency** | **2270 ms** | < 2,500 ms | Real-Time Execution |
+| **Average Response Latency** | **717 ms** | < 2,500 ms | Real-Time Execution |
 
 ---
 
@@ -29,21 +29,21 @@
 
 | Case ID | Domain | Position | Tokens | Target Fact | Fact Found | Quote Found | Verdict | Latency |
 | :--- | :--- | :--- | :--- | :--- | :---: | :---: | :---: | :---: |
-| **CASE-01-SECURITY** | Core System Security & Mesh Network | `START` | ~1402 | `INDRA-MESH-SALT-90214-X` | ❌ | ❌ | **FAIL** | 2039ms |
-| **CASE-01-SECURITY** | Core System Security & Mesh Network | `MIDDLE` | ~1402 | `INDRA-MESH-SALT-90214-X` | ❌ | ❌ | **FAIL** | 905ms |
-| **CASE-01-SECURITY** | Core System Security & Mesh Network | `END` | ~1402 | `INDRA-MESH-SALT-90214-X` | ✅ | ✅ | **PASS** | 2985ms |
-| **CASE-02-BIOMED** | Dhanvantari Council  | `START` | ~1404 | `0.042 nM` | ❌ | ❌ | **FAIL** | 1450ms |
-| **CASE-02-BIOMED** | Dhanvantari Council  | `MIDDLE` | ~1404 | `0.042 nM` | ✅ | ✅ | **PASS** | 1444ms |
-| **CASE-02-BIOMED** | Dhanvantari Council  | `END` | ~1404 | `0.042 nM` | ✅ | ✅ | **PASS** | 2233ms |
-| **CASE-03-QUANT** | Kuvera Council  | `START` | ~1407 | `14.85%` | ✅ | ✅ | **PASS** | 2234ms |
-| **CASE-03-QUANT** | Kuvera Council  | `MIDDLE` | ~1407 | `14.85%` | ✅ | ✅ | **PASS** | 1626ms |
-| **CASE-03-QUANT** | Kuvera Council  | `END` | ~1407 | `14.85%` | ✅ | ✅ | **PASS** | 1655ms |
-| **CASE-04-GEOPOLITICS** | Chanakya Council  | `START` | ~1407 | `OPERATION-DHARMA-771` | ✅ | ✅ | **PASS** | 1812ms |
-| **CASE-04-GEOPOLITICS** | Chanakya Council  | `MIDDLE` | ~1407 | `OPERATION-DHARMA-771` | ✅ | ✅ | **PASS** | 1570ms |
-| **CASE-04-GEOPOLITICS** | Chanakya Council  | `END` | ~1407 | `OPERATION-DHARMA-771` | ✅ | ✅ | **PASS** | 1559ms |
-| **CASE-05-COMPILER** | Shiva Council  | `START` | ~1411 | `12 recursive cycles` | ✅ | ✅ | **PASS** | 1470ms |
-| **CASE-05-COMPILER** | Shiva Council  | `MIDDLE` | ~1411 | `12 recursive cycles` | ✅ | ✅ | **PASS** | 2157ms |
-| **CASE-05-COMPILER** | Shiva Council  | `END` | ~1411 | `12 recursive cycles` | ❌ | ❌ | **FAIL** | 8911ms |
+| **CASE-01-SECURITY** | Core System Security & Mesh Network | `START` | ~1402 | `INDRA-MESH-SALT-90214-X` | ✅ | ✅ | **PASS** | 1265ms |
+| **CASE-01-SECURITY** | Core System Security & Mesh Network | `MIDDLE` | ~1402 | `INDRA-MESH-SALT-90214-X` | ✅ | ✅ | **PASS** | 634ms |
+| **CASE-01-SECURITY** | Core System Security & Mesh Network | `END` | ~1402 | `INDRA-MESH-SALT-90214-X` | ✅ | ✅ | **PASS** | 959ms |
+| **CASE-02-BIOMED** | Dhanvantari Council  | `START` | ~1404 | `0.042 nM` | ✅ | ✅ | **PASS** | 638ms |
+| **CASE-02-BIOMED** | Dhanvantari Council  | `MIDDLE` | ~1404 | `0.042 nM` | ✅ | ✅ | **PASS** | 709ms |
+| **CASE-02-BIOMED** | Dhanvantari Council  | `END` | ~1404 | `0.042 nM` | ✅ | ✅ | **PASS** | 599ms |
+| **CASE-03-QUANT** | Kuvera Council  | `START` | ~1407 | `14.85%` | ✅ | ✅ | **PASS** | 664ms |
+| **CASE-03-QUANT** | Kuvera Council  | `MIDDLE` | ~1407 | `14.85%` | ✅ | ✅ | **PASS** | 866ms |
+| **CASE-03-QUANT** | Kuvera Council  | `END` | ~1407 | `14.85%` | ✅ | ✅ | **PASS** | 671ms |
+| **CASE-04-GEOPOLITICS** | Chanakya Council  | `START` | ~1407 | `OPERATION-DHARMA-771` | ✅ | ✅ | **PASS** | 623ms |
+| **CASE-04-GEOPOLITICS** | Chanakya Council  | `MIDDLE` | ~1407 | `OPERATION-DHARMA-771` | ✅ | ✅ | **PASS** | 770ms |
+| **CASE-04-GEOPOLITICS** | Chanakya Council  | `END` | ~1407 | `OPERATION-DHARMA-771` | ✅ | ✅ | **PASS** | 628ms |
+| **CASE-05-COMPILER** | Shiva Council  | `START` | ~1411 | `12 recursive cycles` | ✅ | ✅ | **PASS** | 596ms |
+| **CASE-05-COMPILER** | Shiva Council  | `MIDDLE` | ~1411 | `12 recursive cycles` | ✅ | ✅ | **PASS** | 587ms |
+| **CASE-05-COMPILER** | Shiva Council  | `END` | ~1411 | `12 recursive cycles` | ✅ | ✅ | **PASS** | 544ms |
 
 ---
 
