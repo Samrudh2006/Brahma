@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
   MessageSquare, Bell, Sparkles, Briefcase, Wrench,
   Star, Calendar, Settings, ChevronRight,
-  Plus, ChevronLeft, PanelLeftClose, PanelLeftOpen, Award, Image, Link2, Code, Smartphone, Shield
+  Plus, ChevronLeft, PanelLeftClose, PanelLeftOpen, Award, Image, Link2, Code, Smartphone, Shield, X
 } from 'lucide-react';
 import { getChatSessions } from '@utils/index';
 
@@ -13,6 +13,8 @@ export default function Sidebar({
   onOpenSettings,
   onNewChat,
   currentIdentity,
+  mobileOpen = false,
+  onMobileClose,
 }) {
   const [collapsed, setCollapsed] = useState(false);
   const [chatHistory, setChatHistory] = useState([]);
@@ -40,80 +42,116 @@ export default function Sidebar({
   ];
 
   return (
-    <aside className={`sidebar ${collapsed ? 'collapsed' : ''}`} style={{
-      width: collapsed ? 76 : 270,
-      transition: 'width 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'space-between',
-      background: 'linear-gradient(180deg, #070a14 0%, #03060f 100%)',
-      borderRight: '1px solid rgba(251, 191, 36, 0.18)',
-      height: '100vh',
-      overflowY: 'hidden',
-      zIndex: 100
-    }}>
-      {/* 1. Brand Header with Exact Ornate Emblem */}
-      <div>
-        <div className="sidebar-header" onClick={() => setActivePage('chat')} style={{
-          padding: '16px 18px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          borderBottom: '1px solid rgba(255,255,255,0.06)',
-          cursor: 'pointer'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <div className="sidebar-master-avatar-wrap">
-              <img src={currentIdentity.portrait} alt={currentIdentity.name} className="sidebar-master-avatar" />
-            </div>
-            {!collapsed && (
-              <div className="sidebar-brand-info">
-                <span className="sidebar-brand-title" style={{ fontSize: '1.05rem', fontWeight: 900, color: '#f8fafc', letterSpacing: '0.04em' }}>
-                  {currentIdentity.name || 'BRAHMA'}
-                </span>
-                <span style={{ fontSize: '0.66rem', color: '#fbbf24', display: 'block', letterSpacing: '0.06em', fontWeight: 800 }}>
-                  {currentIdentity.badgeText || 'Universal Master'}
-                </span>
+    <>
+      {mobileOpen && (
+        <div
+          className="sidebar-backdrop"
+          onClick={onMobileClose}
+          aria-hidden="true"
+        />
+      )}
+      <aside className={`sidebar ${collapsed ? 'collapsed' : ''} ${mobileOpen ? 'mobile-open' : ''}`} style={{
+        width: collapsed ? 76 : 270,
+        transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        background: 'linear-gradient(180deg, #070a14 0%, #03060f 100%)',
+        borderRight: '1px solid rgba(251, 191, 36, 0.18)',
+        height: '100vh',
+        overflowY: 'hidden',
+        zIndex: 100
+      }}>
+        {/* 1. Brand Header with Exact Ornate Emblem */}
+        <div>
+          <div className="sidebar-header" onClick={() => { setActivePage('chat'); if (onMobileClose) onMobileClose(); }} style={{
+            padding: '16px 18px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            borderBottom: '1px solid rgba(255,255,255,0.06)',
+            cursor: 'pointer'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div className="sidebar-master-avatar-wrap">
+                <img src={currentIdentity.portrait} alt={currentIdentity.name} className="sidebar-master-avatar" />
               </div>
-            )}
+              {!collapsed && (
+                <div className="sidebar-brand-info">
+                  <span className="sidebar-brand-title" style={{ fontSize: '1.05rem', fontWeight: 900, color: '#f8fafc', letterSpacing: '0.04em' }}>
+                    {currentIdentity.name || 'BRAHMA'}
+                  </span>
+                  <span style={{ fontSize: '0.66rem', color: '#fbbf24', display: 'block', letterSpacing: '0.06em', fontWeight: 800 }}>
+                    {currentIdentity.badgeText || 'Universal Master'}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Collapse / Close Toggle Button */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              {mobileOpen && (
+                <button
+                  className="sidebar-mobile-close-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (onMobileClose) onMobileClose();
+                  }}
+                  title="Close menu"
+                  style={{
+                    background: 'rgba(251, 191, 36, 0.15)',
+                    border: '1px solid rgba(251, 191, 36, 0.4)',
+                    color: '#fbbf24',
+                    borderRadius: 6,
+                    padding: 5,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  <X size={15} />
+                </button>
+              )}
+              <button
+                className="sidebar-collapse-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCollapsed(!collapsed);
+                }}
+                title={collapsed ? 'Open sidebar' : 'Close sidebar'}
+                style={{
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  color: '#94a3b8',
+                  borderRadius: 6,
+                  padding: 5,
+                  cursor: 'pointer'
+                }}
+              >
+                {collapsed ? <PanelLeftOpen size={14} /> : <PanelLeftClose size={14} />}
+              </button>
+            </div>
           </div>
 
-          {/* Collapse / Close Toggle Button */}
-          <button
-            className="sidebar-collapse-btn"
-            onClick={(e) => {
-              e.stopPropagation();
-              setCollapsed(!collapsed);
-            }}
-            title={collapsed ? 'Open sidebar' : 'Close sidebar'}
-            style={{
-              background: 'rgba(255,255,255,0.05)',
-              border: '1px solid rgba(255,255,255,0.1)',
-              color: '#94a3b8',
-              borderRadius: 6,
-              padding: 5,
-              cursor: 'pointer'
-            }}
-          >
-            {collapsed ? <PanelLeftOpen size={14} /> : <PanelLeftClose size={14} />}
-          </button>
-        </div>
-
-        {/* 2. Navigation Items with Sanskrit Header + Subtitle */}
-        <nav className="sidebar-nav" style={{
-          padding: '12px 10px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 4,
-          maxHeight: 'calc(100vh - 150px)',
-          overflowY: 'auto'
-        }}>
-          {navItems.map((item) => {
-            const isActive = activePage === item.id;
-            return (
-              <button
-                key={item.id}
-                onClick={() => setActivePage(item.id)}
+          {/* 2. Navigation Items with Sanskrit Header + Subtitle */}
+          <nav className="sidebar-nav" style={{
+            padding: '12px 10px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 4,
+            maxHeight: 'calc(100vh - 150px)',
+            overflowY: 'auto'
+          }}>
+            {navItems.map((item) => {
+              const isActive = activePage === item.id;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    setActivePage(item.id);
+                    if (onMobileClose) onMobileClose();
+                  }}
                 title={collapsed ? `${item.glyph} ${item.title} — ${item.subtitle}` : undefined}
                 style={{
                   display: 'flex',
@@ -208,7 +246,7 @@ export default function Sidebar({
         borderTop: '1px solid rgba(255,255,255,0.06)',
         background: '#040711'
       }}>
-        <div className="user-profile-widget" onClick={onOpenSettings} title="User Profile & Settings" style={{
+        <div className="user-profile-widget" onClick={() => { onOpenSettings(); if (onMobileClose) onMobileClose(); }} title="User Profile & Settings" style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: collapsed ? 'center' : 'space-between',
@@ -246,5 +284,6 @@ export default function Sidebar({
         </div>
       </div>
     </aside>
+    </>
   );
 }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, ChevronDown, Sun, Moon, Settings, Clock, Palette, Check } from 'lucide-react';
+import { Search, ChevronDown, Sun, Moon, Settings, Clock, Palette, Check, Menu } from 'lucide-react';
 
 const LUXURY_THEMES = [
   { id: 'obsidian', name: '🌌 Cosmic Gold', color: '#fbbf24', desc: 'Obsidian & Gold' },
@@ -16,7 +16,8 @@ export default function Header({
   onOpenSettings,
   theme,
   setTheme,
-  setActivePage
+  setActivePage,
+  onToggleMobileSidebar
 }) {
   const [showThemeMenu, setShowThemeMenu] = useState(false);
 
@@ -28,6 +29,16 @@ export default function Header({
   return (
     <header className="top-header" style={{ position: 'relative' }}>
       <div className="header-left">
+        {/* Mobile Hamburger Trigger */}
+        <button
+          className="mobile-menu-trigger"
+          onClick={onToggleMobileSidebar}
+          title="Toggle Navigation Menu"
+          aria-label="Toggle Navigation Menu"
+        >
+          <Menu size={20} />
+        </button>
+
         {/* Identity Selector Dropdown Pill */}
         <div
           className="identity-switcher-pill"
@@ -39,7 +50,7 @@ export default function Header({
             alt={currentIdentity.name}
             className="switcher-portrait"
           />
-          <span className="switcher-name">{currentIdentity.name} Intelligence</span>
+          <span className="switcher-name">{currentIdentity.name} <span className="switcher-subtext">Intelligence</span></span>
           <ChevronDown size={14} style={{ color: 'var(--accent-gold)' }} />
         </div>
       </div>

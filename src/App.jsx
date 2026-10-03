@@ -45,6 +45,7 @@ import '@styles/index.css';
 
 export default function App() {
   const [activeStudioModal, setActiveStudioModal] = React.useState(null); // 'discovery' | 'coconut' | 'genesis' | 'training' | null
+  const [isMobileNavOpen, setIsMobileNavOpen] = React.useState(false);
 
   // ─── Zustand store slices ────────────────────────────────────────────────
   const {
@@ -167,6 +168,8 @@ export default function App() {
         onOpenSettings={() => setSettingsModal(true)}
         onNewChat={handleNewChat}
         currentIdentity={currentIdentity}
+        mobileOpen={isMobileNavOpen}
+        onMobileClose={() => setIsMobileNavOpen(false)}
       />
 
       <main className="main-workspace">
@@ -179,6 +182,7 @@ export default function App() {
             backendOnline={backendOnline}
             ollamaOnline={ollamaOnline}
             setActivePage={setActivePage}
+            onToggleMobileSidebar={() => setIsMobileNavOpen(!isMobileNavOpen)}
           />
         )}
 

@@ -3,34 +3,79 @@ import { Play, Volume2, VolumeX, FastForward, Sparkles } from 'lucide-react';
 
 export default function SplashScreen({ onComplete }) {
   const videoRef = useRef(null);
+  const ambientRef = useRef(null);
   const [isFading, setIsFading] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const [showPlayFallback, setShowPlayFallback] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [videoError, setVideoError] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
     const videoEl = videoRef.current;
+    const ambientEl = ambientRef.current;
     if (!videoEl) return;
 
-    // Autoplay attempt
-    const playPromise = videoEl.play();
-    if (playPromise !== undefined) {
-      playPromise
-        .then(() => setShowPlayFallback(false))
-        .catch((err) => {
-          console.warn('Autoplay blocked by browser. Showing enter button:', err);
-          setShowPlayFallback(true);
-        });
+    // Strict mobile-friendly setup: ensure muted property is set in DOM before play
+    videoEl.defaultMuted = true;
+    videoEl.muted = true;
+    if (ambientEl) {
+      ambientEl.defaultMuted = true;
+      ambientEl.muted = true;
     }
 
-    const handleTimeUpdate = () => {
-      if (videoEl.duration) {
-        setProgress((videoEl.currentTime / videoEl.duration) * 100);
+    // Autoplay attempt
+    const attemptPlay = () => {
+      const playPromise = videoEl.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            setIsPlaying(true);
+            setShowPlayFallback(false);
+            if (ambientEl) ambientEl.play().catch(() => {});
+          })
+          .catch((err) => {
+            console.warn('Autoplay restricted on device. Showing enter button:', err);
+            setShowPlayFallback(true);
+          });
       }
     };
 
+    attemptPlay();
+
+    // Fallback timer: If after 3 seconds the video is stalled or blocked, reveal Enter button
+    const fallbackTimer = setTimeout(() => {
+      if (videoEl.paused || videoEl.currentTime === 0) {
+        setShowPlayFallback(true);
+      }
+    }, 2800);
+
+    const handleTimeUpdate = () => {
+      if (videoEl.duration) {
+        const curProgress = (videoEl.currentTime / videoEl.duration) * 100;
+        setProgress(curProgress);
+        setIsPlaying(true);
+        // Sync ambient video if slight drift
+        if (ambientEl && Math.abs(ambientEl.currentTime - videoEl.currentTime) > 0.3) {
+          ambientEl.currentTime = videoEl.currentTime;
+        }
+      }
+    };
+
+    const handlePlay = () => {
+      setIsPlaying(true);
+      setShowPlayFallback(false);
+      if (ambientEl) ambientEl.play().catch(() => {});
+    };
+
     videoEl.addEventListener('timeupdate', handleTimeUpdate);
-    return () => videoEl.removeEventListener('timeupdate', handleTimeUpdate);
+    videoEl.addEventListener('playing', handlePlay);
+
+    return () => {
+      clearTimeout(fallbackTimer);
+      videoEl.removeEventListener('timeupdate', handleTimeUpdate);
+      videoEl.removeEventListener('playing', handlePlay);
+    };
   }, []);
 
   const handleEnded = () => {
@@ -42,145 +87,149 @@ export default function SplashScreen({ onComplete }) {
     setIsFading(true);
     setTimeout(() => {
       onComplete();
-    }, 900);
+    }, 800);
   };
 
-  const toggleMute = () => {
+  const toggleMute = (e) => {
+    e.stopPropagation();
+    const nextMuted = !isMuted;
     if (videoRef.current) {
-      videoRef.current.muted = !isMuted;
-      setIsMuted(!isMuted);
+      videoRef.current.muted = nextMuted;
+      setIsMuted(nextMuted);
     }
   };
 
-  const handleManualPlay = () => {
+  const handleManualPlay = (e) => {
+    if (e) e.stopPropagation();
     if (videoRef.current) {
-      videoRef.current.play();
-      setShowPlayFallback(false);
+      videoRef.current.play().then(() => {
+        setIsPlaying(true);
+        setShowPlayFallback(false);
+        if (ambientRef.current) ambientRef.current.play().catch(() => {});
+      }).catch(() => {
+        // If play still cannot execute, transition straight to app
+        finishSplash();
+      });
+    } else {
+      finishSplash();
     }
+  };
+
+  const handleVideoError = (e) => {
+    console.warn('Splash video playback error on mobile:', e);
+    setVideoError(true);
+    setShowPlayFallback(true);
   };
 
   return (
-    <div className={`splash-container ${isFading ? 'fading-out' : ''}`} style={{
-      position: 'fixed',
-      inset: 0,
-      zIndex: 9999,
-      background: '#02040a',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      overflow: 'hidden'
-    }}>
-      <video
-        ref={videoRef}
-        src="/assets/splash_video.mp4"
-        className="splash-video"
-        autoPlay
-        playsInline
-        muted={isMuted}
-        onEnded={handleEnded}
-        style={{ width: '100vw', height: '100vh', objectFit: 'cover' }}
-      />
-
-      {/* Video Playback Progress Bar */}
-      <div style={{
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        width: '100%',
-        height: 4,
-        background: 'rgba(255,255,255,0.1)',
-        zIndex: 10000
-      }}>
-        <div style={{
-          width: `${progress}%`,
-          height: '100%',
-          background: 'linear-gradient(90deg, #fbbf24, #f59e0b)',
-          boxShadow: '0 0 10px #fbbf24',
-          transition: 'width 0.1s linear'
-        }} />
+    <div
+      className={`splash-container ${isFading ? 'fading-out' : ''}`}
+      onClick={showPlayFallback ? handleManualPlay : undefined}
+    >
+      {/* ── 1. Sacred Header Overlay with Crystal-Clear Typography ── */}
+      <div className="splash-top-brand">
+        <div className="splash-brand-badge">
+          <span className="splash-trishula">🔱</span>
+          <span className="splash-brand-name">BRAHMA</span>
+          <span className="splash-brand-tag">SOVEREIGN AI</span>
+        </div>
+        <p className="splash-sanskrit-tagline">
+          ॥ ब्रह्म सत्यं जगन्मिथ्या जीवो ब्रह्मैव नापरः ॥
+        </p>
       </div>
 
-      {/* Control Overlay Buttons */}
-      <div className="splash-overlay-controls" style={{
-        position: 'absolute',
-        bottom: 30,
-        right: 30,
-        display: 'flex',
-        alignItems: 'center',
-        gap: 12,
-        zIndex: 10001
-      }}>
+      {/* ── 2. Video Player System with Mobile Ambient Fill ── */}
+      {!videoError ? (
+        <div className="splash-video-stage">
+          {/* Ambient blurred background video for full-screen seamless glow on tall phones */}
+          <video
+            ref={ambientRef}
+            src="/assets/splash_video.mp4"
+            className="splash-video-ambient"
+            autoPlay
+            playsInline
+            webkit-playsinline="true"
+            x5-playsinline="true"
+            muted={true}
+            loop
+            preload="auto"
+            aria-hidden="true"
+          />
+
+          {/* Main crisp video with object-fit: contain (Guarantees zero text cropping on mobile) */}
+          <video
+            ref={videoRef}
+            src="/assets/splash_video.mp4"
+            className="splash-video-main"
+            autoPlay
+            playsInline
+            webkit-playsinline="true"
+            x5-playsinline="true"
+            muted={isMuted}
+            preload="auto"
+            onEnded={handleEnded}
+            onError={handleVideoError}
+          />
+        </div>
+      ) : (
+        /* Graceful fallback if video fails to decode on mobile */
+        <div className="splash-fallback-stage">
+          <div className="splash-fallback-mandala">
+            <div className="splash-mandala-ring" />
+            <img
+              src="/assets/brahma_temple_bg.jpg"
+              alt="Brahma Sanctuary"
+              className="splash-fallback-art"
+            />
+          </div>
+          <h2 className="splash-fallback-title">BRAHMA SOVEREIGN MATRIX</h2>
+          <p className="splash-fallback-desc">13 Sacred Councils · 289 Swarm Intelligence Agents</p>
+        </div>
+      )}
+
+      {/* ── 3. Subtle Vignette & Frame ── */}
+      <div className="splash-vignette-overlay" pointerEvents="none" />
+
+      {/* ── 4. Video Playback Progress Bar (Mobile Safe-Area Aligned) ── */}
+      <div className="splash-progress-track">
+        <div
+          className="splash-progress-fill"
+          style={{ width: `${progress}%` }}
+        />
+      </div>
+
+      {/* ── 5. Mobile-Optimized Control Overlay ── */}
+      <div className="splash-overlay-controls">
         {showPlayFallback && (
           <button
             onClick={handleManualPlay}
-            style={{
-              background: 'linear-gradient(135deg, #fbbf24, #d97706)',
-              color: '#000',
-              border: 'none',
-              padding: '10px 20px',
-              borderRadius: 10,
-              fontWeight: 800,
-              fontSize: '0.88rem',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 8,
-              boxShadow: '0 4px 20px rgba(251, 191, 36, 0.4)'
-            }}
+            className="splash-btn splash-btn-primary"
+            title="Enter Sovereign Sanctuary"
           >
-            <Play size={16} /> Enter Sanctuary
+            <Play size={16} fill="currentColor" />
+            <span>Enter Sanctuary</span>
+          </button>
+        )}
+
+        {!videoError && (
+          <button
+            onClick={toggleMute}
+            className="splash-btn splash-btn-secondary"
+            title={isMuted ? "Unmute Audio" : "Mute Audio"}
+            aria-label={isMuted ? "Unmute Audio" : "Mute Audio"}
+          >
+            {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+            <span className="splash-btn-text">{isMuted ? 'Sound Off' : 'Sound On'}</span>
           </button>
         )}
 
         <button
-          onClick={toggleMute}
-          title={isMuted ? "Unmute Audio" : "Mute Audio"}
-          style={{
-            background: 'rgba(15, 23, 42, 0.75)',
-            border: '1px solid rgba(251, 191, 36, 0.3)',
-            color: '#fbbf24',
-            padding: '10px 14px',
-            borderRadius: 10,
-            cursor: 'pointer',
-            backdropFilter: 'blur(10px)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 6,
-            fontSize: '0.8rem',
-            fontWeight: 700
-          }}
-        >
-          {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
-          {isMuted ? 'Unmute' : 'Muted'}
-        </button>
-
-        <button
           onClick={finishSplash}
-          style={{
-            background: 'rgba(15, 23, 42, 0.85)',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            color: '#f8fafc',
-            padding: '10px 18px',
-            borderRadius: 10,
-            cursor: 'pointer',
-            backdropFilter: 'blur(10px)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 6,
-            fontSize: '0.82rem',
-            fontWeight: 800,
-            transition: 'all 0.2s'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.borderColor = '#fbbf24';
-            e.currentTarget.style.color = '#fbbf24';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-            e.currentTarget.style.color = '#f8fafc';
-          }}
+          className="splash-btn splash-btn-skip"
+          title="Skip Intro to Main Matrix"
         >
-          <FastForward size={16} /> Skip Intro ⏭️
+          <span>Skip</span>
+          <FastForward size={16} />
         </button>
       </div>
     </div>
