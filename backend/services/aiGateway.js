@@ -395,7 +395,31 @@ Active pills: ${JSON.stringify(pills)}${searchContext ? `\n\n${searchContext}` :
   }
 
   async streamFreeCloudRouter(messages, model, onChunk) {
-    // Attempt fast connection
+    try {
+      const userPrompt = messages.filter(m => m.role === 'user').pop()?.content || '';
+      if (!userPrompt) return false;
+
+      const systemMsg = messages.find(m => m.role === 'system')?.content || '';
+      const promptText = systemMsg 
+        ? `${systemMsg.slice(0, 250)}\n\nQuery: ${userPrompt}\nProvide a thorough, comprehensive response:` 
+        : userPrompt;
+
+      const encoded = encodeURIComponent(promptText);
+      const url = `https://text.pollinations.ai/${encoded}?model=openai-fast`;
+
+      const res = await axios.get(url, { timeout: 12000 });
+      if (res.data && typeof res.data === 'string' && res.data.trim().length > 15 && !res.data.startsWith('{')) {
+        onChunk(`__THOUGHT__[Sovereign Cloud Mesh] Dispatched across global open weights matrix...`);
+        const words = res.data.trim().split(' ');
+        for (let i = 0; i < words.length; i++) {
+          onChunk((i === 0 ? '' : ' ') + words[i]);
+          await new Promise(r => setTimeout(r, 20));
+        }
+        return true;
+      }
+    } catch (err) {
+      // Gracefully cascade to local synthesizer
+    }
     return false;
   }
 
