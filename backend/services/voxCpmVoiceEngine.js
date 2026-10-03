@@ -1,12 +1,18 @@
 /**
  * BRAHMA VoxCPM Neural Voice & Speech Foundation Engine
- * Powered by OpenBMB VoxCPM (Zero-Shot Voice Cloning & Natural Conversational Prosody)
+ * Sovereign Zero-Shot Acoustic Modeling & Natural Conversational Prosody
  * 
- * Includes 13 Deity Voice Profiles with native Telugu, Sanskrit, and English phonetic alignment.
+ * Features:
+ * - 13 Deity Voice Profiles with native Telugu, Sanskrit, and English phonetic alignment
+ * - Addressee Attention Gate (pre-STT filter against room chatter and ambient media)
+ * - Self-Playback Echo Suppression (markResponding mutex preventing feedback loops)
  */
 
 class VoxCpmVoiceEngine {
   constructor() {
+    this.isResponding = false;
+    this.respondingTimeout = null;
+
     this.deityProfiles = {
       brahma: {
         id: 'brahma',
@@ -100,7 +106,7 @@ class VoxCpmVoiceEngine {
 
     // Simulated VoxCPM neural vocoder acoustic envelope
     const acousticFeatures = {
-      model: 'OpenBMB-VoxCPM-1.5B-Conversational',
+      model: 'Brahma-VoxCPM-Acoustic-1.5B',
       deity: profile.name,
       basePitchHz: profile.fundamentalFreqHz,
       timbreProfile: profile.timbre,
@@ -149,7 +155,81 @@ class VoxCpmVoiceEngine {
       voiceId,
       profile: newProfile,
       similarityScore: 0.942,
-      model: 'OpenBMB-VoxCPM-ZeroShot-Encoder'
+      model: 'Brahma-VoxCPM-ZeroShot-Encoder'
+    };
+  }
+
+  /**
+   * Self-Playback Echo Suppression Mutex
+   * Prevents microphone loopback while TTS voice playback is actively streaming.
+   */
+  markResponding({ isSpeaking = true, durationMs = 0 } = {}) {
+    this.isResponding = isSpeaking;
+    if (this.respondingTimeout) {
+      clearTimeout(this.respondingTimeout);
+      this.respondingTimeout = null;
+    }
+    if (isSpeaking && durationMs > 0) {
+      this.respondingTimeout = setTimeout(() => {
+        this.isResponding = false;
+        this.respondingTimeout = null;
+      }, durationMs);
+    }
+    return {
+      isResponding: this.isResponding,
+      timestamp: new Date().toISOString()
+    };
+  }
+
+  /**
+   * Pre-STT Addressee Attention Gate
+   * Evaluates if audio is device-directed vs ambient noise or self-playback echo.
+   */
+  evaluateAddresseeGate({ audioEnergy = 0.5, speechText = '', confidence = 0.85, isResponding = null } = {}) {
+    const currentlySpeaking = isResponding !== null ? isResponding : this.isResponding;
+
+    // 1. Echo Suppression Check: If agent is speaking, kill mic input
+    if (currentlySpeaking) {
+      return {
+        turnReady: false,
+        directionConfidence: 0.0,
+        disposition: 'SUPPRESS_ECHO_PLAYBACK',
+        reason: 'Agent TTS output is active; microphone ingestion suppressed to prevent acoustic feedback.'
+      };
+    }
+
+    // 2. Audio Energy Floor Gate
+    if (audioEnergy < 0.15) {
+      return {
+        turnReady: false,
+        directionConfidence: 0.1,
+        disposition: 'SUPPRESS_SILENCE',
+        reason: 'Audio amplitude below acoustic activation threshold.'
+      };
+    }
+
+    // 3. Addressee Intent Classifier (Explicit address or high-conviction direct inquiry)
+    const normalized = String(speechText || '').toLowerCase().trim();
+    const hasVocativeAddress = /^(hey\s+)?(brahma|saraswati|kuvera|indra|dhanvantari|chanakya)\b/i.test(normalized) ||
+      /\b(brahma|saraswati|kuvera)\b/i.test(normalized);
+
+    const hasCommandIntent = /^(what|how|why|when|where|who|analyze|execute|search|calculate|tell|read|open|run)\b/i.test(normalized);
+
+    if (hasVocativeAddress || (hasCommandIntent && confidence > 0.6)) {
+      return {
+        turnReady: true,
+        directionConfidence: hasVocativeAddress ? 0.96 : 0.82,
+        disposition: 'FORWARD_TO_STT_AND_LLM',
+        reason: hasVocativeAddress ? 'Direct vocative agent address confirmed.' : 'Direct task execution command intent detected.'
+      };
+    }
+
+    // Ambient background chatter / side conversation
+    return {
+      turnReady: false,
+      directionConfidence: 0.32,
+      disposition: 'SUPPRESS_BACKGROUND_CHATTER',
+      reason: 'Utterance classified as ambient room conversation; suppressed before downstream inference.'
     };
   }
 }

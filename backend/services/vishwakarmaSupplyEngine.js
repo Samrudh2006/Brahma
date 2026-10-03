@@ -87,6 +87,132 @@ class VishwakarmaSupplyEngine {
       inventoryTelemetry: analyzedNodes
     };
   }
+
+  /**
+   * Commercial E-Commerce Unit Economics & Seller Operations Engine
+   * Calculates ACoS/TACoS break-evens, FBA storage fee burn velocity, and net landed margin ROI.
+   */
+  analyzeCommercialEcommerceUnitEconomics({
+    sku = 'PROD-SKU-001',
+    sellingPrice = 45.0,
+    unitManufactureCost = null,
+    cogs = 9.5,
+    shippingFreightPerUnit = 2.5,
+    customsTariffPerUnit = 0.5,
+    fbaPickPackFee = 5.8,
+    referralCommissionPercent = null,
+    referralFeePercent = 15.0,
+    adSpendMonthly = null,
+    adSpend = 3200,
+    adRevenueMonthly = null,
+    adRevenue = 12800,
+    totalRevenue = null,
+    totalUnitsSoldMonthly = null,
+    dailyUnitSalesVelocity = null,
+    currentFbaInventory = null,
+    currentInventoryUnits = 450,
+    leadTimeDays = 25,
+    monthlyStorageRatePerUnit = 0.85
+  } = {}) {
+    const startTime = Date.now();
+
+    // Canonicalize inputs
+    const baseCogs = unitManufactureCost !== null ? unitManufactureCost : (cogs !== null ? cogs : 9.5);
+    const commPct = referralCommissionPercent !== null ? referralCommissionPercent : (referralFeePercent !== null ? referralFeePercent : 15.0);
+    const resolvedAdSpend = adSpendMonthly !== null ? adSpendMonthly : (adSpend !== null ? adSpend : 3200);
+    const resolvedAdRevenue = adRevenueMonthly !== null ? adRevenueMonthly : (adRevenue !== null ? adRevenue : 12800);
+    const resolvedInventory = currentFbaInventory !== null ? currentFbaInventory : (currentInventoryUnits !== null ? currentInventoryUnits : 450);
+
+    let resolvedMonthlyUnits = 800;
+    if (totalUnitsSoldMonthly !== null) {
+      resolvedMonthlyUnits = totalUnitsSoldMonthly;
+    } else if (dailyUnitSalesVelocity !== null) {
+      resolvedMonthlyUnits = dailyUnitSalesVelocity * 30;
+    }
+
+    // 1. Landed Cost & Cost of Goods Sold (COGS)
+    const landedCost = +(baseCogs + shippingFreightPerUnit + customsTariffPerUnit).toFixed(2);
+    const referralFee = +((sellingPrice * (commPct / 100)).toFixed(2));
+    const computedTotalRevenue = totalRevenue !== null ? totalRevenue : +(sellingPrice * resolvedMonthlyUnits).toFixed(2);
+
+    // 2. Advertising Economics (ACoS, TACoS, Break-Even ACoS)
+    const adCostPerUnit = +(resolvedAdSpend / Math.max(1, resolvedMonthlyUnits)).toFixed(2);
+    const acosPercent = +((resolvedAdSpend / Math.max(1, resolvedAdRevenue)) * 100).toFixed(1);
+    const tacosPercent = +((resolvedAdSpend / Math.max(1, computedTotalRevenue)) * 100).toFixed(1);
+
+    const grossMarginBeforeAds = +(sellingPrice - landedCost - fbaPickPackFee - referralFee).toFixed(2);
+    const breakEvenAcosPercent = +((grossMarginBeforeAds / sellingPrice) * 100).toFixed(1);
+
+    // 3. Net Margin & Return on Investment (ROI)
+    const totalUnitCost = +(landedCost + fbaPickPackFee + referralFee + adCostPerUnit).toFixed(2);
+    const netProfitPerUnit = +(sellingPrice - totalUnitCost).toFixed(2);
+    const netMarginPercent = +((netProfitPerUnit / sellingPrice) * 100).toFixed(1);
+    const roiPercent = +((netProfitPerUnit / Math.max(0.1, landedCost)) * 100).toFixed(1);
+
+    // 4. FBA Velocity & Storage Burn
+    const dailyVelocity = dailyUnitSalesVelocity !== null ? dailyUnitSalesVelocity : +(resolvedMonthlyUnits / 30).toFixed(2);
+    const daysOfSupply = +(resolvedInventory / Math.max(0.1, dailyVelocity)).toFixed(1);
+    const reorderThresholdUnits = Math.round(dailyVelocity * (leadTimeDays + 14)); // lead time + 14 day safety buffer
+
+    let fbaStatus = 'OPTIMAL_STOCK';
+    let fbaRecommendation = 'Current inventory covers planned velocity.';
+
+    if (daysOfSupply < leadTimeDays) {
+      fbaStatus = 'STOCKOUT_IMMINENT';
+      fbaRecommendation = `URGENT: Expedite ${reorderThresholdUnits} units immediately to prevent listing suspension.`;
+    } else if (daysOfSupply > 180) {
+      fbaStatus = 'AGED_STORAGE_PENALTY_RISK';
+      fbaRecommendation = 'Excess supply exceeding 180 days; run coupon/PPC discount to liquidate.';
+    } else if (daysOfSupply <= leadTimeDays + 14) {
+      fbaStatus = 'REORDER_POINT_REACHED';
+      fbaRecommendation = `Standard replenishment order of ${reorderThresholdUnits} units recommended.`;
+    }
+
+    return {
+      success: true,
+      council: this.councilName,
+      sku,
+      calculationDurationMs: Date.now() - startTime,
+      unitEconomics: {
+        sellingPrice,
+        landedCost,
+        netLandedMargin: netProfitPerUnit,
+        breakdown: {
+          manufactureCost: baseCogs,
+          freight: shippingFreightPerUnit,
+          customs: customsTariffPerUnit,
+          fbaPickPack: fbaPickPackFee,
+          amazonReferralFee: referralFee,
+          adCostPerUnit
+        },
+        netProfitPerUnit,
+        netMarginPercent,
+        roiPercent,
+        healthRating: netMarginPercent >= 20 ? 'HIGHLY_PROFITABLE' : netMarginPercent >= 10 ? 'VIABLE' : 'UNPROFITABLE_COMPRESS_COSTS'
+      },
+      advertisingMetrics: {
+        acosPercent,
+        tacosPercent,
+        breakEvenAcosPercent,
+        adEfficiency: acosPercent < breakEvenAcosPercent ? 'PROFITABLE_CAMPAIGN' : 'UNPROFITABLE_AD_SPEND'
+      },
+      inventoryRestockVelocity: {
+        dailyVelocityUnitsPerDay: dailyVelocity,
+        daysOfSupplyRemaining: `${daysOfSupply} days`,
+        daysOfSupply: Number(daysOfSupply),
+        suggestedReorderQuantity: reorderThresholdUnits,
+        status: fbaStatus,
+        recommendation: fbaRecommendation
+      },
+      inventoryRunway: {
+        daysOfInventoryRemaining: Math.round(daysOfSupply),
+        dailyVelocityUnits: dailyVelocity,
+        reorderPointUnits: reorderThresholdUnits,
+        status: fbaStatus,
+        monthlyStorageFeeEst: +(resolvedInventory * monthlyStorageRatePerUnit).toFixed(2)
+      }
+    };
+  }
 }
 
 module.exports = new VishwakarmaSupplyEngine();
