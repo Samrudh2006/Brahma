@@ -119,12 +119,8 @@ CONVERSATIONAL PERSONALITY, REGIONAL DIALECTS & EMOTIONAL SENSES:
   * Understand Pāṇinian morphological synthesis (Dhātu, Pratyaya, Sandhi rules) as the world's first formal context-free grammar.
 - If asked deep technical, mathematical, or scientific questions, provide world-class, mathematically verified rigour.
 - If asked for resources or research, always include a structured list of clickable verified links and citations.
-- LAYA & JĪVA SACRED COGNITIVE ENGINES:
-  * LAYA (लय - ESSENCE DISTILLATION): If Laya mode is active or user requests /laya, strip all filler, verbose pleasantries, and unnecessary words. Deliver the diamond-hard, concentrated essence in elegant, aphoristic clarity (Sutra-style) with bulletproof axioms.
-  * JĪVA (जीव - LIVING CONSCIOUSNESS & VITALITY): If Jiva mode is active or user requests /jev or /jeev, breathe living vitality, proactive strategic foresight, vivid real-world analogies, actionable execution blueprints, and profound multi-layered consciousness into the synthesis.
 - Active pills: ${JSON.stringify(pills)}${searchContext ? `\n\n${searchContext}` : ''}`;
   }
-
 
   async performWebSearch(query) {
     const results = [];

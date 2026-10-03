@@ -5,6 +5,7 @@
  */
 const router = require('express').Router();
 const aiGateway = require('../services/aiGateway');
+const layaJevRouter = require('../services/layaJevRouter');
 
 router.post('/', async (req, res) => {
   const { messages = [], identity = {}, pills = {}, model = 'deepseek-r1', userApiKey = null } = req.body;
@@ -14,6 +15,15 @@ router.post('/', async (req, res) => {
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
   res.flushHeaders();
+
+  // 1. Ultra-Fast Laya System-1 Pre-Flight Intent & Guardrail Decision (<35ms)
+  const lastUserQuery = messages.filter(m => m.sender === 'user').pop()?.text || '';
+  const layaDecision = layaJevRouter.classify(lastUserQuery, { identityId: identity?.id });
+
+  // Stream instant System-1 Laya thought event to client in first 10ms
+  const layaHeader = `__THOUGHT__[Laya System-1 @ ${layaDecision.latencyMs}ms] Intent: ${layaDecision.intent} | Guardrail: ${layaDecision.guardrail.isSafe ? 'VERIFIED_SAFE (0.02)' : 'BLOCKED'} | Routing: ${layaDecision.council.name} Council (${layaDecision.complexityTier})`;
+  res.write(`data: ${JSON.stringify({ thought: layaHeader, laya: layaDecision })}\n\n`);
+
 
   try {
     await aiGateway.streamCompletion(

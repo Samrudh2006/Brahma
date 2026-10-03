@@ -122,12 +122,15 @@ export const disconnectIntegration = (id) =>
 // ─── Notifications ────────────────────────────────────────────────────────────
 export const fetchNotifications = (unreadOnly = false) =>
   request(`/notifications${unreadOnly ? '?unread=true' : ''}`);
-export const markNotificationRead = (id) =>
-  request(`/notifications/${id}/read`, { method: 'PATCH' });
-
 // ─── Scheduled Tasks ─────────────────────────────────────────────────────────
 export const getTasks = () => request('/tasks');
 export const createTask = (task) =>
   request('/tasks', { method: 'POST', body: JSON.stringify(task) });
 export const deleteTask = (id) =>
   request(`/tasks/${id}`, { method: 'DELETE' });
+
+// ─── Laya & Jev System-1 Classification ──────────────────────────────────────
+export const classifyIntentWithLaya = (prompt, preferences = {}) =>
+  request('/laya/classify', { method: 'POST', body: JSON.stringify({ prompt, preferences }) });
+
+
