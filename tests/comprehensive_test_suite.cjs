@@ -44,6 +44,8 @@ const agronomy = require('../backend/services/brahmaAgronomyEngine');
 const civilEngine = require('../backend/services/brahmaCivilEngine');
 const fleetLogistics = require('../backend/services/brahmaFleetLogisticsEngine');
 const publicAdmin = require('../backend/services/brahmaPublicAdminEngine');
+const creativeMedia = require('../backend/services/brahmaCreativeMediaEngine');
+const hospitalityHaccp = require('../backend/services/brahmaHospitalityHaccpEngine');
 
 const testResults = {
   total: 0,
@@ -1126,6 +1128,84 @@ async function runAllTests() {
     );
   } catch (err) {
     assertTest('integration', 'Brahma Public Admin RTI Section 6(1) Draft, GeM Tender & Citizen Grievance SLA', false, err.message);
+  }
+
+  // Test 4.41: Brahma Creative Media & NLE Audio/Video Engine
+  try {
+    const edl = creativeMedia.compileEDLSequence({
+      title: 'Commercial_Cut_01',
+      fps: 24,
+      clips: [
+        { name: 'Interview_A', durationSeconds: 10.5 },
+        { name: 'B_Roll_Footage', durationSeconds: 5.0 }
+      ]
+    });
+    const subs = creativeMedia.generateSubtitles([
+      { startTimeMs: 1000, endTimeMs: 3500, text: 'Welcome to sovereign autonomous computing.' }
+    ]);
+    const loudness = creativeMedia.calculateLoudnessNormalization({
+      measuredLUFS: -19.4,
+      measuredTruePeakDBTP: -0.5,
+      targetStandard: 'STREAMING_WEB'
+    });
+
+    assertTest(
+      'integration',
+      'Brahma Creative Media SMPTE EDL Compiler, Subtitle Formatter & EBU R128 Loudness',
+      edl.eventCount === 2 && subs.vttContent.includes('WEBVTT') && loudness.gainAdjustmentDB === 5.4,
+      `Compiled 2-event EDL sequence (${edl.totalDurationTimecode}); WebVTT/SRT formatted; EBU R128 web normalization applied (+${loudness.gainAdjustmentDB} dB)`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Creative Media SMPTE EDL Compiler, Subtitle Formatter & EBU R128 Loudness', false, err.message);
+  }
+
+  // Test 4.42: Brahma Hospitality & Food Service HACCP Engine
+  try {
+    const ccpCheck = hospitalityHaccp.auditThermalCCPLog({
+      controlPoint: 'HOT_HOLDING_BUFFET',
+      recordedTempC: 58.5,
+      durationMinutes: 45
+    });
+    const scaled = hospitalityHaccp.scaleRecipe({
+      recipeName: 'Chicken Tikka Masala',
+      baseServings: 4,
+      targetServings: 40
+    });
+    const revPash = hospitalityHaccp.calculateRevPASH({
+      totalRevenue: 145000,
+      totalAvailableSeats: 60,
+      operatingHours: 8
+    });
+
+    assertTest(
+      'integration',
+      'Brahma Hospitality Food Safety HACCP Audit, Recipe Allergen Scaling & RevPASH Yield',
+      ccpCheck.isBreached === true && scaled.mandatoryAllergensDetected.includes('MILK') && revPash.revPASH > 250,
+      `CCP thermal breach caught (<60°C danger zone); recipe scaled to 40 servings (${scaled.allergenWarningLabel}); RevPASH: ₹${revPash.revPASH}/seat-hr`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Hospitality Food Safety HACCP Audit, Recipe Allergen Scaling & RevPASH Yield', false, err.message);
+  }
+
+  // Test 4.43: Dhanvantari Clinical HL7 FHIR Bundle & Multi-Drug CYP450 Interaction Gate
+  try {
+    const fhirBundle = dhanvantari.generateFHIRBundle({
+      patientId: 'pt_4401',
+      observations: [{ loincCode: '2345-7', name: 'Serum Glucose', value: 110, unit: 'mg/dL' }],
+      conditions: [{ snomedCode: '44054006', name: 'Type 2 Diabetes Mellitus' }]
+    });
+    const ddiEvaluation = dhanvantari.evaluateDrugInteractions({
+      drugList: ['warfarin', 'aspirin', 'amiodarone', 'ciprofloxacin']
+    });
+
+    assertTest(
+      'integration',
+      'Dhanvantari Clinical HL7 FHIR Bundle & Multi-Drug CYP450 Interaction Gate',
+      fhirBundle.resourceType === 'Bundle' && fhirBundle.total === 3 && ddiEvaluation.isPrescriptionSafe === false && ddiEvaluation.criticalCount === 2,
+      `FHIR v4.0.1 Bundle sealed (3 entries); intercepted 2 CRITICAL DDI alerts (GI hemorrhage + QT prolongation)`
+    );
+  } catch (err) {
+    assertTest('integration', 'Dhanvantari Clinical HL7 FHIR Bundle & Multi-Drug CYP450 Interaction Gate', false, err.message);
   }
 
   // ═════════════════════════════════════════════════════════════════════════════

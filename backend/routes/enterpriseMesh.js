@@ -595,4 +595,73 @@ router.post('/publicadmin/grievance', (req, res) => {
   }
 });
 
+// ─── 19. Brahma Creative Media & NLE Audio/Video Engine ───────────────────────
+const creativeMedia = require('../services/brahmaCreativeMediaEngine');
+
+router.post('/media/edl-compile', (req, res) => {
+  try {
+    const result = creativeMedia.compileEDLSequence(req.body);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/media/subtitles', (req, res) => {
+  try {
+    const result = creativeMedia.generateSubtitles(req.body.cues);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/media/loudness', (req, res) => {
+  try {
+    const result = creativeMedia.calculateLoudnessNormalization(req.body);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/media/color-gamut', (req, res) => {
+  try {
+    const result = creativeMedia.transformColorGamut(req.body);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ─── 20. Brahma Hospitality & Food Service HACCP Engine ───────────────────────
+const hospitalityHaccp = require('../services/brahmaHospitalityHaccpEngine');
+
+router.post('/hospitality/ccp-audit', (req, res) => {
+  try {
+    const result = hospitalityHaccp.auditThermalCCPLog(req.body);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/hospitality/recipe-scale', (req, res) => {
+  try {
+    const result = hospitalityHaccp.scaleRecipe(req.body);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/hospitality/revpash', (req, res) => {
+  try {
+    const result = hospitalityHaccp.calculateRevPASH(req.body);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 module.exports = router;

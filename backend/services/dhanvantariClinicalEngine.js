@@ -416,6 +416,138 @@ class DhanvantariClinicalEngine {
       timestamp: new Date().toISOString()
     };
   }
+
+  /**
+   * HL7 FHIR v4.0.1 Compliant Resource Bundle Generator
+   * Maps patient observations and clinical findings to standard FHIR collection bundle.
+   */
+  generateFHIRBundle({
+    patientId = 'pat_9021',
+    patientGender = 'female',
+    patientBirthDate = '1985-06-15',
+    observations = [], // [{ loincCode, name, value, unit }]
+    conditions = []    // [{ snomedCode, name }]
+  } = {}) {
+    const bundleId = `bundle_${crypto.randomBytes(6).toString('hex')}`;
+    const timestamp = new Date().toISOString();
+
+    const fhirEntries = [
+      {
+        fullUrl: `urn:uuid:patient-${patientId}`,
+        resource: {
+          resourceType: 'Patient',
+          id: patientId,
+          gender: patientGender,
+          birthDate: patientBirthDate
+        }
+      }
+    ];
+
+    // Map Observations
+    observations.forEach((obs, idx) => {
+      fhirEntries.push({
+        fullUrl: `urn:uuid:obs-${idx + 1}`,
+        resource: {
+          resourceType: 'Observation',
+          id: `obs_${idx + 1}`,
+          status: 'final',
+          code: {
+            coding: [
+              {
+                system: 'http://loinc.org',
+                code: obs.loincCode || '2345-7',
+                display: obs.name || 'Serum Biomarker'
+              }
+            ]
+          },
+          subject: { reference: `Patient/${patientId}` },
+          effectiveDateTime: timestamp,
+          valueQuantity: {
+            value: obs.value,
+            unit: obs.unit,
+            system: 'http://unitsofmeasure.org'
+          }
+        }
+      });
+    });
+
+    // Map Conditions
+    conditions.forEach((cond, idx) => {
+      fhirEntries.push({
+        fullUrl: `urn:uuid:cond-${idx + 1}`,
+        resource: {
+          resourceType: 'Condition',
+          id: `cond_${idx + 1}`,
+          clinicalStatus: {
+            coding: [{ system: 'http://terminology.hl7.org/CodeSystem/condition-clinical', code: 'active' }]
+          },
+          code: {
+            coding: [
+              {
+                system: 'http://snomed.info/sct',
+                code: cond.snomedCode || '44054006',
+                display: cond.name || 'Clinical Condition'
+              }
+            ]
+          },
+          subject: { reference: `Patient/${patientId}` }
+        }
+      });
+    });
+
+    return {
+      resourceType: 'Bundle',
+      id: bundleId,
+      type: 'collection',
+      timestamp,
+      total: fhirEntries.length,
+      entry: fhirEntries
+    };
+  }
+
+  /**
+   * Multi-Drug CYP450 Interaction & QT Prolongation Risk Engine
+   */
+  evaluateDrugInteractions({ drugList = [] }) {
+    const normalizedDrugs = drugList.map(d => String(d).toLowerCase().trim());
+    const detectedAlerts = [];
+
+    // Check pre-configured pairwise contraindications
+    for (const contra of this.contraindications) {
+      const matchA = normalizedDrugs.some(d => d.includes(contra.pair[0]));
+      const matchB = normalizedDrugs.some(d => d.includes(contra.pair[1]));
+      if (matchA && matchB) {
+        detectedAlerts.push({
+          severity: contra.risk,
+          interactors: contra.pair,
+          mechanism: contra.reason,
+          source: 'Dhanvantari Clinical Safety Gate'
+        });
+      }
+    }
+
+    // QT Prolongation Risk Check
+    const qtProlongingAgents = ['amiodarone', 'haloperidol', 'erythromycin', 'ciprofloxacin', 'citalopram'];
+    const matchedQTAgents = normalizedDrugs.filter(d => qtProlongingAgents.some(q => d.includes(q)));
+    if (matchedQTAgents.length >= 2) {
+      detectedAlerts.push({
+        severity: 'CRITICAL',
+        interactors: matchedQTAgents,
+        mechanism: 'Additive Torsades de Pointes / QT prolongation arrhythmia risk.',
+        source: 'Cardiac Electrophysiology Invariant'
+      });
+    }
+
+    return {
+      success: true,
+      drugsEvaluated: normalizedDrugs,
+      totalInteractions: detectedAlerts.length,
+      criticalCount: detectedAlerts.filter(a => a.severity === 'CRITICAL').length,
+      highCount: detectedAlerts.filter(a => a.severity === 'HIGH').length,
+      alerts: detectedAlerts,
+      isPrescriptionSafe: detectedAlerts.filter(a => a.severity === 'CRITICAL').length === 0
+    };
+  }
 }
 
 module.exports = new DhanvantariClinicalEngine();

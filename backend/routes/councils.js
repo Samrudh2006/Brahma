@@ -82,6 +82,24 @@ router.post('/dhanvantari/normalize-biomarkers', (req, res) => {
   }
 });
 
+router.post('/dhanvantari/fhir-bundle', (req, res) => {
+  try {
+    const bundle = dhanvantari.generateFHIRBundle(req.body);
+    res.json({ success: true, bundle });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/dhanvantari/drug-interactions', (req, res) => {
+  try {
+    const result = dhanvantari.evaluateDrugInteractions(req.body);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // ─── 2. Chanakya: Legal Intelligence & Protocols ─────────────────────────────
 router.post('/chanakya/legal-audit', async (req, res) => {
   try {
