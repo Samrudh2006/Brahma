@@ -95,6 +95,12 @@ const hyperbolicManifold = require('../backend/services/brahmaHyperbolicManifold
 const liquidContinuous = require('../backend/services/brahmaLiquidContinuousEngine');
 const causalCounterfactual = require('../backend/services/brahmaCausalCounterfactualEngine');
 const quantumStarkAnchor = require('../backend/services/brahmaQuantumStarkAnchorEngine');
+const neuralDarwinism = require('../backend/services/brahmaNeuralDarwinismEvolutionEngine');
+const swarmSla = require('../backend/services/brahmaSwarmSlaCoordinationEngine');
+const symplecticPhysics = require('../backend/services/brahmaSymplecticHamiltonianPhysicsEngine');
+const omniModalPerceiver = require('../backend/services/brahmaOmniModalPerceiverFusionEngine');
+const selfHealingHotPatch = require('../backend/services/brahmaSelfHealingHotPatchEngine');
+const didIdentityMesh = require('../backend/services/brahmaDidIdentityMeshEngine');
 const goalCompiler = require('../backend/services/brahmaGoalCompilerEngine');
 const skillLibrary = require('../backend/services/brahmaSkillLibraryService');
 const crossExperimenter = require('../backend/services/brahmaCrossDomainExperimenter');
@@ -269,6 +275,30 @@ async function runAllTests() {
   const pqRes = quantumStarkAnchor.anchorQuantumStateProof({});
   const pqVerify = quantumStarkAnchor.verifyQuantumProof({ proofId: pqRes.proofId, stateRootHash: pqRes.starkPayload.stateRootHash });
   assertTest('unit', 'Post-Quantum Lattice & Recursive STARK Anchor', pqRes.success === true && pqVerify.valid === true, `10,000 steps compressed to ${pqRes.starkPayload.proofByteSize / 1024}KB quantum-proof rollup`);
+
+  // Test 1.20: Neural Darwinism & Algorithmic Evolution (DeepMind AlphaDev Tournament)
+  const evoRes = neuralDarwinism.runEvolutionTournament({});
+  assertTest('unit', 'Neural Darwinism Algorithmic Evolution', evoRes.success === true && evoRes.evolvedChampion.fitnessScore > 0, `Evolved champion: ${evoRes.evolvedChampion.name} with ${evoRes.evolvedChampion.speedupVsParent}`);
+
+  // Test 1.21: Decentralized Swarm Coordination & SLA Bonds (MIT Media Lab Consensus)
+  const swarmRes = swarmSla.spawnCoordinatedSubSwarm({});
+  assertTest('unit', 'Decentralized Swarm Coordination & SLA Bonds', swarmRes.success === true && swarmRes.allSlasMet === true, `Swarm synchronized with ${swarmRes.totalStakedCredits} credits bond staked`);
+
+  // Test 1.22: Symplectic Hamiltonian Energy Conservation (Greydanus Stanford PINO)
+  const sympRes = symplecticPhysics.integrateHamiltonianSystem({});
+  assertTest('unit', 'Symplectic Hamiltonian Energy Conservation', sympRes.success === true && sympRes.energyPreserved === true, `Max energy drift: ${sympRes.maxEnergyDriftJoules} Joules (Symplectic d(p ^ q) = 0 preserved)`);
+
+  // Test 1.23: Omni-Modal Perceiver Unified Latent Fusion (DeepMind Perceiver IO)
+  const omniRes = omniModalPerceiver.fuseOmniModalInputs({});
+  assertTest('unit', 'Omni-Modal Perceiver Unified Latent Fusion', omniRes.success === true && omniRes.latentBottleneckTokens === 8, `Fused 4 modalities into 8 latent tokens (Synergy score: ${omniRes.modalitySynergyScore})`);
+
+  // Test 1.24: Self-Healing Kernel & Hermetic AST Hot-Patching (ACM OSDI Zero-Downtime Patch)
+  const healRes = selfHealingHotPatch.diagnoseAndApplyHotPatch({});
+  assertTest('unit', 'Self-Healing Kernel & Hermetic AST Hot-Patch', healRes.success === true && healRes.zeroDowntimePreserved === true, `Hot-patch deployed in ${healRes.remediationDurationMs}ms without server restart`);
+
+  // Test 1.25: Decentralized Identity (DID) & W3C Verifiable Credentials (W3C / Cambridge)
+  const didRes = didIdentityMesh.issueVerifiableCredential({});
+  assertTest('unit', 'Self-Sovereign Decentralized Identity (W3C DID)', didRes.success === true && didRes.isCryptographicallyValid === true, `Issued signed credential from ${didRes.issuerDid}`);
 
   // ═════════════════════════════════════════════════════════════════════════════
   // 2. WHITEBOX TESTING (AST Invariants, Code Paths & Branch Coverage)
