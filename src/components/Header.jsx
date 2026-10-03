@@ -1,14 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, ChevronDown, Sun, Moon, Settings, Clock, Palette, Check, Menu, Volume2, VolumeX, Smartphone, Music, Mic, MessageSquareHeart } from 'lucide-react';
+import {
+  Search, ChevronDown, Settings, Palette, Check, Menu,
+  Volume2, VolumeX, Smartphone, Mic, MessageSquareHeart,
+  MoreVertical, Sparkles, Sliders
+} from 'lucide-react';
 import { toggleAmbientDrone, updateAmbientTheme, getDroneState, playTactileClick } from '@utils/soundEffects';
 import { useAppStore } from '@store/index';
 
 const LUXURY_THEMES = [
-  { id: 'obsidian', name: '🌌 Cosmic Gold', color: '#fbbf24', desc: 'Obsidian & 432Hz Cosmic Pad', soundLabel: '🌌 Cosmic 432 Hz Deep Warmth' },
-  { id: 'teal', name: '🦚 Mayūra Teal', color: '#2bb6bd', desc: 'Peacock & 528Hz Solfeggio', soundLabel: '🦚 Mayūra 528 Hz Healing Water' },
-  { id: 'cyberpunk', name: '🌆 Cyberpunk Kashi', color: '#ec4899', desc: 'Neon Violet & Vangelis Synth', soundLabel: '🌆 Cyber Kashi Analog Synth Pad' },
-  { id: 'surya', name: '🌅 Sūrya Solarized', color: '#f59e0b', desc: 'Solar Om & Sacred Tanpura', soundLabel: '🌅 Sūrya 136.1 Hz Solar Tanpura' },
-  { id: 'zen', name: '❄️ Himālaya Zen', color: '#38bdf8', desc: 'Tibetan Bowl & Mountain Air', soundLabel: '❄️ Himālaya 396 Hz Tibetan Bowl' }
+  { id: 'obsidian', name: '🌌 Cosmic Gold', color: '#fbbf24', desc: 'Obsidian & 432Hz Cosmic Pad', soundLabel: '🌌 Cosmic 432 Hz Warmth' },
+  { id: 'teal', name: '🦚 Mayūra Teal', color: '#2bb6bd', desc: 'Peacock & 528Hz Solfeggio', soundLabel: '🦚 Mayūra 528 Hz Water' },
+  { id: 'cyberpunk', name: '🌆 Cyberpunk Kashi', color: '#ec4899', desc: 'Neon Violet & Vangelis Synth', soundLabel: '🌆 Cyber Kashi Synth' },
+  { id: 'surya', name: '🌅 Sūrya Solarized', color: '#f59e0b', desc: 'Solar Om & Sacred Tanpura', soundLabel: '🌅 Sūrya 136.1 Hz Tanpura' },
+  { id: 'zen', name: '❄️ Himālaya Zen', color: '#38bdf8', desc: 'Tibetan Bowl & Mountain Air', soundLabel: '❄️ Himālaya 396 Hz Bowl' }
 ];
 
 export default function Header({
@@ -30,9 +34,12 @@ export default function Header({
   const setTheme = propSetTheme || storeSetTheme;
 
   const [showThemeMenu, setShowThemeMenu] = useState(false);
+  const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [isDroneActive, setIsDroneActive] = useState(false);
   const [installPrompt, setInstallPrompt] = useState(null);
+
   const themeMenuRef = useRef(null);
+  const moreMenuRef = useRef(null);
 
   useEffect(() => {
     // Listen for PWA installation event
@@ -44,29 +51,31 @@ export default function Header({
     return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
   }, []);
 
-  // Close theme dropdown when clicking outside
+  // Close menus when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (themeMenuRef.current && !themeMenuRef.current.contains(event.target)) {
         setShowThemeMenu(false);
       }
+      if (moreMenuRef.current && !moreMenuRef.current.contains(event.target)) {
+        setShowMoreMenu(false);
+      }
     };
-    if (showThemeMenu) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [showThemeMenu]);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
-  const handleToggleDrone = () => {
+  const handleToggleDrone = (e) => {
+    if (e) e.stopPropagation();
     playTactileClick();
     const active = toggleAmbientDrone((state) => setIsDroneActive(state), theme);
     setIsDroneActive(active);
   };
 
-  const handleInstallPwa = async () => {
+  const handleInstallPwa = async (e) => {
+    if (e) e.stopPropagation();
     playTactileClick();
+    setShowMoreMenu(false);
     if (installPrompt) {
       installPrompt.prompt();
       const choiceResult = await installPrompt.userChoice;
@@ -74,7 +83,7 @@ export default function Header({
         setInstallPrompt(null);
       }
     } else {
-      alert('To install BRAHMA on your phone or desktop: open your browser menu (⋮ or Share) and tap "Install App" or "Add to Home Screen"!');
+      alert('To install BRAHMA on your device: open your browser menu (⋮ or Share) and tap "Install App" or "Add to Home Screen"!');
     }
   };
 
@@ -90,7 +99,7 @@ export default function Header({
       setTheme(themeId);
     }
 
-    // 2. Direct DOM instant attribute updates
+    // 2. Direct DOM updates
     if (typeof document !== 'undefined') {
       if (themeId === 'obsidian') {
         document.documentElement.setAttribute('data-theme', 'obsidian');
@@ -108,13 +117,15 @@ export default function Header({
       } catch (_) {}
     }
 
-    // 4. Acoustic drone tone alignment
+    // 4. Ambient Drone update
     try {
       updateAmbientTheme(themeId);
     } catch (_) {}
 
     setShowThemeMenu(false);
   };
+
+  const activeThemeObj = LUXURY_THEMES.find(t => t.id === theme) || LUXURY_THEMES[0];
 
   return (
     <header className="top-header" style={{ position: 'relative' }}>
@@ -146,18 +157,44 @@ export default function Header({
         </div>
       </div>
 
-      <div className="header-right">
-        {/* 1. Search / Command Palette */}
+      <div className="header-right" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        
+        {/* 1. Search / Command Palette Pill */}
         <button
           type="button"
           className="icon-action-btn"
           onClick={onOpenCommandPalette}
           title="Search & Command Palette (Ctrl + K)"
+          style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 10px' }}
         >
-          <Search size={17} />
+          <Search size={16} />
+          <span style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 600, display: 'none' }} className="search-hotkey-label">
+            ⌘K
+          </span>
         </button>
 
-        {/* 2. Direct Theme Palette Dropdown Trigger */}
+        {/* 2. Live Hands-Free Telugu Voice Mode Button (Prominent Action) */}
+        <button
+          type="button"
+          className="icon-action-btn"
+          onClick={() => {
+            playTactileClick();
+            if (onOpenLiveVoice) onOpenLiveVoice();
+          }}
+          title="Open Hands-Free Continuous Telugu Voice Mode"
+          style={{
+            background: 'rgba(56, 189, 248, 0.12)',
+            border: '1px solid rgba(56, 189, 248, 0.4)',
+            color: '#38bdf8',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px'
+          }}
+        >
+          <Mic size={16} />
+        </button>
+
+        {/* 3. Aesthetic Theme Palette Dropdown */}
         <div style={{ position: 'relative' }} ref={themeMenuRef}>
           <button
             type="button"
@@ -165,15 +202,16 @@ export default function Header({
             onClick={(e) => {
               e.stopPropagation();
               setShowThemeMenu(!showThemeMenu);
+              setShowMoreMenu(false);
             }}
-            title={`Switch Aesthetic Theme (Current: ${theme})`}
+            title={`Aesthetic Theme: ${activeThemeObj.name}`}
             style={{
-              background: showThemeMenu ? 'rgba(251, 191, 36, 0.2)' : 'transparent',
-              borderColor: showThemeMenu ? '#fbbf24' : 'transparent',
-              color: LUXURY_THEMES.find(t => t.id === theme)?.color || 'var(--accent-gold)'
+              background: showThemeMenu ? 'rgba(251, 191, 36, 0.18)' : 'transparent',
+              borderColor: showThemeMenu ? activeThemeObj.color : 'transparent',
+              color: activeThemeObj.color
             }}
           >
-            <Palette size={17} />
+            <Palette size={16} />
           </button>
 
           {/* Theme Dropdown Popover */}
@@ -182,19 +220,19 @@ export default function Header({
               position: 'absolute',
               top: 42,
               right: 0,
-              width: 230,
+              width: 220,
               background: '#090d16',
               border: '1px solid rgba(251, 191, 36, 0.35)',
               borderRadius: 12,
-              padding: 10,
-              boxShadow: '0 20px 50px rgba(0,0,0,0.9), 0 0 25px rgba(251, 191, 36, 0.15)',
+              padding: 8,
+              boxShadow: '0 20px 50px rgba(0,0,0,0.95), 0 0 25px rgba(251, 191, 36, 0.15)',
               zIndex: 99999,
               display: 'flex',
               flexDirection: 'column',
-              gap: 4
+              gap: 3
             }}>
-              <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#fbbf24', padding: '4px 8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                Select Aesthetic Theme
+              <div style={{ fontSize: '0.70rem', fontWeight: 800, color: '#fbbf24', padding: '4px 8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                Select Visual Theme
               </div>
               {LUXURY_THEMES.map(t => (
                 <button
@@ -205,13 +243,13 @@ export default function Header({
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    padding: '8px 10px',
+                    padding: '7px 10px',
                     borderRadius: 8,
-                    background: theme === t.id ? 'rgba(251, 191, 36, 0.18)' : 'rgba(255, 255, 255, 0.02)',
+                    background: theme === t.id ? 'rgba(251, 191, 36, 0.18)' : 'transparent',
                     border: theme === t.id ? `1px solid ${t.color}` : '1px solid transparent',
                     color: theme === t.id ? t.color : '#e2e8f0',
                     cursor: 'pointer',
-                    fontSize: '0.8rem',
+                    fontSize: '0.78rem',
                     fontWeight: 700,
                     textAlign: 'left',
                     width: '100%',
@@ -220,99 +258,166 @@ export default function Header({
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, pointerEvents: 'none' }}>
-                    <div style={{ width: 12, height: 12, borderRadius: '50%', background: t.color, flexShrink: 0, boxShadow: theme === t.id ? `0 0 8px ${t.color}` : 'none' }} />
+                    <div style={{ width: 10, height: 10, borderRadius: '50%', background: t.color, flexShrink: 0, boxShadow: theme === t.id ? `0 0 8px ${t.color}` : 'none' }} />
                     <span>{t.name}</span>
                   </div>
-                  {theme === t.id && <Check size={14} color={t.color} style={{ pointerEvents: 'none' }} />}
+                  {theme === t.id && <Check size={13} color={t.color} style={{ pointerEvents: 'none' }} />}
                 </button>
               ))}
             </div>
           )}
         </div>
 
-        {/* 3. Feedback & Improvement Modal Trigger */}
-        <button
-          type="button"
-          className="icon-action-btn"
-          onClick={() => {
-            playTactileClick();
-            if (onOpenFeedback) onOpenFeedback();
-          }}
-          title="Share Feedback & Report Bugs"
-          style={{
-            color: '#f59e0b',
-            background: 'rgba(245, 158, 11, 0.12)',
-            borderColor: 'rgba(245, 158, 11, 0.3)'
-          }}
-        >
-          <MessageSquareHeart size={17} />
-        </button>
+        {/* 4. Consolidated Quick Actions Menu (⋯ More / Settings) */}
+        <div style={{ position: 'relative' }} ref={moreMenuRef}>
+          <button
+            type="button"
+            className="icon-action-btn"
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowMoreMenu(!showMoreMenu);
+              setShowThemeMenu(false);
+            }}
+            title="More Options & System Settings"
+            style={{
+              background: showMoreMenu ? 'rgba(255, 255, 255, 0.12)' : 'transparent',
+              borderColor: showMoreMenu ? 'rgba(255, 255, 255, 0.25)' : 'transparent'
+            }}
+          >
+            <Sliders size={16} />
+          </button>
 
-        {/* 4. Settings */}
-        <button
-          className="icon-action-btn"
-          onClick={onOpenSettings}
-          title="System Settings & Model Config"
-        >
-          <Settings size={17} />
-        </button>
+          {/* Quick Actions Dropdown */}
+          {showMoreMenu && (
+            <div style={{
+              position: 'absolute',
+              top: 42,
+              right: 0,
+              width: 220,
+              background: '#090d16',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
+              borderRadius: 12,
+              padding: 6,
+              boxShadow: '0 20px 50px rgba(0,0,0,0.95), 0 0 20px rgba(0,0,0,0.8)',
+              zIndex: 99999,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 2
+            }}>
+              {/* Soundscape Ambient Audio Toggle */}
+              <button
+                type="button"
+                onClick={handleToggleDrone}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '8px 10px',
+                  borderRadius: 8,
+                  background: isDroneActive ? 'rgba(251, 191, 36, 0.15)' : 'transparent',
+                  border: 'none',
+                  color: isDroneActive ? '#fbbf24' : '#e2e8f0',
+                  cursor: 'pointer',
+                  fontSize: '0.78rem',
+                  fontWeight: 600,
+                  textAlign: 'left',
+                  width: '100%'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  {isDroneActive ? <Volume2 size={15} color="#fbbf24" /> : <VolumeX size={15} color="#94a3b8" />}
+                  <span>Ambient Drone</span>
+                </div>
+                <span style={{ fontSize: '0.68rem', color: isDroneActive ? '#4ade80' : '#94a3b8' }}>
+                  {isDroneActive ? 'ON' : 'OFF'}
+                </span>
+              </button>
 
-        {/* Sacred Procedural Ambient Soundscape Toggle with Theme Awareness */}
-        {(() => {
-          const activeThemeObj = LUXURY_THEMES.find(t => t.id === theme) || LUXURY_THEMES[0];
-          return (
-            <button
-              className="icon-action-btn"
-              onClick={handleToggleDrone}
-              title={isDroneActive ? `${activeThemeObj.soundLabel} • Active (Click to Mute)` : `Play ${activeThemeObj.soundLabel}`}
-              style={{
-                background: isDroneActive ? 'rgba(251, 191, 36, 0.2)' : 'transparent',
-                borderColor: isDroneActive ? activeThemeObj.color : 'transparent',
-                color: isDroneActive ? activeThemeObj.color : 'var(--text-secondary)'
-              }}
-            >
-              {isDroneActive ? <Volume2 size={17} /> : <VolumeX size={17} />}
-            </button>
-          );
-        })()}
+              {/* Share Feedback */}
+              <button
+                type="button"
+                onClick={() => {
+                  playTactileClick();
+                  setShowMoreMenu(false);
+                  if (onOpenFeedback) onOpenFeedback();
+                }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  padding: '8px 10px',
+                  borderRadius: 8,
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#e2e8f0',
+                  cursor: 'pointer',
+                  fontSize: '0.78rem',
+                  fontWeight: 600,
+                  textAlign: 'left',
+                  width: '100%'
+                }}
+              >
+                <MessageSquareHeart size={15} color="#f59e0b" />
+                <span>Share Feedback</span>
+              </button>
 
-        {/* Live Hands-Free Telugu Voice Mode Button */}
-        <button
-          className="icon-action-btn"
-          onClick={() => {
-            playTactileClick();
-            if (onOpenLiveVoice) onOpenLiveVoice();
-          }}
-          title="Open Hands-Free Continuous Telugu Voice Mode (No Buttons Needed)"
-          style={{
-            background: 'rgba(56, 189, 248, 0.15)',
-            border: '1px solid rgba(56, 189, 248, 0.45)',
-            color: '#38bdf8'
-          }}
-        >
-          <Mic size={17} />
-        </button>
+              {/* PWA Install */}
+              <button
+                type="button"
+                onClick={handleInstallPwa}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  padding: '8px 10px',
+                  borderRadius: 8,
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#e2e8f0',
+                  cursor: 'pointer',
+                  fontSize: '0.78rem',
+                  fontWeight: 600,
+                  textAlign: 'left',
+                  width: '100%'
+                }}
+              >
+                <Smartphone size={15} color="#38bdf8" />
+                <span>Install Native App</span>
+              </button>
 
-        {/* PWA Install Native App Button */}
-        <button
-          className="icon-action-btn"
-          onClick={handleInstallPwa}
-          title="Install BRAHMA Native App (PWA)"
-          style={{
-            color: 'var(--accent-gold)'
-          }}
-        >
-          <Smartphone size={17} />
-        </button>
+              <div style={{ height: 1, background: 'rgba(255,255,255,0.08)', margin: '4px 0' }} />
 
-        {/* 5. Scheduled Tasks / History */}
-        <button
-          className="icon-action-btn"
-          onClick={() => setActivePage('scheduled')}
-          title="Scheduled Tasks & History"
-        >
-          <Clock size={17} />
-        </button>
+              {/* Full Settings */}
+              <button
+                type="button"
+                onClick={() => {
+                  playTactileClick();
+                  setShowMoreMenu(false);
+                  if (onOpenSettings) onOpenSettings();
+                }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  padding: '8px 10px',
+                  borderRadius: 8,
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#f8fafc',
+                  cursor: 'pointer',
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  textAlign: 'left',
+                  width: '100%'
+                }}
+              >
+                <Settings size={15} color="#d4af37" />
+                <span>System Settings</span>
+              </button>
+            </div>
+          )}
+        </div>
+
       </div>
     </header>
   );
