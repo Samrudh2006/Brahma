@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>01 — Hero Brand Title Scene Takeover | BRAHMA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #030712;
+      color: #f8fafc;
+      font-family: 'Outfit', sans-serif;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      user-select: none;
+    }
+
+    /* Video Frame (16:9) */
+    #canvas-container {
+      position: relative;
+      flex: 1;
+      width: 100%;
+      height: calc(100% - 64px);
+      background: radial-gradient(circle at center, #0f172a 0%, #030712 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    /* Overlaid Content Scenes */
+    .scene-layer {
+      position: absolute;
+      z-index: 10;
+      text-align: center;
+      width: 85%;
+      max-width: 1100px;
+      opacity: 0;
+      transform: translateY(30px) scale(0.96);
+      transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+    }
+    .scene-layer.active {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .badge {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #f59e0b;
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      padding: 6px 18px;
+      border-radius: 999px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
+    }
+
+    .title-huge {
+      font-size: clamp(2.8rem, 6vw, 5.5rem);
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, #ffffff 30%, #fbbf24 70%, #d97706 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 10px 40px rgba(245, 158, 11, 0.25);
+    }
+
+    .subtitle {
+      font-size: clamp(1rem, 2vw, 1.4rem);
+      font-weight: 400;
+      color: #94a3b8;
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 1.5;
+    }
+
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 36px;
+    }
+    .pillar-card {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      padding: 16px 12px;
+      backdrop-filter: blur(12px);
+    }
+    .pillar-glyph { font-size: 1.6rem; color: #fbbf24; margin-bottom: 6px; }
+    .pillar-name { font-weight: 800; font-size: 0.95rem; color: #f8fafc; }
+    .pillar-sub { font-size: 0.75rem; color: #94a3b8; margin-top: 4px; }
+
+    /* Video Player Control Bar */
+    #controls-bar {
+      height: 64px;
+      background: #090d16;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      gap: 18px;
+      z-index: 50;
+    }
+
+    .btn-ctrl {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #f8fafc;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.2s;
+    }
+    .btn-ctrl:hover { background: rgba(255, 255, 255, 0.12); }
+    .btn-ctrl.primary { background: #f59e0b; color: #000; border: none; }
+    .btn-ctrl.primary:hover { background: #d97706; }
+
+    .progress-bar-container {
+      flex: 1;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 999px;
+      position: relative;
+      cursor: pointer;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #f59e0b, #38bdf8);
+      border-radius: 999px;
+      width: 0%;
+      transition: width 0.05s linear;
+    }
+
+    .time-readout {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: #94a3b8;
+      min-width: 90px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="canvas-container">
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Scene 1: 0 - 4s -->
+    <div class="scene-layer active" id="scene-1">
+      <div class="badge">🔱 LEVEL-4.2 RECURSIVE AGI MATRIX</div>
+      <h1 class="title-huge">BRAHMA</h1>
+      <p class="subtitle">The Autonomous Multi-Agent Operating System & Frontier Research Supercluster</p>
+    </div>
+
+    <!-- Scene 2: 4 - 8s -->
+    <div class="scene-layer" id="scene-2">
+      <div class="badge" style="color: #38bdf8; border-color: rgba(56, 189, 248, 0.4); background: rgba(56, 189, 248, 0.1);">
+        SOVEREIGN ARCHITECTURE
+      </div>
+      <h1 class="title-huge" style="background: linear-gradient(135deg, #ffffff 30%, #38bdf8 100%); -webkit-background-clip: text;">
+        13 Sacred Councils · 289 Swarms
+      </h1>
+      <p class="subtitle">Decentralized peer-to-peer consensus operating with sub-millisecond local routing.</p>
+      
+      <div class="pillars-grid">
+        <div class="pillar-card">
+          <div class="pillar-glyph">✦</div>
+          <div class="pillar-name">SṚṢṬI</div>
+          <div class="pillar-sub">Autonomous Web Builder</div>
+        </div>
+        <div class="pillar-card">
+          <div class="pillar-glyph">⌁</div>
+          <div class="pillar-name">YANTRA 2.0</div>
+          <div class="pillar-sub">Headless Browser Swarm</div>
+        </div>
+        <div class="pillar-card">
+          <div class="pillar-glyph">◈</div>
+          <div class="pillar-name">SAMVĀDA</div>
+          <div class="pillar-sub">Cognitive Dialogue Core</div>
+        </div>
+        <div class="pillar-card">
+          <div class="pillar-glyph">⚖</div>
+          <div class="pillar-name">DHARMA</div>
+          <div class="pillar-sub">Lean 4 Invariant Proofs</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scene 3: 8 - 12s -->
+    <div class="scene-layer" id="scene-3">
+      <div class="badge" style="color: #10b981; border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.1);">
+        VERIFIED EMPIRICAL ADVANTAGE
+      </div>
+      <h1 class="title-huge" style="background: linear-gradient(135deg, #ffffff 30%, #34d399 100%); -webkit-background-clip: text;">
+        94.8% HumanEval · 0.021ms Latency
+      </h1>
+      <p class="subtitle">100% Sovereign. 0 Subscriptions. 0 Data Leakage. Available Everywhere.</p>
+    </div>
+
+    <!-- Scene 4: 12 - 15s -->
+    <div class="scene-layer" id="scene-4">
+      <div class="badge">OPEN SOURCE · APACHE 2.0</div>
+      <h1 class="title-huge">Deploy Your Sovereign Matrix Today</h1>
+      <p class="subtitle">github.com/Samrudh2006/Brahma</p>
+    </div>
+  </div>
+
+  <!-- Player Controls -->
+  <div id="controls-bar">
+    <button class="btn-ctrl primary" id="btn-play">Pause</button>
+    <button class="btn-ctrl" id="btn-restart">Restart</button>
+    
+    <div class="progress-bar-container" id="timeline">
+      <div class="progress-fill" id="progress-bar"></div>
+    </div>
+
+    <div class="time-readout" id="time-display">00:00 / 00:15</div>
+  </div>
+
+  <script>
+    // 60 FPS Particle Canvas Animation
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+
+    window.addEventListener('resize', () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    });
+
+    const particles = Array.from({ length: 90 }, () => ({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      vx: (Math.random() - 0.5) * 0.8,
+      vy: (Math.random() - 0.5) * 0.8,
+      size: Math.random() * 2.5 + 1,
+      color: Math.random() > 0.5 ? '#f59e0b' : '#38bdf8'
+    }));
+
+    function drawSacredGeometry(time) {
+      ctx.save();
+      ctx.translate(width / 2, height / 2);
+      ctx.rotate(time * 0.0003);
+      
+      const rings = 4;
+      for (let r = 1; r <= rings; r++) {
+        ctx.beginPath();
+        ctx.arc(0, 0, r * 90, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(245, 158, 11, ${0.08 / r})`;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Polygon points
+        const sides = r * 3;
+        ctx.beginPath();
+        for (let i = 0; i <= sides; i++) {
+          const angle = (i * 2 * Math.PI) / sides;
+          const px = Math.cos(angle) * (r * 90);
+          const py = Math.sin(angle) * (r * 90);
+          if (i === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        }
+        ctx.strokeStyle = `rgba(56, 189, 248, ${0.05 / r})`;
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function renderParticles() {
+      ctx.clearRect(0, 0, width, height);
+      drawSacredGeometry(Date.now());
+
+      particles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0) p.x = width;
+        if (p.x > width) p.x = 0;
+        if (p.y < 0) p.y = height;
+        if (p.y > height) p.y = 0;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = 0.5;
+        ctx.fill();
+      });
+      ctx.globalAlpha = 1.0;
+    }
+
+    // 15-Second Timeline Animation Engine
+    const TOTAL_DURATION = 15;
+    let currentTime = 0;
+    let isPlaying = true;
+    let lastTimestamp = performance.now();
+
+    const scenes = [
+      { id: 'scene-1', start: 0, end: 4 },
+      { id: 'scene-2', start: 4, end: 8 },
+      { id: 'scene-3', start: 8, end: 12 },
+      { id: 'scene-4', start: 12, end: 15 }
+    ];
+
+    function updateTimeline(delta) {
+      if (isPlaying) {
+        currentTime += delta;
+        if (currentTime >= TOTAL_DURATION) {
+          currentTime = 0; // Loop
+        }
+      }
+
+      // Update progress
+      const progressPercent = (currentTime / TOTAL_DURATION) * 100;
+      document.getElementById('progress-bar').style.width = progressPercent + '%';
+
+      // Update time readout
+      const curSec = Math.floor(currentTime);
+      const strCur = `00:${String(curSec).padStart(2, '0')}`;
+      document.getElementById('time-display').innerText = `${strCur} / 00:15`;
+
+      // Update Scene activations
+      scenes.forEach(scene => {
+        const el = document.getElementById(scene.id);
+        if (currentTime >= scene.start && currentTime < scene.end) {
+          el.classList.add('active');
+        } else {
+          el.classList.remove('active');
+        }
+      });
+    }
+
+    function animationLoop(timestamp) {
+      const delta = (timestamp - lastTimestamp) / 1000;
+      lastTimestamp = timestamp;
+
+      renderParticles();
+      updateTimeline(delta);
+
+      requestAnimationFrame(animationLoop);
+    }
+    requestAnimationFrame(animationLoop);
+
+    // Controls
+    const btnPlay = document.getElementById('btn-play');
+    btnPlay.addEventListener('click', () => {
+      isPlaying = !isPlaying;
+      btnPlay.innerText = isPlaying ? 'Pause' : 'Play';
+    });
+
+    document.getElementById('btn-restart').addEventListener('click', () => {
+      currentTime = 0;
+      isPlaying = true;
+      btnPlay.innerText = 'Pause';
+    });
+
+    document.getElementById('timeline').addEventListener('click', (e) => {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const clickRatio = (e.clientX - rect.left) / rect.width;
+      currentTime = clickRatio * TOTAL_DURATION;
+    });
+  </script>
+</body>
+</html>

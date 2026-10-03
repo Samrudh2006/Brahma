@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>07 — 9:16 Viral Reel: OpenAI Dots Alternative | BRAHMA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&family=JetBrains+Mono:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #030712;
+      color: #f8fafc;
+      font-family: 'Outfit', sans-serif;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      user-select: none;
+    }
+
+    /* 9:16 Phone Shell */
+    #phone-container {
+      width: min(100%, 420px);
+      height: min(100vh - 40px, 840px);
+      background: #090d16;
+      border: 2px solid rgba(255, 255, 255, 0.12);
+      border-radius: 36px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+    }
+
+    /* Reel Screen */
+    #reel-stage {
+      flex: 1;
+      padding: 36px 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      background: radial-gradient(circle at 50% 30%, #1e1b4b 0%, #030712 100%);
+    }
+
+    .reel-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: #ef4444;
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      padding: 6px 14px;
+      border-radius: 999px;
+      margin-bottom: 20px;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+
+    .reel-headline {
+      font-size: 2.2rem;
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #ffffff 40%, #fbbf24 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .reel-card {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 18px;
+      padding: 20px;
+      width: 100%;
+      margin: 14px 0;
+      text-align: left;
+      backdrop-filter: blur(12px);
+    }
+    .reel-feature {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.85rem;
+      margin-bottom: 10px;
+      color: #cbd5e1;
+    }
+    .reel-feature:last-child { margin-bottom: 0; }
+    .check-icon { color: #34d399; font-weight: 900; }
+
+    .reel-cta {
+      margin-top: 20px;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #000;
+      font-weight: 900;
+      padding: 12px 24px;
+      border-radius: 999px;
+      font-size: 0.95rem;
+      box-shadow: 0 4px 20px rgba(245, 158, 11, 0.4);
+    }
+
+    /* Controls Bar inside Phone Frame */
+    .phone-controls {
+      height: 50px;
+      background: #040711;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      gap: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .mini-btn {
+      background: transparent;
+      border: none;
+      color: #fbbf24;
+      font-weight: 800;
+      font-size: 0.78rem;
+      cursor: pointer;
+    }
+    .phone-bar {
+      flex: 1;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .phone-progress {
+      height: 100%;
+      background: #f59e0b;
+      width: 0%;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="phone-container">
+    <div id="reel-stage">
+      <div class="reel-badge">🚨 BREAKING AI ALERT</div>
+      
+      <h1 class="reel-headline">OpenAI Dots Just Launched.</h1>
+      <p style="color: #94a3b8; font-size: 0.95rem; margin-bottom: 16px;">
+        $200/month walled garden... or 100% sovereign?
+      </p>
+
+      <div class="reel-card">
+        <div style="font-weight: 800; color: #fbbf24; margin-bottom: 10px; font-size: 0.9rem;">
+          MEET BRAHMA (Apache 2.0)
+        </div>
+        <div class="reel-feature">
+          <span class="check-icon">✓</span> Run autonomous browsers on your laptop
+        </div>
+        <div class="reel-feature">
+          <span class="check-icon">✓</span> 13 Councils delegating 24/7 in background
+        </div>
+        <div class="reel-feature">
+          <span class="check-icon">✓</span> Full-stack web synthesizer (✦ SṚṢṬI)
+        </div>
+        <div class="reel-feature">
+          <span class="check-icon">✓</span> ₹0 / $0 Free & Self-Hosted Sovereignty
+        </div>
+      </div>
+
+      <div class="reel-cta">
+        🔱 Star on GitHub: /Samrudh2006/Brahma
+      </div>
+    </div>
+
+    <div class="phone-controls">
+      <button class="mini-btn" id="btn-play">Pause</button>
+      <div class="phone-bar">
+        <div class="phone-progress" id="reel-progress"></div>
+      </div>
+      <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.70rem; color: #94a3b8;" id="reel-time">00:00</span>
+    </div>
+  </div>
+
+  <script>
+    const DURATION = 15;
+    let time = 0;
+    let isPlaying = true;
+    let last = performance.now();
+
+    function loop(now) {
+      const delta = (now - last) / 1000;
+      last = now;
+
+      if (isPlaying) {
+        time += delta;
+        if (time >= DURATION) time = 0;
+      }
+
+      const p = (time / DURATION) * 100;
+      document.getElementById('reel-progress').style.width = p + '%';
+      document.getElementById('reel-time').innerText = `00:${String(Math.floor(time)).padStart(2, '0')}`;
+
+      requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+
+    const btnPlay = document.getElementById('btn-play');
+    btnPlay.addEventListener('click', () => {
+      isPlaying = !isPlaying;
+      btnPlay.innerText = isPlaying ? 'Pause' : 'Play';
+    });
+  </script>
+</body>
+</html>
