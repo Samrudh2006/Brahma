@@ -3,7 +3,8 @@ import {
   Smartphone, Monitor, Radio, Send, Terminal, Mail,
   Shield, CheckCircle2, AlertTriangle, RefreshCw, Globe,
   Activity, Play, Lock, Key, Copy, Check, QrCode, Zap,
-  Server, HardDrive, Cpu, Clock, CheckCheck
+  Server, HardDrive, Cpu, Clock, CheckCheck, Compass, Eye,
+  Calendar, Layers, Download, CheckSquare, ExternalLink
 } from 'lucide-react';
 import { API_BASE } from '../api/client';
 
@@ -31,9 +32,25 @@ export default function RemoteGatewayView() {
   const mobileGatewayToken = 'BRAHMA-SECURE-MOBILE-NODE-991A';
   const mobileAccessUrl = `${API_BASE}/remote/status?auth=` + mobileGatewayToken;
 
+  // ─── YANTRA 2.0 Autonomous Browser Swarm State ─────────────────────────────
+  const [browserStatus, setBrowserStatus] = useState(null);
+  const [browserRecipes, setBrowserRecipes] = useState([]);
+  const [selectedRecipe, setSelectedRecipe] = useState(null);
+  const [customUrl, setCustomUrl] = useState('https://news.ycombinator.com');
+  const [runningBrowser, setRunningBrowser] = useState(false);
+  const [browserResult, setBrowserResult] = useState(null);
+  const [browserLogs, setBrowserLogs] = useState([]);
+  const [activeRoutines, setActiveRoutines] = useState([]);
+  const [routineInterval, setRoutineInterval] = useState(30);
+  const [schedulingRoutine, setSchedulingRoutine] = useState(false);
+
   useEffect(() => {
     fetchTelemetry();
-    const interval = setInterval(fetchTelemetry, 5000);
+    fetchBrowserMeta();
+    const interval = setInterval(() => {
+      fetchTelemetry();
+      fetchBrowserRoutines();
+    }, 5000);
     return () => clearInterval(interval);
   }, []);
 
@@ -48,6 +65,41 @@ export default function RemoteGatewayView() {
       console.warn('Telemetry error:', e);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchBrowserMeta = async () => {
+    try {
+      const [statusRes, recipesRes] = await Promise.all([
+        fetch(`${API_BASE}/remote/browser/status`),
+        fetch(`${API_BASE}/remote/browser/recipes`)
+      ]);
+      if (statusRes.ok) {
+        const sData = await statusRes.json();
+        setBrowserStatus(sData);
+      }
+      if (recipesRes.ok) {
+        const rData = await recipesRes.json();
+        setBrowserRecipes(rData);
+        if (rData.length > 0 && !selectedRecipe) {
+          setSelectedRecipe(rData[0]);
+        }
+      }
+      fetchBrowserRoutines();
+    } catch (e) {
+      console.warn('Browser meta fetch error:', e);
+    }
+  };
+
+  const fetchBrowserRoutines = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/remote/browser/routines`);
+      if (res.ok) {
+        const data = await res.json();
+        setActiveRoutines(data.routines || []);
+      }
+    } catch (e) {
+      console.warn('Routines fetch error:', e);
     }
   };
 
@@ -112,6 +164,82 @@ export default function RemoteGatewayView() {
     setTimeout(() => setTokenCopied(false), 2000);
   };
 
+  // ─── Execute Headless Browser Recipe / Custom Workflow ───────────────────────
+  const handleRunBrowserWorkflow = async (recipe = null) => {
+    const targetRecipe = recipe || selectedRecipe;
+    let steps = [];
+
+    if (targetRecipe) {
+      steps = targetRecipe.steps;
+    } else {
+      steps = [
+        { action: 'goto', url: customUrl },
+        { action: 'wait', ms: 1500 },
+        { action: 'screenshot' }
+      ];
+    }
+
+    setRunningBrowser(true);
+    setBrowserLogs([`🚀 Spawning Yantra 2.0 Headless Chrome Container...`, `Target: ${targetRecipe ? targetRecipe.name : customUrl}`]);
+    setBrowserResult(null);
+
+    try {
+      const res = await fetch(`${API_BASE}/remote/browser/execute`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          steps,
+          options: { headless: true, viewport: { width: 1280, height: 800 } }
+        })
+      });
+      const data = await res.json();
+      setBrowserResult(data);
+      if (data.logs) {
+        setBrowserLogs(data.logs);
+      }
+    } catch (err) {
+      setBrowserLogs(prev => [...prev, `❌ Error: ${err.message}`]);
+    } finally {
+      setRunningBrowser(false);
+    }
+  };
+
+  // ─── Schedule 24/7 Routine ───────────────────────────────────────────────────
+  const handleScheduleRoutine = async () => {
+    if (!selectedRecipe) return;
+    setSchedulingRoutine(true);
+    try {
+      const res = await fetch(`${API_BASE}/remote/browser/schedule`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          recipeId: selectedRecipe.id,
+          name: `24/7 Watchdog: ${selectedRecipe.name}`,
+          intervalMinutes: Number(routineInterval) || 30
+        })
+      });
+      await res.json();
+      fetchBrowserRoutines();
+    } catch (err) {
+      console.warn('Schedule error:', err);
+    } finally {
+      setSchedulingRoutine(false);
+    }
+  };
+
+  const handleCancelRoutine = async (routineId) => {
+    try {
+      await fetch(`${API_BASE}/remote/browser/cancel`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ routineId })
+      });
+      fetchBrowserRoutines();
+    } catch (e) {
+      console.warn('Cancel routine error:', e);
+    }
+  };
+
   return (
     <div style={{ padding: '24px 32px', maxWidth: 1300, margin: '0 auto', color: '#e2e8f0' }}>
       {/* Header */}
@@ -119,19 +247,22 @@ export default function RemoteGatewayView() {
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <span style={{ fontSize: '1.4rem', fontWeight: 900, color: '#f8fafc' }}>
-              📱 Mobile-to-Laptop Daemon & Remote Automations
+              ⌁ YANTRA 2.0 — Sovereign Computer-Use & Autonomous Browser Swarm
             </span>
             <span style={{ background: '#10b981', color: '#000', fontSize: '0.72rem', fontWeight: 800, padding: '2px 8px', borderRadius: 10 }}>
-              LIVE DAEMON
+              24/7 ALWAYS-ON
+            </span>
+            <span style={{ background: '#3b82f6', color: '#fff', fontSize: '0.72rem', fontWeight: 800, padding: '2px 8px', borderRadius: 10 }}>
+              CDP + PUPPETEER CORE
             </span>
           </div>
           <p style={{ color: '#94a3b8', fontSize: '0.85rem', marginTop: 4 }}>
-            Control your laptop remotely from your mobile phone anywhere · Live Web Search · Automated Email Alerts
+            Zero-Trust Local Computer-Use · Headless Browser Swarms · 24/7 Recurring Routines · OpenAI Dots & MausBot Sovereign Alternative
           </p>
         </div>
 
         <button
-          onClick={fetchTelemetry}
+          onClick={() => { fetchTelemetry(); fetchBrowserMeta(); }}
           style={{
             background: 'rgba(255,255,255,0.06)',
             border: '1px solid rgba(255,255,255,0.15)',
@@ -150,7 +281,245 @@ export default function RemoteGatewayView() {
         </button>
       </div>
 
-      {/* Grid: 3 Main Columns */}
+      {/* ─── YANTRA 2.0 BROWSER SWARM SPOTLIGHT ─── */}
+      <div style={{ background: 'linear-gradient(180deg, rgba(15, 23, 42, 0.85) 0%, rgba(10, 15, 30, 0.95) 100%)', border: '1px solid rgba(59, 130, 246, 0.3)', borderRadius: 16, padding: 22, marginBottom: 24, boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ background: 'rgba(59, 130, 246, 0.15)', color: '#60a5fa', padding: 8, borderRadius: 10 }}>
+              <Compass size={20} />
+            </div>
+            <div>
+              <h2 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#f8fafc', margin: 0 }}>
+                Headless Browser Swarm & Computer-Use Engine
+              </h2>
+              <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+                Engine: {browserStatus?.engine || 'Puppeteer-Core + Chrome CDP'} · Binary: {browserStatus?.chromeExecutable || 'Detecting...'}
+              </span>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <span style={{ fontSize: '0.78rem', color: '#10b981', display: 'flex', alignItems: 'center', gap: 6, fontWeight: 700 }}>
+              <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#10b981', display: 'inline-block' }}></span>
+              {activeRoutines.length} Active 24/7 Watchdogs
+            </span>
+          </div>
+        </div>
+
+        {/* 2-Column: Left (Recipes & Controls), Right (Live Visual Viewport & Output) */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 1.3fr', gap: 20 }}>
+          {/* Left Column: Recipes & Routine Dispatch */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#e2e8f0', display: 'flex', alignItems: 'center', gap: 6 }}>
+              <Layers size={15} color="#fbbf24" /> Select Pre-built Autonomous Browser Recipe:
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {browserRecipes.map(recipe => {
+                const isSelected = selectedRecipe?.id === recipe.id;
+                return (
+                  <div
+                    key={recipe.id}
+                    onClick={() => setSelectedRecipe(recipe)}
+                    style={{
+                      background: isSelected ? 'rgba(59, 130, 246, 0.12)' : 'rgba(255, 255, 255, 0.03)',
+                      border: isSelected ? '1px solid #3b82f6' : '1px solid rgba(255, 255, 255, 0.07)',
+                      borderRadius: 10,
+                      padding: '12px 14px',
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease'
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div style={{ fontWeight: 800, fontSize: '0.85rem', color: isSelected ? '#60a5fa' : '#f8fafc' }}>
+                        {recipe.name}
+                      </div>
+                      <span style={{ fontSize: '0.68rem', background: 'rgba(255,255,255,0.06)', padding: '2px 6px', borderRadius: 4, color: '#94a3b8' }}>
+                        {recipe.category}
+                      </span>
+                    </div>
+                    <div style={{ fontSize: '0.74rem', color: '#94a3b8', marginTop: 4 }}>
+                      {recipe.description}
+                    </div>
+                    <div style={{ fontSize: '0.70rem', color: '#fbbf24', marginTop: 6, fontFamily: 'monospace' }}>
+                      ⚡ {recipe.steps.length} Automated Actions ({recipe.steps.map(s => s.action).join(' → ')})
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Run Once / Schedule Controls */}
+            <div style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 10, padding: 14 }}>
+              <div style={{ display: 'flex', gap: 10 }}>
+                <button
+                  onClick={() => handleRunBrowserWorkflow()}
+                  disabled={runningBrowser}
+                  style={{
+                    flex: 1.2,
+                    background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: 8,
+                    padding: '10px 14px',
+                    fontWeight: 800,
+                    fontSize: '0.82rem',
+                    cursor: runningBrowser ? 'not-allowed' : 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 8,
+                    boxShadow: '0 4px 12px rgba(37,99,235,0.3)'
+                  }}
+                >
+                  {runningBrowser ? <RefreshCw className="spin" size={15} /> : <Play size={15} />}
+                  {runningBrowser ? 'Executing Headless CDP...' : 'Dispatch Agent Swarm Now'}
+                </button>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1 }}>
+                  <input
+                    type="number"
+                    min="5"
+                    max="1440"
+                    value={routineInterval}
+                    onChange={(e) => setRoutineInterval(e.target.value)}
+                    style={{
+                      width: 50,
+                      background: '#040711',
+                      border: '1px solid rgba(255,255,255,0.15)',
+                      borderRadius: 6,
+                      color: '#fbbf24',
+                      padding: '8px 4px',
+                      fontSize: '0.78rem',
+                      textAlign: 'center',
+                      fontWeight: 700
+                    }}
+                  />
+                  <span style={{ fontSize: '0.72rem', color: '#94a3b8' }}>min</span>
+                  <button
+                    onClick={handleScheduleRoutine}
+                    disabled={schedulingRoutine}
+                    style={{
+                      flex: 1,
+                      background: 'rgba(16, 185, 129, 0.15)',
+                      border: '1px solid #10b981',
+                      color: '#34d399',
+                      borderRadius: 6,
+                      padding: '8px 10px',
+                      fontWeight: 700,
+                      fontSize: '0.75rem',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    + 24/7 Schedule
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Active Routines List */}
+            {activeRoutines.length > 0 && (
+              <div style={{ background: 'rgba(16, 185, 129, 0.05)', border: '1px solid rgba(16, 185, 129, 0.2)', borderRadius: 10, padding: 12 }}>
+                <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#34d399', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <Clock size={13} /> Active 24/7 Watchdog Jobs:
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  {activeRoutines.map(r => (
+                    <div key={r.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#040711', padding: '6px 10px', borderRadius: 6, fontSize: '0.72rem' }}>
+                      <div>
+                        <span style={{ color: '#f8fafc', fontWeight: 600 }}>{r.name}</span>
+                        <span style={{ color: '#94a3b8', marginLeft: 6 }}>({r.intervalMinutes}m cycle · runs: {r.runCount})</span>
+                      </div>
+                      <button
+                        onClick={() => handleCancelRoutine(r.id)}
+                        style={{ background: 'transparent', border: 'none', color: '#f87171', cursor: 'pointer', fontWeight: 700 }}
+                      >
+                        Stop
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Right Column: Visual Viewport Preview & Execution Logs */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#e2e8f0', display: 'flex', alignItems: 'center', gap: 6 }}>
+                <Eye size={15} color="#38bdf8" /> Real-Time Viewport Preview (CDP Buffer)
+              </div>
+              {browserResult?.durationMs && (
+                <span style={{ fontSize: '0.72rem', color: '#10b981', fontWeight: 700 }}>
+                  ✓ Completed in {(browserResult.durationMs / 1000).toFixed(2)}s
+                </span>
+              )}
+            </div>
+
+            {/* Viewport Frame */}
+            <div style={{
+              background: '#040711',
+              border: '1px solid rgba(255,255,255,0.1)',
+              borderRadius: 10,
+              minHeight: 230,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              overflow: 'hidden',
+              position: 'relative'
+            }}>
+              {browserResult?.screenshot ? (
+                <img
+                  src={browserResult.screenshot}
+                  alt="Live Browser Viewport"
+                  style={{ width: '100%', height: 'auto', maxHeight: 270, objectFit: 'contain' }}
+                />
+              ) : (
+                <div style={{ textAlign: 'center', color: '#64748b', padding: 24, fontSize: '0.78rem' }}>
+                  {runningBrowser ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
+                      <RefreshCw className="spin" size={24} color="#60a5fa" />
+                      <span>Stealth browser active... capturing live viewport buffer</span>
+                    </div>
+                  ) : (
+                    <span>Click "Dispatch Agent Swarm Now" above to capture live viewport</span>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Step-by-Step CDP Telemetry Log */}
+            <div style={{ background: '#020617', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 8, padding: 12, maxHeight: 150, overflowY: 'auto', fontFamily: 'monospace', fontSize: '0.70rem' }}>
+              <div style={{ color: '#fbbf24', fontWeight: 700, marginBottom: 4 }}>
+                Telemetry Log:
+              </div>
+              {browserLogs.length > 0 ? (
+                browserLogs.map((log, i) => (
+                  <div key={i} style={{ color: log.includes('ERROR') ? '#f87171' : log.includes('Extracted') ? '#4ade80' : '#94a3b8' }}>
+                    {log}
+                  </div>
+                ))
+              ) : (
+                <div style={{ color: '#475569' }}>Awaiting browser execution...</div>
+              )}
+            </div>
+
+            {/* Extracted JSON Payload Preview */}
+            {browserResult?.extractedData && Object.keys(browserResult.extractedData).length > 0 && (
+              <div style={{ background: '#040d1a', border: '1px solid rgba(56, 189, 248, 0.2)', borderRadius: 8, padding: 10, fontSize: '0.70rem' }}>
+                <div style={{ color: '#38bdf8', fontWeight: 700, marginBottom: 4 }}>
+                  📊 Extracted Data Payload:
+                </div>
+                <div style={{ maxHeight: 90, overflowY: 'auto', color: '#a5f3fc', fontFamily: 'monospace' }}>
+                  {JSON.stringify(browserResult.extractedData, null, 2)}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Grid: 3 Main Telemetry & IPC Columns */}
       <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 1fr', gap: 20 }}>
         {/* Col 1: System Telemetry & Mobile QR Pairing */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -252,51 +621,43 @@ export default function RemoteGatewayView() {
               disabled={executing}
               style={{
                 width: '100%',
-                background: 'linear-gradient(135deg, #fbbf24, #d97706)',
+                background: 'linear-gradient(135deg, #f59e0b, #d97706)',
                 color: '#000',
                 border: 'none',
                 borderRadius: 8,
                 padding: '9px',
                 fontWeight: 800,
                 fontSize: '0.8rem',
-                cursor: 'pointer',
+                cursor: executing ? 'not-allowed' : 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: 6
+                gap: 6,
+                marginBottom: 10
               }}
             >
               {executing ? <RefreshCw className="spin" size={14} /> : <Play size={14} />}
-              Execute on Laptop
+              {executing ? 'Executing on Host...' : 'Execute Host Shell Script'}
             </button>
+
             {commandOutput && (
-              <pre style={{ marginTop: 10, background: '#02040a', border: '1px solid rgba(255,255,255,0.05)', borderRadius: 8, padding: 10, fontSize: '0.72rem', color: '#a7f3d0', maxHeight: 120, overflowY: 'auto', whiteSpace: 'pre-wrap' }}>
+              <div style={{ background: '#020617', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 6, padding: 10, fontSize: '0.72rem', fontFamily: 'monospace', maxHeight: 110, overflowY: 'auto', whiteSpace: 'pre-wrap', color: '#cbd5e1' }}>
                 {commandOutput}
-              </pre>
+              </div>
             )}
           </div>
 
           {/* Web Search Card */}
           <div style={{ background: 'rgba(15, 23, 42, 0.65)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: 20 }}>
             <h3 style={{ fontSize: '0.95rem', color: '#a855f7', display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-              <Globe size={16} /> Real-Time Web Search Crawler
+              <Globe size={16} /> Fast Web Synthesizer
             </h3>
             <div style={{ display: 'flex', gap: 8, marginBottom: 10 }}>
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleWebSearch()}
-                style={{
-                  flex: 1,
-                  background: '#040711',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  borderRadius: 8,
-                  color: '#fff',
-                  padding: '8px 12px',
-                  fontSize: '0.8rem',
-                  outline: 'none'
-                }}
+                style={{ flex: 1, background: '#040711', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, color: '#fff', padding: '7px 10px', fontSize: '0.78rem' }}
               />
               <button
                 onClick={handleWebSearch}

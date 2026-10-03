@@ -234,4 +234,60 @@ router.post('/inbox/triage', async (req, res) => {
   }
 });
 
+// ─── 8. YANTRA 2.0 Autonomous Headless Browser Agent Swarm ────────────────────
+const yantraBrowser = require('../services/yantraBrowserAgentService');
+
+// GET /api/remote/browser/status — Browser agent status & Chrome binary verification
+router.get('/browser/status', (req, res) => {
+  res.json(yantraBrowser.getStatus());
+});
+
+// GET /api/remote/browser/recipes — Prebuilt autonomous browser recipes
+router.get('/browser/recipes', (req, res) => {
+  res.json(yantraBrowser.getPrebuiltRecipes());
+});
+
+// POST /api/remote/browser/execute — Execute multi-step headless browser workflow
+router.post('/browser/execute', async (req, res) => {
+  try {
+    const { steps, options, workflowId } = req.body;
+    if (!steps || !Array.isArray(steps) || steps.length === 0) {
+      return res.status(400).json({ error: 'Steps array is required for browser workflow' });
+    }
+    const result = await yantraBrowser.executeWorkflow({ steps, options, workflowId });
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/remote/browser/schedule — Schedule 24/7 recurring browser routine
+router.post('/browser/schedule', (req, res) => {
+  try {
+    const { routineId, name, recipeId, intervalMinutes, steps } = req.body;
+    const result = yantraBrowser.scheduleRoutine({ routineId, name, recipeId, intervalMinutes, steps });
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET /api/remote/browser/routines — List active 24/7 browser routines
+router.get('/browser/routines', (req, res) => {
+  res.json({ routines: yantraBrowser.getActiveRoutines() });
+});
+
+// POST /api/remote/browser/cancel — Terminate a running 24/7 routine
+router.post('/browser/cancel', (req, res) => {
+  const { routineId } = req.body;
+  if (!routineId) return res.status(400).json({ error: 'routineId is required' });
+  res.json(yantraBrowser.cancelRoutine(routineId));
+});
+
+// GET /api/remote/browser/history — Get execution audit logs & screenshots
+router.get('/browser/history', (req, res) => {
+  res.json({ history: yantraBrowser.getHistory() });
+});
+
 module.exports = router;
+
