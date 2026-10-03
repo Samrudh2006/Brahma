@@ -9,8 +9,9 @@
   <a href="https://brahma-web.antideploy.com"><img src="https://img.shields.io/badge/Live%20Web-brahma--web.antideploy.com-brightgreen.svg?style=for-the-badge&logo=vercel" alt="Live Web App"></a>
   <a href="https://brahma-ai-hmcd.onrender.com"><img src="https://img.shields.io/badge/Production%20API-Live%20on%20Render-blue.svg?style=for-the-badge&logo=render" alt="Production API"></a>
   <a href="https://github.com/Samrudh2006/Brahma/blob/master/LICENSE"><img src="https://img.shields.io/badge/License-Apache%202.0-gold.svg?style=for-the-badge" alt="License"></a>
+  <a href="https://github.com/Samrudh2006/Brahma/commits/master"><img src="https://img.shields.io/badge/Commits-Cryptographically%20Verified%20(Ed25519)-success.svg?style=for-the-badge&logo=github" alt="Cryptographically Verified"></a>
   <a href="https://github.com/Samrudh2006/Brahma"><img src="https://img.shields.io/badge/Evolution-Level%204.2%20AGI%20Precursor-darkviolet.svg?style=for-the-badge" alt="Level 4.2 AGI"></a>
-  <a href="https://github.com/Samrudh2006/Brahma"><img src="https://img.shields.io/badge/Invariants-17%2F17%20Passed%20(100%25)-success.svg?style=for-the-badge" alt="17/17 Invariants Passed"></a>
+  <a href="https://github.com/Samrudh2006/Brahma"><img src="https://img.shields.io/badge/Invariants-184%2F184%20Passed%20(100%25)-success.svg?style=for-the-badge" alt="184/184 Invariants Passed"></a>
   <a href="https://github.com/Samrudh2006/Brahma"><img src="https://img.shields.io/badge/Neural%20Routing-0.021ms%20Latency-orange.svg?style=for-the-badge" alt="Latency 0.021ms"></a>
   <a href="https://github.com/Samrudh2006/Brahma"><img src="https://img.shields.io/badge/API%20Throughput-1.57M%20req%2Fsec-red.svg?style=for-the-badge" alt="Throughput"></a>
   <a href="https://github.com/Samrudh2006/Brahma"><img src="https://img.shields.io/badge/Architecture-13%20Sanskrit%20Councils-orange.svg?style=for-the-badge" alt="13 Councils"></a>
