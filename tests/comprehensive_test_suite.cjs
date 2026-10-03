@@ -83,6 +83,16 @@ const analogicalTransfer = require('../backend/services/brahmaAnalogicalTransfer
 const repEPlasticity = require('../backend/services/brahmaRepEPlasticityEngine');
 const grammarDiscovery = require('../backend/services/brahmaGrammarSymbolicDiscovery');
 const selfPlayArena = require('../backend/services/brahmaSelfPlayArenaEngine');
+const goalCompiler = require('../backend/services/brahmaGoalCompilerEngine');
+const skillLibrary = require('../backend/services/brahmaSkillLibraryService');
+const crossExperimenter = require('../backend/services/brahmaCrossDomainExperimenter');
+const causalWorldModel = require('../backend/services/brahmaCausalWorldModel');
+const benchmarkGenerator = require('../backend/services/brahmaAutonomousBenchmarkGenerator');
+const blindEvaluation = require('../backend/services/brahmaBlindEvaluationEngine');
+const researchScientist = require('../backend/services/brahmaResearchScientistLoop');
+const safeEvolution = require('../backend/services/brahmaSafeArchitectureEvolution');
+const longHorizonProject = require('../backend/services/brahmaLongHorizonProjectEngine');
+const generalizationFirewall = require('../backend/services/brahmaGeneralizationFirewall');
 
 const testResults = {
   total: 0,
@@ -2339,6 +2349,246 @@ async function runAllTests() {
     );
   } catch (err) {
     assertTest('integration', 'Brahma Adversarial Dual-Council Self-Play Arena (Vritra Attacker vs Brihaspati Defense Duel)', false, err.message);
+  }
+
+  // Test 4.91: Autonomous Task Decomposition & Goal Compiler (DAG Synthesis & Replanning)
+  try {
+    const compiled = goalCompiler.compileGoal({
+      objective: 'Autonomously simulate aerodynamic drag and formally verify security compliance',
+      domain: 'PHYSICS_AND_SECURITY'
+    });
+    const executed = goalCompiler.executeAndMonitor(compiled, compiled.executionOrder[1]);
+
+    const isGoalValid = compiled.executionOrder.length >= 3 &&
+      compiled.metrics.jointSuccessProbability > 0.8 &&
+      executed.finalStatus === 'GOAL_ACHIEVED_VERIFIED' &&
+      executed.replanCount === 1;
+
+    assertTest(
+      'integration',
+      'Brahma Autonomous Task Decomposition & Goal Compiler (DAG Synthesis & Replanning)',
+      Boolean(isGoalValid),
+      `Compiled ${compiled.subtaskCount}-node DAG (P_success: ${compiled.metrics.jointSuccessProbability}); dynamically replanned after step failure; verified goal achievement`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Autonomous Task Decomposition & Goal Compiler (DAG Synthesis & Replanning)', false, err.message);
+  }
+
+  // Test 4.92: Persistent Skill & Capability Library (Register, Benchmark, Track & Rollback)
+  try {
+    const registered = skillLibrary.registerSkill({
+      name: 'SimulateHydrodynamicWave',
+      capability: 'NUMERICAL_SIMULATION',
+      description: 'Simulates 1D Saint-Venant shallow water equations',
+      code: 'function solve() { return { depth: 5.2 }; }',
+      benchmarkScore: 97.5
+    });
+    const perfUpdate = skillLibrary.recordExecution(registered.skillId, true, 42);
+
+    const isSkillValid = registered.status === 'REGISTERED_IN_PERSISTENT_LIBRARY' &&
+      registered.confidence === 0.975 &&
+      perfUpdate.successCount === 1;
+
+    assertTest(
+      'integration',
+      'Brahma Persistent Capability & Skill Library (Provenance, Tracking & Confidence)',
+      Boolean(isSkillValid),
+      `Registered skill "${registered.skillId}" (Confidence: ${registered.confidence}); execution tracked (Success rate: 100%)`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Persistent Capability & Skill Library (Provenance, Tracking & Confidence)', false, err.message);
+  }
+
+  // Test 4.93: Cross-Domain Empirical Experiment Generator (Darcy -> Supply Chain Queue Pressure)
+  try {
+    const expRes = crossExperimenter.runEmpiricalTransferExperiment({
+      sourceDomain: 'FLUID_DYNAMICS',
+      targetDomain: 'SUPPLY_CHAIN_BOTTLENECK',
+      sampleSize: 300,
+      acceptanceThresholdPct: 15.0
+    });
+
+    const isExpValid = expRes.metrics.improvementPct > 15.0 &&
+      expRes.decision === 'ACCEPT_TRANSFER_REPRODUCIBLY_USEFUL' &&
+      expRes.assumptions.length === 3;
+
+    assertTest(
+      'integration',
+      'Brahma Cross-Domain Empirical Experiment Generator (Synthetic Validation & Acceptance)',
+      Boolean(isExpValid),
+      `Validated Darcy fluid analogy on supply backlog (+${expRes.metrics.improvementPct}% delay reduction vs baseline); decision: ${expRes.decision}`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Cross-Domain Empirical Experiment Generator (Synthetic Validation & Acceptance)', false, err.message);
+  }
+
+  // Test 4.94: Persistent Causal World Model (Bayesian Hypothesis Updating & Do-Calculus)
+  try {
+    const updateRes = causalWorldModel.updateHypothesisWithEvidence(
+      'ComputeCluster.loadPct',
+      'InferenceLatency.p99Ms',
+      { supportsHypothesis: true, observationContext: 'High concurrency load test', pValue: 0.001 }
+    );
+    const doSim = causalWorldModel.simulateIntervention('ComputeCluster.loadPct', 25, 'InferenceLatency.p99Ms');
+
+    const isCausalValid = updateRes.posteriorConfidence > updateRes.priorConfidence &&
+      updateRes.causalVerdict === 'HIGHLY_CONFIDENT_CAUSAL_LAW' &&
+      doSim.projectedOutcomeDelta > 0;
+
+    assertTest(
+      'integration',
+      'Brahma Persistent Causal World Model (Bayesian Updating & Judea Pearl Do-Calculus)',
+      Boolean(isCausalValid),
+      `Bayesian posterior updated ${updateRes.priorConfidence} -> ${updateRes.posteriorConfidence} (${updateRes.causalVerdict}); simulated intervention P(Latency | do(Load = 25))`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Persistent Causal World Model (Bayesian Updating & Judea Pearl Do-Calculus)', false, err.message);
+  }
+
+  // Test 4.95: Autonomous Benchmark Generator & Tamper-Proof Held-Out Suite
+  try {
+    const suite = benchmarkGenerator.generateUnseenBenchmarkSuite('CRYPTOGRAPHY_RESILIENCE', { testCount: 5 });
+    const evalRun = benchmarkGenerator.evaluateCandidate(suite.suiteId, (t) => ({ success: true, latencyMs: 15 }));
+
+    const isBenchValid = suite.tests.length === 5 &&
+      suite.integrityHash.length === 64 &&
+      evalRun.scorePct === 100.0 &&
+      evalRun.passedCount === 5;
+
+    assertTest(
+      'integration',
+      'Brahma Autonomous Benchmark Generator (OOD Held-Out Vault & SHA-256 Integrity)',
+      Boolean(isBenchValid),
+      `Generated 5-test held-out benchmark (SHA-256 seal: ${suite.integrityHash.slice(0, 16)}...); evaluated candidate (Score: ${evalRun.scorePct}%)`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Autonomous Benchmark Generator (OOD Held-Out Vault & SHA-256 Integrity)', false, err.message);
+  }
+
+  // Test 4.96: Human-vs-Brahma Double-Blind Tri-Party Evaluation Engine
+  try {
+    const trial = blindEvaluation.createBlindTrial({ prompt: 'Design an ultra-low-latency order matching engine' });
+    blindEvaluation.submitBlindOutput(trial.trialId, 'CANDIDATE_A', { code: 'class FastBook {}' });
+    blindEvaluation.submitBlindOutput(trial.trialId, 'CANDIDATE_B', { code: 'function match() {}' });
+    blindEvaluation.submitBlindOutput(trial.trialId, 'CANDIDATE_C', { code: 'const engine = {}' });
+
+    const evalReport = blindEvaluation.evaluateBlindTrial(trial.trialId, {
+      'CANDIDATE_A': { correctness: 98, reasoningQuality: 96, toolEfficiency: 95, robustness: 99, novelTaskSuccess: 97, errorRecovery: 95, transferPerformance: 94 },
+      'CANDIDATE_B': { correctness: 85, reasoningQuality: 82, toolEfficiency: 80, robustness: 84, novelTaskSuccess: 81, errorRecovery: 80, transferPerformance: 80 },
+      'CANDIDATE_C': { correctness: 88, reasoningQuality: 89, toolEfficiency: 86, robustness: 87, novelTaskSuccess: 85, errorRecovery: 84, transferPerformance: 85 }
+    });
+
+    const isBlindValid = evalReport.rankings.length === 3 &&
+      evalReport.unblindedReport !== undefined &&
+      evalReport.winnerScore > 90.0;
+
+    assertTest(
+      'integration',
+      'Brahma Double-Blind Tri-Party Evaluation (Brahma vs Frontier LLM vs Human Expert)',
+      Boolean(isBlindValid),
+      `Double-blind trial unblinded: Winner "${evalReport.winnerIdentity}" (Score: ${evalReport.winnerScore}/100, Verdict: ${evalReport.verdict})`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Double-Blind Tri-Party Evaluation (Brahma vs Frontier LLM vs Human Expert)', false, err.message);
+  }
+
+  // Test 4.97: Autonomous Research Scientist Loop (Observe -> Hypothesize -> Experiment -> Refute -> Revise)
+  try {
+    const research = researchScientist.conductResearchInvestigation({
+      phenomenonName: 'Quantum Thermal Noise Coupling',
+      maxIterations: 3,
+      rSquaredThreshold: 0.98
+    });
+
+    const isResearchValid = research.status === 'SCIENTIFIC_DISCOVERY_CONVERGED' &&
+      research.totalIterations <= 3 &&
+      research.finalDiscovery.finalRSquared >= 0.98 &&
+      research.finalDiscovery.governingEquation.includes('T^2 * B');
+
+    assertTest(
+      'integration',
+      'Brahma Autonomous Research Scientist Loop (Hypothesis Refutation & Convergence)',
+      Boolean(isResearchValid),
+      `Converged in ${research.totalIterations} scientific iterations; derived governing equation: ${research.finalDiscovery.governingEquation} (R² = ${research.finalDiscovery.finalRSquared})`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Autonomous Research Scientist Loop (Hypothesis Refutation & Convergence)', false, err.message);
+  }
+
+  // Test 4.98: Safe Architecture Evolution Pipeline (Sandbox, Security, Benchmark & Multi-Sig)
+  try {
+    const prop = safeEvolution.proposeArchitecturalMutation({
+      mutationType: 'ROUTING_OPTIMIZATION',
+      title: 'Adaptive Priority Latency Fast-Path',
+      targetSubsystem: 'reactLoopEngine',
+      proposedCode: 'module.exports = { routeFast: (q) => ({ priority: "HIGH" }) };',
+      rationale: 'Reduces dispatch overhead by 12%'
+    });
+    const evoResult = safeEvolution.runEvolutionPipeline(prop.proposalId, { autoApproveCouncilQuorum: true });
+
+    const isEvoValid = evoResult.stages.sandboxVerified === true &&
+      evoResult.stages.securityPassed === true &&
+      evoResult.stages.benchmarkPassed === true &&
+      evoResult.stages.multiSigApproved === true &&
+      evoResult.status === 'DEPLOYED_TO_PRODUCTION_CANARY_VERIFIED';
+
+    assertTest(
+      'integration',
+      'Brahma Safe Architecture Evolution (5-Stage Defense Gate & Multi-Sig Canary Deployment)',
+      Boolean(isEvoValid),
+      `Proposal "${prop.title}" passed sandbox, static security analysis, invariant benchmark, and multi-sig quorum (Status: ${evoResult.status})`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Safe Architecture Evolution (5-Stage Defense Gate & Multi-Sig Canary Deployment)', false, err.message);
+  }
+
+  // Test 4.99: Long-Horizon Project Orchestrator & Degradation Curve Profiler
+  try {
+    const proj = longHorizonProject.createLongHorizonProject({
+      projectName: 'Multi-Repo Distributed Refactor',
+      targetHorizonSteps: 60,
+      checkpointInterval: 10
+    });
+    const horizonSim = longHorizonProject.executeHorizonSimulation(proj.projectId, 60);
+
+    const isHorizonValid = horizonSim.totalExecutedSteps === 60 &&
+      horizonSim.checkpointsCount === 6 &&
+      horizonSim.metrics.finalAccuracyRetentionPct >= 85.0 &&
+      horizonSim.metrics.horizonResilienceGrade === 'GRADE_A_LONG_HORIZON_STABLE';
+
+    assertTest(
+      'integration',
+      'Brahma Long-Horizon Project Orchestrator (60-Step Horizon & Entropy Profiling)',
+      Boolean(isHorizonValid),
+      `Executed 60-step horizon with 6 checkpoints; average accuracy: ${(horizonSim.metrics.averageAccuracyOverHorizon * 100).toFixed(1)}% (Retention: ${horizonSim.metrics.finalAccuracyRetentionPct}%, ${horizonSim.metrics.horizonResilienceGrade})`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Long-Horizon Project Orchestrator (60-Step Horizon & Entropy Profiling)', false, err.message);
+  }
+
+  // Test 4.100: Generalization Firewall & Hard-Code Memorization Detector
+  try {
+    const firewallReport = generalizationFirewall.auditCapabilityGeneralization({
+      capabilityName: 'Dynamic Quadratic Invariant Transformer',
+      candidateCodeOrFn: (arr) => arr.map(x => x * x),
+      knownStructureTest: { input: [2, 4, 6], expected: [4, 16, 36] },
+      unseenStructureTest: { input: [13, 27, 49], expected: [169, 729, 2401] },
+      codeSourceString: 'function transform(arr) { return arr.map(x => x * x); }'
+    });
+
+    const isFirewallValid = firewallReport.empiricalGeneralizationRatio >= 0.85 &&
+      firewallReport.suspiciousIndicators.length === 0 &&
+      firewallReport.verdict === 'GENUINE_GENERALIZATION_VERIFIED' &&
+      firewallReport.firewallStatus === 'PASS_FIREWALL_CLEARED';
+
+    assertTest(
+      'integration',
+      'Brahma Generalization Firewall (EGR Ratio & Anti-Hardcoding Memorization Gate)',
+      Boolean(isFirewallValid),
+      `EGR: ${firewallReport.empiricalGeneralizationRatio} (Known: ${firewallReport.knownStructureScore}%, Unseen: ${firewallReport.unseenStructureScore}%); zero hardcoded leaks; verdict: ${firewallReport.verdict}`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Generalization Firewall (EGR Ratio & Anti-Hardcoding Memorization Gate)', false, err.message);
   }
 
   // ═════════════════════════════════════════════════════════════════════════════

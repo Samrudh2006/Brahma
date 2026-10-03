@@ -1232,4 +1232,110 @@ router.post('/transcendence/selfplay-duel', (req, res) => {
   }
 });
 
+// ─── 37. Advanced Proto-AGI Autonomy & Empirical Validation Mesh ────────────
+const goalCompiler = require('../services/brahmaGoalCompilerEngine');
+const skillLibrary = require('../services/brahmaSkillLibraryService');
+const crossExperimenter = require('../services/brahmaCrossDomainExperimenter');
+const causalWorldModel = require('../services/brahmaCausalWorldModel');
+const benchmarkGenerator = require('../services/brahmaAutonomousBenchmarkGenerator');
+const blindEvaluation = require('../services/brahmaBlindEvaluationEngine');
+const researchScientist = require('../services/brahmaResearchScientistLoop');
+const safeEvolution = require('../services/brahmaSafeArchitectureEvolution');
+const longHorizonProject = require('../services/brahmaLongHorizonProjectEngine');
+const generalizationFirewall = require('../services/brahmaGeneralizationFirewall');
+
+router.post('/autonomy/goal-compile', (req, res) => {
+  try {
+    const result = goalCompiler.compileGoal(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/autonomy/skill-register', (req, res) => {
+  try {
+    const result = skillLibrary.registerSkill(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/autonomy/cross-experiment', (req, res) => {
+  try {
+    const result = crossExperimenter.runEmpiricalTransferExperiment(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/autonomy/causal-update', (req, res) => {
+  try {
+    const { cause, effect, observation } = req.body || {};
+    const result = causalWorldModel.updateHypothesisWithEvidence(cause, effect, observation || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/autonomy/benchmark-generate', (req, res) => {
+  try {
+    const result = benchmarkGenerator.generateUnseenBenchmarkSuite(req.body && req.body.targetCapability, req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/autonomy/blind-evaluate', (req, res) => {
+  try {
+    const result = blindEvaluation.evaluateBlindTrial(req.body.trialId, req.body.blindScores || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/autonomy/research-loop', (req, res) => {
+  try {
+    const result = researchScientist.conductResearchInvestigation(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/autonomy/safe-evolution', (req, res) => {
+  try {
+    const proposal = safeEvolution.proposeArchitecturalMutation(req.body || {});
+    const result = safeEvolution.runEvolutionPipeline(proposal.proposalId, req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/autonomy/long-horizon-sim', (req, res) => {
+  try {
+    const proj = longHorizonProject.createLongHorizonProject(req.body || {});
+    const result = longHorizonProject.executeHorizonSimulation(proj.projectId, req.body.steps || 50);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/autonomy/generalization-firewall', (req, res) => {
+  try {
+    const result = generalizationFirewall.auditCapabilityGeneralization(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 module.exports = router;
+
