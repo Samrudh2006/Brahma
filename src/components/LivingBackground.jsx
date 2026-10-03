@@ -27,13 +27,14 @@ export default function LivingBackground({ theme }) {
       const currentTheme = document.documentElement.getAttribute('data-theme') || theme;
       const isShiftedRight = currentTheme === 'teal' || currentTheme === 'surya';
       const baseShiftX = isShiftedRight ? 130 : 0;
-      const baseScale = isShiftedRight ? 1.18 : 1.05;
+      const baseShiftY = currentTheme === 'surya' ? 75 : 0;
+      const baseScale = isShiftedRight ? 1.20 : 1.05;
 
       if (bgLayerRef.current) {
-        bgLayerRef.current.style.transform = `scale(${baseScale}) translate3d(${baseShiftX - currentX * 12}px, ${-currentY * 8}px, 0)`;
+        bgLayerRef.current.style.transform = `scale(${baseScale}) translate3d(${baseShiftX - currentX * 12}px, ${baseShiftY - currentY * 8}px, 0)`;
       }
       if (auraLayerRef.current) {
-        auraLayerRef.current.style.transform = `translate3d(${baseShiftX - currentX * 22}px, ${-currentY * 16}px, 0)`;
+        auraLayerRef.current.style.transform = `translate3d(${baseShiftX - currentX * 22}px, ${baseShiftY - currentY * 16}px, 0)`;
       }
 
       animationFrameId = requestAnimationFrame(updateParallax);

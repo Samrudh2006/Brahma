@@ -252,7 +252,7 @@ body,
 
 .living-bg-image {
   position: absolute;
-  inset: -30px;
+  inset: -80px;
   background-image:
     linear-gradient(180deg, rgba(3, 7, 18, 0.42) 0%, rgba(3, 7, 18, 0.18) 35%, rgba(3, 7, 18, 0.85) 100%),
     url('/assets/brahma_temple_bg.jpg');
@@ -270,7 +270,7 @@ body,
     url('/assets/mayura_peacock_bg.jpg');
   background-position: center top;
   filter: contrast(1.08) saturate(1.18) brightness(0.96);
-  transform: scale(1.18) translateX(130px);
+  transform: scale(1.20) translateX(130px);
 }
 
 /* 2. Cyberpunk Kashi Theme (Neon Violet & Electric Pink) */
@@ -282,14 +282,14 @@ body,
   filter: contrast(1.12) saturate(1.22) brightness(0.96);
 }
 
-/* 3. Sūrya Solarized / Cosmic Gold Theme (Sacred Golden Sun Temple - Shifted Right to Center with User Workspace) */
+/* 3. Sūrya Solarized Theme (Sacred Golden Sun Temple - Shifted Right & Down to Center with Logo) */
 [data-theme='surya'] .living-bg-image {
   background-image:
     linear-gradient(180deg, rgba(20, 5, 2, 0.42) 0%, rgba(20, 5, 2, 0.16) 35%, rgba(20, 5, 2, 0.88) 100%),
     url('/assets/surya_gold_bg.jpg');
   background-position: center top;
   filter: contrast(1.10) saturate(1.20) brightness(0.96);
-  transform: scale(1.18) translateX(130px);
+  transform: scale(1.20) translate(130px, 75px);
 }
 
 /* 4. Himālaya Zen Theme (Snow Mountains, Kedarnath & Midnight Blue) */
@@ -326,7 +326,7 @@ body,
 }
 
 [data-theme='surya'] .living-bg-aura {
-  background: radial-gradient(circle at calc(50% + 130px) 38%,
+  background: radial-gradient(circle at calc(50% + 130px) calc(38% + 75px),
       rgba(245, 158, 11, 0.26) 0%,
       rgba(234, 88, 12, 0.08) 45%,
       transparent 70%);

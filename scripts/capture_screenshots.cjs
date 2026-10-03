@@ -26,9 +26,16 @@ async function captureAll() {
     localStorage.setItem('brahma-theme', 'surya');
   });
 
-  console.log('🌐 Navigating to http://localhost:3000/...');
-  await page.goto('http://localhost:3000/', { waitUntil: 'networkidle2', timeout: 30000 });
-  await new Promise(r => setTimeout(r, 2000));
+  let targetPort = 3000;
+  try {
+    console.log('🌐 Trying http://localhost:3000/...');
+    await page.goto('http://localhost:3000/', { waitUntil: 'domcontentloaded', timeout: 5000 });
+  } catch (_) {
+    targetPort = 3001;
+    console.log('🌐 Fallback to http://localhost:3001/...');
+    await page.goto('http://localhost:3001/', { waitUntil: 'domcontentloaded', timeout: 30000 });
+  }
+  await new Promise(r => setTimeout(r, 2500));
 
   // 1. Capture Main Sūrya Solarized Workspace (Default Theme)
   console.log('📸 1. Capturing Main Sūrya Solarized Workspace...');
