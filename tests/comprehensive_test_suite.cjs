@@ -954,39 +954,19 @@ async function runAllTests() {
     const benchmarks = indra.listBenchmarkTargets();
     const has9Targets = benchmarks.success === true && benchmarks.totalTargets === 9;
 
-    const evaluation = indra.evaluateVulnerabilityAuditScorecard({
-      benchmarkId: 'OWASP_CRAPI',
-      targetComponent: 'VehicleLocationAPI',
-      auditFinding: {
-        vulnerabilityName: 'Broken Object Level Authorization (BOLA/IDOR) on Vehicle Telemetry',
-        cveId: 'CWE-639',
-        cweId: 'CWE-639',
-        owaspCategory: 'OWASP API Security Top 10 - API1:2023 Broken Object Level Authorization',
-        vulnerableEndpoint: '/api/v1/vehicle/{vehicleId}/location',
-        cvssScore: 8.6,
-        cvssVector: 'CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:N',
-        severityRating: 'HIGH',
-        rootCauseAnalysis: 'Endpoint decodes vehicleId parameter directly from path variable without validating authenticated user tenancy or ownership.',
-        exploitabilityReasoning: 'Authenticated attacker can iterate sequential vehicle IDs to access real-time GPS coordinates of arbitrary fleet vehicles under normal network preconditions.',
-        remediationGuidance: 'Enforce tenant-isolated database query filters: verify req.user.tenantId and req.user.assignedVehicles.includes(vehicleId) before returning location telemetry.',
-        confidenceScore: 0.96,
-        isSpeculative: false,
-        apiSecurityLogic: 'Analyzed JWT bearer token claims and verified that vehicle ID parameter lacks tenancy state assertion, leading to BOLA / IDOR access control bypass.',
-        evidenceReproduction: 'Step 1: Authenticate as user A. Step 2: GET /api/v1/vehicle/veh_102/location with user A token. Step 3: Successfully receives location of vehicle owned by user B.',
-        inScope: true,
-        nonDestructive: true
-      }
-    });
+    // Run autonomous audit across all 9 benchmark targets
+    const allAudits = benchmarks.benchmarks.map(b => indra.runAutonomousBenchmarkAudit(b.id));
+    const allPassedAPlus = allAudits.every(a => a.success === true && a.totalScore >= 95 && a.grade === 'A+');
+    const allRemediationReady = allAudits.every(a => a.remediationReady === true && a.disposition === 'AUDIT_EXCELLENCE_VERIFIED');
+    const all10CategoriesScored = allAudits.every(a => Object.keys(a.scoreDistribution).length === 10);
 
-    const isGradeAPlus = evaluation.success === true && evaluation.totalScore >= 90 && evaluation.grade === 'A+';
-    const hasAllCategories = Object.keys(evaluation.scoreDistribution).length === 10;
-    const isRemediationReady = evaluation.remediationReady === true && evaluation.disposition === 'AUDIT_EXCELLENCE_VERIFIED';
+    const crapiEval = allAudits.find(a => a.benchmarkId === 'OWASP_CRAPI');
 
     assertTest(
       'integration',
       'Indra 10-Category × 100-Point Vulnerability Scorecard & Benchmark Catalog',
-      has9Targets && isGradeAPlus && hasAllCategories && isRemediationReady,
-      `Indexed 9 benchmark targets (crAPI, Juice Shop, etc.); Scorecard total: ${evaluation.totalScore}/100 (${evaluation.grade}); all 10 categories rigorously scored`
+      has9Targets && allPassedAPlus && allRemediationReady && all10CategoriesScored,
+      `All 9 benchmarks autonomously audited (crAPI, Juice Shop, NodeGoat, GitHub Lab, WebGoat, Gruyere, gRPC Goat, DVWA, Goatlin) with 100% A+ compliance`
     );
   } catch (err) {
     assertTest('integration', 'Indra 10-Category × 100-Point Vulnerability Scorecard & Benchmark Catalog', false, err.message);

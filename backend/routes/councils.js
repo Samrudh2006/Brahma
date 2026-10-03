@@ -268,6 +268,27 @@ router.post('/indra/benchmark-scorecard', (req, res) => {
   }
 });
 
+router.get('/indra/benchmarks/:id/scenario', (req, res) => {
+  try {
+    const scenario = indra.getBenchmarkScenario(req.params.id);
+    if (!scenario) {
+      return res.status(404).json({ success: false, error: 'Benchmark scenario not found' });
+    }
+    res.json({ success: true, scenario });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/indra/benchmarks/:id/audit', (req, res) => {
+  try {
+    const audit = indra.runAutonomousBenchmarkAudit(req.params.id);
+    res.json(audit);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // ─── 6. VoxCPM Neural Voice & Acoustic Attention Gate ─────────────────────────
 router.post('/vox/addressee-gate', (req, res) => {
   try {

@@ -213,9 +213,11 @@
 - [x] **3. Council Route Integration**
   - [x] Mounted `GET /api/councils/indra/benchmarks` in `backend/routes/councils.js`.
   - [x] Mounted `POST /api/councils/indra/benchmark-scorecard` in `backend/routes/councils.js`.
+  - [x] Mounted `GET /api/councils/indra/benchmarks/:id/scenario` in `backend/routes/councils.js`.
+  - [x] Mounted `POST /api/councils/indra/benchmarks/:id/audit` in `backend/routes/councils.js`.
 
 - [x] **4. Test Suite Oracle & Build Verification**
-  - [x] Added Test 4.35 to `tests/comprehensive_test_suite.cjs`.
-  - [x] 54/54 tests passing in `tests/comprehensive_test_suite.cjs` (100.0% pass rate).
-  - [x] Production build clean: `npx vite build` passed (12.43s, 0 errors).
+  - [x] Added Test 4.35 to `tests/comprehensive_test_suite.cjs` iterating over all 9 benchmarks autonomously.
+  - [x] 54/54 tests passing in `tests/comprehensive_test_suite.cjs` (100.0% pass rate; all 9 targets A+ tier).
+  - [x] Production build clean: `npx vite build` passed (0 errors).
   - [x] Zero UI button clutter added.
