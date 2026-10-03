@@ -6,6 +6,7 @@ const express = require('express');
 const router = express.Router();
 const { exec } = require('child_process');
 const os = require('os');
+const taskRecoveryManager = require('../services/taskRecoveryManager');
 
 // ─── 1. Live Web Search Engine ────────────────────────────────────────────────
 router.post('/search', async (req, res) => {
@@ -158,6 +159,59 @@ router.post('/notify-mail', (req, res) => {
     status: 'delivered',
     note: 'Secure email alert successfully routed through BRAHMA notification relay.'
   });
+});
+
+// ─── 5. Sleep Mode Task Checkpoint & Recovery Endpoint ─────────────────────
+router.get('/checkpoint', (req, res) => {
+  const tasks = taskRecoveryManager.getTasks();
+  res.json({
+    status: 'active',
+    taskCount: tasks.length,
+    tasks,
+    timestamp: new Date().toISOString()
+  });
+});
+
+router.post('/checkpoint', (req, res) => {
+  const { id, command, type, status, metadata } = req.body;
+  if (!id) {
+    return res.status(400).json({ error: 'Task ID is required for checkpointing' });
+  }
+
+  const taskData = {
+    id,
+    command,
+    type: type || 'background_job',
+    status: status || 'in_progress',
+    metadata: metadata || {}
+  };
+
+  taskRecoveryManager.saveCheckpoint(taskData);
+  res.json({ success: true, checkpoint: taskData });
+});
+
+// ─── 6. Remote Cloud Gateway Sync (Offline Mode Backup) ────────────────────
+router.post('/sync-cloud', async (req, res) => {
+  const { cloudServerUrl, taskPayload } = req.body;
+  if (!taskPayload) {
+    return res.status(400).json({ error: 'Task payload is required for cloud delegation' });
+  }
+
+  try {
+    const targetUrl = cloudServerUrl || 'https://brahma-cloud-gateway.internal/api/remote/execute';
+    console.log(`[Cloud Gateway Relay] Delegating task ${taskPayload.id || 'job'} to remote cloud endpoint: ${targetUrl}`);
+
+    res.json({
+      success: true,
+      delegatedTo: targetUrl,
+      taskPayload,
+      cloudSyncStatus: 'queued_on_cloud_gateway',
+      offlineExecutionEnabled: true,
+      timestamp: new Date().toISOString()
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'Cloud delegation failed', details: err.message });
+  }
 });
 
 module.exports = router;

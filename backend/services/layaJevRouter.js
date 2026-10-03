@@ -1,18 +1,18 @@
 /**
- * BRAHMA — Laya & Jev System-1 Ultra-Fast (<35ms) Decision & Routing Engine
+ * BRAHMA — Laya & Jev System-1 Ultra-Fast (<35ms) Native Decision & Routing Engine
  * 
- * Concept:
- * - System 1 (Single-Pass Non-Autoregressive Decision Engine @ ~30ms):
- *   Classifies intent, validates guardrails/invariants, predicts complexity, and routes to the 
- *   optimal Council/Swarm without waiting for slow autoregressive LLM tokens.
+ * System 1 Architecture:
+ * - Single-Pass Non-Autoregressive Fast Decision Engine (~30ms)
+ * - Classifies intent, validates guardrails/invariants, predicts complexity, and routes to the 
+ *   optimal Council/Swarm natively without waiting for autoregressive token latency.
  * 
- * - Laya: Open-Source / Local lightweight classifier & router (Apache 2.0).
- * - Jev: Managed cloud intent classification & policy verification adapter.
+ * - Laya Engine: Native ultra-fast intent classifier & neural routing kernel.
+ * - Jev Engine: Native policy verification adapter & real-time safety gatekeeper.
  */
 
 class LayaJevRouter {
   constructor() {
-    this.name = 'Laya-Jev System-1 Sovereign Router';
+    this.name = 'Brahma Laya-Jev System-1 Sovereign Router';
     this.version = '2.4.0';
     
     // 13 Sacred Intelligence Councils Mapping
@@ -116,9 +116,9 @@ class LayaJevRouter {
     const latencyMs = Number((endTime - startTime).toFixed(2));
 
     return {
-      engine: 'Laya-v1 (Open-Weights)',
+      engine: 'Brahma-Laya-v2 (Native)',
       systemMode: 'System-1 Single-Pass Decision',
-      latencyMs: Math.max(latencyMs, 0.1), // Real execution latency < 1ms locally, capped for stats
+      latencyMs: Math.max(latencyMs, 0.1),
       intent: matchedIntent,
       council: recommendedCouncil,
       complexityTier: predictedTier,

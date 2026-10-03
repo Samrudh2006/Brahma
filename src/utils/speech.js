@@ -22,6 +22,144 @@ export const SUPPORTED_LANGUAGES = [
   { code: 'zh-CN', name: 'Chinese (Mandarin)', flag: '🇨🇳', nativeName: '中文' }
 ];
 
+/**
+ * 3 Top-Tier TTS Models & 3 Top-Tier STT Models Per Language Catalog
+ */
+export const MULTI_MODEL_VOICE_CATALOG = {
+  'te-IN': {
+    ttsModels: [
+      { tier: 1, name: 'AI4Bharat Bhashini IndicTTS (Open-Source Telugu)', type: 'Free Open-Source Neural', latency: '50ms' },
+      { tier: 2, name: 'Microsoft Edge Neural Telugu (Mohan / Shruti)', type: 'Free Edge Neural', latency: '40ms' },
+      { tier: 3, name: 'Google Telugu Natural Neural', type: 'Free Android / Web Neural', latency: '45ms' }
+    ],
+    sttModels: [
+      { tier: 1, name: 'OpenAI Whisper-Large-v3 (Open-Source Weights)', type: 'Free Sub-Word ASR' },
+      { tier: 2, name: 'AI4Bharat Bhashini Speech-to-Text', type: 'Free Indic Acoustic Model' },
+      { tier: 3, name: 'WebSpeech Continuous VAD (te-IN)', type: 'Free Zero-Latency VAD' }
+    ]
+  },
+  'en-US': {
+    ttsModels: [
+      { tier: 1, name: 'Microsoft Edge Free Neural (Jenny / Guy)', type: 'Free High-Fidelity Neural' },
+      { tier: 2, name: 'Coqui TTS / Piper Neural (Open-Source)', type: 'Free Open-Source Local' },
+      { tier: 3, name: 'Google US English Natural Neural', type: 'Free Web Neural' }
+    ],
+    sttModels: [
+      { tier: 1, name: 'OpenAI Whisper-Large-v3 / Whisper Turbo', type: 'Free Open-Source ASR' },
+      { tier: 2, name: 'VOSK Offline Speech Recognition Engine', type: 'Free Open-Source Local ASR' },
+      { tier: 3, name: 'WebSpeech Continuous VAD (en-US)', type: 'Free Zero-Latency VAD' }
+    ]
+  },
+  'en-IN': {
+    ttsModels: [
+      { tier: 1, name: 'Microsoft Edge Neural Indian English (Prabhat/Neerja)', type: 'Free Edge Neural' },
+      { tier: 2, name: 'Google Indian English Natural Neural', type: 'Free Web Neural' },
+      { tier: 3, name: 'AI4Bharat IndicTTS English-India', type: 'Free Open-Source Neural' }
+    ],
+    sttModels: [
+      { tier: 1, name: 'OpenAI Whisper-Large-v3 (Indian Accent Model)', type: 'Free Open-Source ASR' },
+      { tier: 2, name: 'AI4Bharat Bhashini Indian English ASR', type: 'Free Open-Source Indic ASR' },
+      { tier: 3, name: 'WebSpeech Continuous VAD (en-IN)', type: 'Free Zero-Latency VAD' }
+    ]
+  },
+  'hi-IN': {
+    ttsModels: [
+      { tier: 1, name: 'AI4Bharat Bhashini IndicTTS (Open-Source Hindi)', type: 'Free Open-Source Neural' },
+      { tier: 2, name: 'Microsoft Edge Neural Hindi (Swara / Madhur)', type: 'Free Edge Neural' },
+      { tier: 3, name: 'Google Hindi Natural Neural', type: 'Free Web Neural' }
+    ],
+    sttModels: [
+      { tier: 1, name: 'OpenAI Whisper-Large-v3 (Hindi Model)', type: 'Free Open-Source ASR' },
+      { tier: 2, name: 'AI4Bharat Bhashini Hindi ASR', type: 'Free Indic Acoustic Model' },
+      { tier: 3, name: 'WebSpeech Continuous VAD (hi-IN)', type: 'Free Zero-Latency VAD' }
+    ]
+  },
+  'ta-IN': {
+    ttsModels: [
+      { tier: 1, name: 'AI4Bharat Bhashini IndicTTS (Tamil)', type: 'Free Open-Source Neural' },
+      { tier: 2, name: 'Microsoft Edge Neural Tamil (Valluvar/Pallavi)', type: 'Free Edge Neural' },
+      { tier: 3, name: 'Google Tamil Natural Neural', type: 'Free Web Neural' }
+    ],
+    sttModels: [
+      { tier: 1, name: 'OpenAI Whisper-Large-v3 (Tamil Model)', type: 'Free Open-Source ASR' },
+      { tier: 2, name: 'AI4Bharat Bhashini Tamil ASR', type: 'Free Indic Acoustic Engine' },
+      { tier: 3, name: 'WebSpeech Continuous VAD (ta-IN)', type: 'Free Zero-Latency VAD' }
+    ]
+  },
+  'kn-IN': {
+    ttsModels: [
+      { tier: 1, name: 'AI4Bharat Bhashini IndicTTS (Kannada)', type: 'Free Open-Source Neural' },
+      { tier: 2, name: 'Microsoft Edge Neural Kannada (Gagan/Sapna)', type: 'Free Edge Neural' },
+      { tier: 3, name: 'Google Kannada Natural Neural', type: 'Free Web Neural' }
+    ],
+    sttModels: [
+      { tier: 1, name: 'OpenAI Whisper-Large-v3 (Kannada Model)', type: 'Free Open-Source ASR' },
+      { tier: 2, name: 'AI4Bharat Bhashini Kannada ASR', type: 'Free Indic Acoustic Engine' },
+      { tier: 3, name: 'WebSpeech Continuous VAD (kn-IN)', type: 'Free Zero-Latency VAD' }
+    ]
+  },
+  'es-ES': {
+    ttsModels: [
+      { tier: 1, name: 'Microsoft Edge Free Neural Spanish (Elvira/Alvaro)', type: 'Free Edge Neural' },
+      { tier: 2, name: 'Coqui TTS Multilingual Spanish', type: 'Free Open-Source Neural' },
+      { tier: 3, name: 'Google Spanish Natural Neural', type: 'Free Web Neural' }
+    ],
+    sttModels: [
+      { tier: 1, name: 'OpenAI Whisper-Large-v3 (Spanish Model)', type: 'Free Open-Source ASR' },
+      { tier: 2, name: 'VOSK Spanish Offline ASR', type: 'Free Open-Source Local ASR' },
+      { tier: 3, name: 'WebSpeech Continuous VAD (es-ES)', type: 'Free Zero-Latency VAD' }
+    ]
+  },
+  'fr-FR': {
+    ttsModels: [
+      { tier: 1, name: 'Microsoft Edge Free Neural French (Henri/Denise)', type: 'Free Edge Neural' },
+      { tier: 2, name: 'Coqui TTS French Model', type: 'Free Open-Source Neural' },
+      { tier: 3, name: 'Google French Natural Neural', type: 'Free Web Neural' }
+    ],
+    sttModels: [
+      { tier: 1, name: 'OpenAI Whisper-Large-v3 (French Model)', type: 'Free Open-Source ASR' },
+      { tier: 2, name: 'VOSK French Offline ASR', type: 'Free Open-Source Local ASR' },
+      { tier: 3, name: 'WebSpeech Continuous VAD (fr-FR)', type: 'Free Zero-Latency VAD' }
+    ]
+  },
+  'de-DE': {
+    ttsModels: [
+      { tier: 1, name: 'Microsoft Edge Free Neural German (Conrad/Katja)', type: 'Free Edge Neural' },
+      { tier: 2, name: 'Coqui TTS German Model', type: 'Free Open-Source Neural' },
+      { tier: 3, name: 'Google German Natural Neural', type: 'Free Web Neural' }
+    ],
+    sttModels: [
+      { tier: 1, name: 'OpenAI Whisper-Large-v3 (German Model)', type: 'Free Open-Source ASR' },
+      { tier: 2, name: 'VOSK German Offline ASR', type: 'Free Open-Source Local ASR' },
+      { tier: 3, name: 'WebSpeech Continuous VAD (de-DE)', type: 'Free Zero-Latency VAD' }
+    ]
+  },
+  'ja-JP': {
+    ttsModels: [
+      { tier: 1, name: 'VOICEVOX (Open-Source Japanese Anime/Human Neural)', type: 'Free Open-Source Local' },
+      { tier: 2, name: 'Microsoft Edge Neural Japanese (Nanami/Keita)', type: 'Free Edge Neural' },
+      { tier: 3, name: 'Google Japanese Natural Neural', type: 'Free Web Neural' }
+    ],
+    sttModels: [
+      { tier: 1, name: 'OpenAI Whisper-Large-v3 (Japanese Model)', type: 'Free Open-Source ASR' },
+      { tier: 2, name: 'ReazonSpeech Open-Source Japanese ASR', type: 'Free Open-Source Local ASR' },
+      { tier: 3, name: 'WebSpeech Continuous VAD (ja-JP)', type: 'Free Zero-Latency VAD' }
+    ]
+  },
+  'zh-CN': {
+    ttsModels: [
+      { tier: 1, name: 'Microsoft Edge Free Neural Mandarin (Xiaoxiao/Yunxi)', type: 'Free Edge Neural' },
+      { tier: 2, name: 'PaddleSpeech Open-Source Mandarin Neural', type: 'Free Open-Source Local' },
+      { tier: 3, name: 'Google Chinese Natural Neural', type: 'Free Web Neural' }
+    ],
+    sttModels: [
+      { tier: 1, name: 'OpenAI Whisper-Large-v3 (Mandarin Model)', type: 'Free Open-Source ASR' },
+      { tier: 2, name: 'Alibaba FunASR Paraformer (Open-Source)', type: 'Free Open-Source ASR' },
+      { tier: 3, name: 'WebSpeech Continuous VAD (zh-CN)', type: 'Free Zero-Latency VAD' }
+    ]
+  }
+};
+
 let currentAudio = null;
 let isSpeakingNow = false;
 

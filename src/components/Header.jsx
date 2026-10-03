@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Search, ChevronDown, Sun, Moon, Settings, Clock, Palette, Check, Menu, Volume2, VolumeX, Smartphone, Music, Mic } from 'lucide-react';
 import { toggleAmbientDrone, updateAmbientTheme, getDroneState, playTactileClick } from '@utils/soundEffects';
 
@@ -25,6 +25,7 @@ export default function Header({
   const [showThemeMenu, setShowThemeMenu] = useState(false);
   const [isDroneActive, setIsDroneActive] = useState(false);
   const [installPrompt, setInstallPrompt] = useState(null);
+  const themeMenuRef = useRef(null);
 
   useEffect(() => {
     // Listen for PWA installation event
@@ -35,6 +36,21 @@ export default function Header({
     window.addEventListener('beforeinstallprompt', handleBeforeInstall);
     return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
   }, []);
+
+  // Close theme dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (themeMenuRef.current && !themeMenuRef.current.contains(event.target)) {
+        setShowThemeMenu(false);
+      }
+    };
+    if (showThemeMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showThemeMenu]);
 
   const handleToggleDrone = () => {
     playTactileClick();
@@ -55,7 +71,11 @@ export default function Header({
     }
   };
 
-  const handleSelectTheme = (themeId) => {
+  const handleSelectTheme = (e, themeId) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     playTactileClick();
     setTheme(themeId);
     updateAmbientTheme(themeId);
@@ -68,6 +88,7 @@ export default function Header({
       <div className="header-left">
         {/* Mobile Hamburger Trigger */}
         <button
+          type="button"
           className="mobile-menu-trigger"
           onClick={onToggleMobileSidebar}
           title="Toggle Navigation Menu"
@@ -95,6 +116,7 @@ export default function Header({
       <div className="header-right">
         {/* 1. Search / Command Palette */}
         <button
+          type="button"
           className="icon-action-btn"
           onClick={onOpenCommandPalette}
           title="Search & Command Palette (Ctrl + K)"
@@ -103,10 +125,14 @@ export default function Header({
         </button>
 
         {/* 2. Direct Theme Palette Dropdown Trigger */}
-        <div style={{ position: 'relative' }}>
+        <div style={{ position: 'relative' }} ref={themeMenuRef}>
           <button
+            type="button"
             className="icon-action-btn"
-            onClick={() => setShowThemeMenu(!showThemeMenu)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowThemeMenu(!showThemeMenu);
+            }}
             title={`Switch Aesthetic Theme (Current: ${theme})`}
             style={{
               background: showThemeMenu ? 'rgba(251, 191, 36, 0.2)' : 'transparent',
@@ -139,7 +165,8 @@ export default function Header({
               {LUXURY_THEMES.map(t => (
                 <button
                   key={t.id}
-                  onClick={() => handleSelectTheme(t.id)}
+                  type="button"
+                  onClick={(e) => handleSelectTheme(e, t.id)}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -147,19 +174,21 @@ export default function Header({
                     padding: '8px 10px',
                     borderRadius: 8,
                     background: theme === t.id ? 'rgba(251, 191, 36, 0.15)' : 'transparent',
-                    border: 'none',
+                    border: theme === t.id ? '1px solid rgba(251, 191, 36, 0.4)' : '1px solid transparent',
                     color: theme === t.id ? t.color : '#e2e8f0',
                     cursor: 'pointer',
                     fontSize: '0.8rem',
                     fontWeight: 700,
-                    textAlign: 'left'
+                    textAlign: 'left',
+                    width: '100%',
+                    boxSizing: 'border-box'
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <div style={{ width: 12, height: 12, borderRadius: '50%', background: t.color }} />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, pointerEvents: 'none' }}>
+                    <div style={{ width: 12, height: 12, borderRadius: '50%', background: t.color, flexShrink: 0 }} />
                     <span>{t.name}</span>
                   </div>
-                  {theme === t.id && <Check size={14} color={t.color} />}
+                  {theme === t.id && <Check size={14} color={t.color} style={{ pointerEvents: 'none' }} />}
                 </button>
               ))}
             </div>

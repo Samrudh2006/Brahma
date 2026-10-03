@@ -1,0 +1,13 @@
+[
+  [
+    "task_001",
+    {
+      "id": "task_001",
+      "command": "npm run test",
+      "status": "in_progress",
+      "updatedAt": 1790587670547,
+      "resumedAt": "2026-09-28T09:27:50.547Z",
+      "sleepDurationSec": 42
+    }
+  ]
+]

@@ -214,6 +214,135 @@ export default function LovableAppStudio({ onClose }) {
 
   const iframeRef = useRef(null);
 
+  // Polyglot WebContainer-like Sandboxed Compiler for React, Python (Pyodide WebAssembly), Vue 3, & HTML/JS
+  const compileSandboxedBundle = (rawCode = '') => {
+    if (!rawCode) return '<!DOCTYPE html><html><body></body></html>';
+
+    const trimmed = rawCode.trim();
+
+    // 1. Python Code Detection -> In-Browser WASM Pyodide Sandbox
+    if (trimmed.startsWith('def ') || trimmed.includes('import ') && (trimmed.includes('sys') || trimmed.includes('math') || trimmed.includes('numpy') || trimmed.includes('print('))) {
+      return `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { background: #030712; color: #f9fafb; font-family: monospace; padding: 24px; }
+  </style>
+</head>
+<body>
+  <div className="mb-4">
+    <h3 style="color:#fbbf24;font-family:sans-serif;margin-top:0;">🐍 BRAHMA Python Pyodide WASM Runtime</h3>
+    <div id="output" style="background:#090d16;border:1px solid #1e293b;padding:16px;border-radius:8px;white-space:pre-wrap;color:#38bdf8;">Loading Python WebAssembly Engine...</div>
+  </div>
+  <script>
+    async function runPy() {
+      const outDiv = document.getElementById('output');
+      try {
+        const pyodide = await loadPyodide();
+        outDiv.innerText = "Python WASM Loaded. Executing script...\n\n";
+        pyodide.setStdout({ write: (text) => { outDiv.innerText += text; } });
+        await pyodide.runPythonAsync(\`${trimmed.replace(/`/g, '\\`').replace(/\${/g, '\\${')}\`);
+      } catch (err) {
+        outDiv.innerHTML = '<span style="color:#f43f5e;">⚠️ Python Execution Error:\\n' + err.message + '</span>';
+      }
+    }
+    runPy();
+  </script>
+</body>
+</html>`;
+    }
+
+    // 2. Vue 3 Code Detection -> In-Browser Vue Runtime
+    if (trimmed.includes('Vue.createApp') || trimmed.includes('<template>') || trimmed.includes('defineComponent')) {
+      return `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>body{background:#030712;color:#fff;font-family:sans-serif;padding:24px;}</style>
+</head>
+<body>
+  <div id="app"></div>
+  <script>
+    try {
+      ${trimmed}
+    } catch(e) {
+      document.getElementById('app').innerHTML = '<div style="color:#f43f5e;">Vue Error: ' + e.message + '</div>';
+    }
+  </script>
+</body>
+</html>`;
+    }
+
+    // 3. Full HTML Document
+    if (trimmed.includes('<!DOCTYPE html>') || trimmed.includes('<html')) {
+      if (trimmed.includes('unpkg.com/@babel/standalone') || trimmed.includes('cdn.tailwindcss.com')) {
+        return trimmed;
+      }
+      return trimmed.replace('<head>', `<head>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+      `);
+    }
+
+    // 4. React (JSX/TSX) + ESM Package Imports
+    return `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script type="importmap">
+    {
+      "imports": {
+        "react": "https://esm.sh/react@18.3.1",
+        "react-dom/client": "https://esm.sh/react-dom@18.3.1/client",
+        "lucide-react": "https://esm.sh/lucide-react@0.344.0"
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body { margin: 0; font-family: 'Outfit', 'Inter', sans-serif; background: #030712; color: #f9fafb; }
+    #root { width: 100%; min-height: 100vh; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel" data-type="module">
+    import React from 'react';
+    import { createRoot } from 'react-dom/client';
+
+    try {
+      ${trimmed}
+
+      const AppToRender = typeof App !== 'undefined' ? App : () => (
+        <div style={{ padding: 32, color: '#fbbf24', fontWeight: 600 }}>
+          🔱 BRAHMA Polyglot Live Sandbox Runtime Active
+        </div>
+      );
+
+      const root = createRoot(document.getElementById('root'));
+      root.render(<AppToRender />);
+    } catch (err) {
+      document.getElementById('root').innerHTML = \`
+        <div style="padding:24px;background:#1e1b4b;color:#f43f5e;font-family:monospace;border-radius:12px;margin:20px;">
+          <h3 style="margin-top:0;">⚠️ Sandboxed Compilation Warning</h3>
+          <pre style="white-space:pre-wrap;">\${err.stack || err.message}</pre>
+        </div>
+      \`;
+    }
+  </script>
+</body>
+</html>`;
+  };
+
   // Export & Deployment State
   const [isExporting, setIsExporting] = useState(false);
   const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
@@ -538,7 +667,7 @@ npm run dev
             <button
               onClick={() => {
                 if (iframeRef.current) {
-                  iframeRef.current.srcdoc = currentProject.livePreviewHtml;
+                  iframeRef.current.srcdoc = compileSandboxedBundle(currentProject.livePreviewHtml);
                 }
               }}
               style={{ background: 'transparent', border: 'none', color: '#8b949e', padding: 5, cursor: 'pointer' }}
@@ -1137,7 +1266,7 @@ npm run dev
             }}>
               <iframe
                 ref={iframeRef}
-                srcDoc={currentProject.livePreviewHtml}
+                srcDoc={compileSandboxedBundle(currentProject.livePreviewHtml)}
                 title="BRAHMA Live Sandbox"
                 sandbox="allow-scripts allow-modals allow-same-origin allow-forms"
                 style={{ width: '100%', height: '100%', border: 'none' }}

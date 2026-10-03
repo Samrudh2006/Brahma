@@ -41,6 +41,8 @@ import PrivacyPolicyModal from '@components/PrivacyPolicyModal';
 import TermsOfServiceModal from '@components/TermsOfServiceModal';
 import NotFoundView from '@components/NotFoundView';
 import LiveVoiceOrbModal from '@components/LiveVoiceOrbModal';
+import RiskApprovalModal from '@components/RiskApprovalModal';
+import { evaluateActionRisk } from '@utils/securityGuard';
 
 
 
@@ -94,6 +96,7 @@ export default function App() {
   const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
   const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
   const [isLiveVoiceOpen, setIsLiveVoiceOpen] = useState(false);
+  const [pendingRiskAction, setPendingRiskAction] = useState(null);
 
 
   // ─── Zustand store slices ────────────────────────────────────────────────
@@ -287,6 +290,7 @@ export default function App() {
             currentIdentity={currentIdentity}
             onOpenIdentityModal={() => setIdentityModal(true)}
             onOpenCommandPalette={() => setCommandPalette(true)}
+            onOpenSettings={() => setSettingsModal(true)}
             theme={theme}
             setTheme={setTheme}
             backendOnline={backendOnline}
@@ -442,12 +446,17 @@ export default function App() {
         onOpenPrivacy={() => setIsPrivacyModalOpen(true)}
       />
 
-      {/* Live Hands-Free Telugu Voice Mode Modal */}
-      <LiveVoiceOrbModal
-        isOpen={isLiveVoiceOpen}
-        onClose={() => setIsLiveVoiceOpen(false)}
-        currentIdentity={currentIdentity}
-        onSendPrompt={handleSendPrompt}
+      {/* OpenWorker-Inspired Risk-Tiered Action Approval Modal */}
+      <RiskApprovalModal
+        pendingAction={pendingRiskAction}
+        onApprove={(action) => {
+          console.log('[RISK GATE] Action approved by user:', action);
+          setPendingRiskAction(null);
+        }}
+        onDeny={(action) => {
+          console.warn('[RISK GATE] Action denied by user:', action);
+          setPendingRiskAction(null);
+        }}
       />
     </div>
   );

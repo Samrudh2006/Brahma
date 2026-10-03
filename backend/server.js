@@ -42,15 +42,20 @@ app.use('/api/laya',           require('./routes/laya'));
 app.use('/auth',               require('./routes/auth'));
 
 
-// ─── Global Error Handler ─────────────────────────────────────────────────────
-app.use((err, req, res, _next) => {
-  console.error('[BRAHMA Backend Error]', err.message);
-  res.status(err.status || 500).json({ error: err.message || 'Internal server error', code: err.status || 500 });
-});
+// ─── Global Centralized Error Handler Middleware ────────────────────────────────
+const errorHandler = require('./middleware/errorHandler');
+app.use(errorHandler);
 
 // ─── Start ─────────────────────────────────────────────────────────────────────
-app.listen(PORT, () => {
+const http = require('http');
+const collabSocket = require('./services/collabSocket');
+
+const server = http.createServer(app);
+collabSocket.attach(server);
+
+server.listen(PORT, () => {
   console.log(`\n🔱 BRAHMA Backend running on http://localhost:${PORT}`);
+  console.log(`   WebSocket Gateway: ws://localhost:${PORT}/ws/collab`);
   console.log(`   Ollama: ${process.env.OLLAMA_BASE_URL || 'http://localhost:11434'}`);
   console.log(`   HF Token: ${process.env.HF_API_TOKEN ? '✓ set' : '✗ not set (cloud fallback unavailable)'}`);
 });

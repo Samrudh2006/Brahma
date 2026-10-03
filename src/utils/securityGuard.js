@@ -1,7 +1,40 @@
 /**
- * BRAHMA Security & Anti-Spam Safeguard Suite
- * Protects frontend forms and LLM inference endpoints from automated bot spam, rapid burst requests, and malicious payload injections.
+ * BRAHMA Security, Risk-Tiered Action Approval & Anti-Spam Safeguard Suite
+ * Inspired by Andrew Ng's OpenWorker Risk-Tiered Action Model & Zero-Trust Defense.
+ * Classifies AI Agent & System actions into 4 Risk Tiers for safety, control, and privacy.
  */
+
+// ─── OpenWorker-Inspired Risk Tiers ──────────────────────────────────────────
+export const RISK_TIERS = {
+  TIER_0_READ: {
+    level: 0,
+    name: 'TIER 0: Read-Only Passive',
+    color: '#38bdf8',
+    requiresApproval: false,
+    description: 'Safe passive operations (searching memory, vector retrieval, reading files, reading settings).'
+  },
+  TIER_1_LOCAL_WRITE: {
+    level: 1,
+    name: 'TIER 1: Local File / State Mutation',
+    color: '#fbbf24',
+    requiresApproval: false, // Auto-logged, soft notify
+    description: 'Modifying local component files, updating settings, saving session states.'
+  },
+  TIER_2_SYSTEM_EXEC: {
+    level: 2,
+    name: 'TIER 2: High-Risk System Execution',
+    color: '#f97316',
+    requiresApproval: true,
+    description: 'Running shell commands, installing packages, compiling native code, executing background tasks.'
+  },
+  TIER_3_DESTRUCTIVE: {
+    level: 3,
+    name: 'TIER 3: Critical Destructive Action',
+    color: '#ef4444',
+    requiresApproval: true,
+    description: 'Deleting database tables, wiping workspace files, dropping schemas, executing destructive terminal scripts.'
+  }
+};
 
 // Rate limiter state: token bucket
 const rateLimitState = {
@@ -10,6 +43,78 @@ const rateLimitState = {
   minIntervalMs: 800, // Min ms between requests
   maxRequestsPerMinute: 35,
 };
+
+/**
+ * OpenWorker Risk Classifier: Evaluates an incoming Agent Action and returns its Risk Tier
+ * @param {object} action - { type: string, target?: string, payload?: any }
+ * @returns {object} Risk Tier definition with evaluation metadata
+ */
+export function evaluateActionRisk(action = {}) {
+  const type = (action.type || '').toLowerCase();
+  const target = (action.target || '').toLowerCase();
+  const command = (action.command || '').toLowerCase();
+
+  // 1. Check Tier 3: Destructive
+  if (
+    type.includes('delete') ||
+    type.includes('drop') ||
+    type.includes('purge') ||
+    command.includes('rm -rf') ||
+    command.includes('del /f') ||
+    command.includes('drop table') ||
+    command.includes('truncate')
+  ) {
+    return {
+      tier: RISK_TIERS.TIER_3_DESTRUCTIVE,
+      action,
+      timestamp: new Date().toISOString(),
+      reason: 'Action involves permanent deletion or destructive system mutations.'
+    };
+  }
+
+  // 2. Check Tier 2: System Execution
+  if (
+    type.includes('exec') ||
+    type.includes('command') ||
+    type.includes('terminal') ||
+    type.includes('install') ||
+    type.includes('build') ||
+    command.includes('npm') ||
+    command.includes('node') ||
+    command.includes('git')
+  ) {
+    return {
+      tier: RISK_TIERS.TIER_2_SYSTEM_EXEC,
+      action,
+      timestamp: new Date().toISOString(),
+      reason: 'Action executes native shell operations or system process commands.'
+    };
+  }
+
+  // 3. Check Tier 1: Local Mutation
+  if (
+    type.includes('write') ||
+    type.includes('save') ||
+    type.includes('update') ||
+    type.includes('edit') ||
+    type.includes('store')
+  ) {
+    return {
+      tier: RISK_TIERS.TIER_1_LOCAL_WRITE,
+      action,
+      timestamp: new Date().toISOString(),
+      reason: 'Action mutates local file contents or application state.'
+    };
+  }
+
+  // 4. Default: Tier 0 Read-Only
+  return {
+    tier: RISK_TIERS.TIER_0_READ,
+    action,
+    timestamp: new Date().toISOString(),
+    reason: 'Read-only operation with zero side effects.'
+  };
+}
 
 /**
  * Validates user prompt input
