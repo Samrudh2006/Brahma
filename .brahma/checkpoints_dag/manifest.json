@@ -27,7 +27,35 @@
       "headMerkleRoot": "07a8e8dc2cf061f88ea7192d295df9303f9c755bfae5897c41361bceebfc7398",
       "checkpointCount": 6,
       "lastUpdated": "2026-10-03T13:55:06.785Z"
+    },
+    "horizon_1791036618952": {
+      "sessionId": "horizon_1791036618952",
+      "currentStep": 10000,
+      "headMerkleRoot": "34c1cc97c3ec7db1b9db47d295532fe09586cad959f1f1e493d1ce19d620cfc7",
+      "checkpointCount": 6,
+      "lastUpdated": "2026-10-03T14:10:18.973Z"
+    },
+    "horizon_1791036679744": {
+      "sessionId": "horizon_1791036679744",
+      "currentStep": 10000,
+      "headMerkleRoot": "98352265c2167ed6bbf1bd086a846af968c4ff34eb014ca45f5d9b32c1b5d4cf",
+      "checkpointCount": 6,
+      "lastUpdated": "2026-10-03T14:11:19.790Z"
+    },
+    "horizon_1791036682984": {
+      "sessionId": "horizon_1791036682984",
+      "currentStep": 10000,
+      "headMerkleRoot": "5774dfa083489dfe6483292cc3779eb43f64592cd257d7d6f4740864dc2f57f9",
+      "checkpointCount": 6,
+      "lastUpdated": "2026-10-03T14:11:23.012Z"
+    },
+    "horizon_1791037074991": {
+      "sessionId": "horizon_1791037074991",
+      "currentStep": 10000,
+      "headMerkleRoot": "acc18edfa414aa40e85aaf25bfc0e61fcac081d44745e4d7f58396dde5e779e0",
+      "checkpointCount": 6,
+      "lastUpdated": "2026-10-03T14:17:55.026Z"
     }
   },
-  "totalCheckpoints": 24
+  "totalCheckpoints": 48
 }

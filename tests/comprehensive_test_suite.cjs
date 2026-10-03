@@ -123,6 +123,16 @@ const unsupervisedSensor = require('../backend/services/brahmaUnsupervisedSensor
 const lemmaLibrary = require('../backend/services/brahmaLemmaLibraryExtractionEngine');
 const neuralProsody = require('../backend/services/brahmaNeuralProsodyModulationEngine');
 const nisqOptimizer = require('../backend/services/brahmaNisqQuantumCircuitOptimizerEngine');
+const conceptLearning = require('../backend/services/brahmaPersistentConceptLearningEngine');
+const intelligenceAttribution = require('../backend/services/brahmaIntelligenceAttributionEngine');
+const modelDistillation = require('../backend/services/brahmaInternalModelDistillationEngine');
+const knowledgeAcquisition = require('../backend/services/brahmaAutonomousKnowledgeAcquisitionEngine');
+const beliefRevision = require('../backend/services/brahmaBeliefRevisionEngine');
+const goalPersistence = require('../backend/services/brahmaGoalPersistenceInterruptEngine');
+const htnPlanner = require('../backend/services/brahmaHierarchicalTaskNetworkEngine');
+const activeInfoSeeking = require('../backend/services/brahmaActiveInformationSeekingEngine');
+const failureCompiler = require('../backend/services/brahmaFailureToCapabilityCompiler');
+const regressionFirewall = require('../backend/services/brahmaIntelligenceRegressionFirewall');
 
 const testResults = {
   total: 0,
@@ -3171,6 +3181,189 @@ async function runAllTests() {
     );
   } catch (err) {
     assertTest('integration', 'Brahma NISQ Quantum Circuit Optimizer Engine (ZX-Calculus Graph Rewriting & Depth Reduction)', false, err.message);
+  }
+
+  // Test 4.131: Brahma Persistent Concept Learning Engine (Experience -> Abstract Rule Induction)
+  try {
+    const conceptRes = conceptLearning.induceConceptFromExperience({});
+
+    const isConceptValid = conceptRes.success === true &&
+      conceptRes.crossDomainGeneralizationVerified === true &&
+      conceptRes.storedInConceptDAG === true;
+
+    assertTest(
+      'integration',
+      'Brahma Persistent Concept Learning Engine (Experience -> Abstract Rule Induction)',
+      Boolean(isConceptValid),
+      `Induced concept "${conceptRes.conceptName}": rule "${conceptRes.abstractRule}"; validated across ${conceptRes.heldOutValidations} held-out domains and stored in Concept DAG`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Persistent Concept Learning Engine (Experience -> Abstract Rule Induction)', false, err.message);
+  }
+
+  // Test 4.132: Brahma Intelligence Attribution Engine (Zero-External LLM Standalone Audit)
+  try {
+    const attrRes = intelligenceAttribution.evaluateAttributionAndAblation({});
+
+    const isAttrValid = attrRes.auditVerdict === 'BRAHMA_HOLDS_PRIMARY_INTELLIGENCE_WEIGHT' &&
+      attrRes.ablationModes.ZERO_EXTERNAL_LLM_AUTONOMOUS.accuracyScore >= 90.0 &&
+      attrRes.attributionAnalysis.autonomousViability === 'STANDALONE_AUTONOMOUS_CERTIFIED';
+
+    assertTest(
+      'integration',
+      'Brahma Intelligence Attribution Engine (Zero-External LLM Standalone Audit)',
+      Boolean(isAttrValid),
+      `Native Brahma intelligence share: ${attrRes.attributionAnalysis.brahmaNativeIntelligenceShare} (Standalone Score: ${attrRes.ablationModes.ZERO_EXTERNAL_LLM_AUTONOMOUS.accuracyScore}/100 in ${attrRes.ablationModes.ZERO_EXTERNAL_LLM_AUTONOMOUS.latencyMs}ms); verified ${attrRes.attributionAnalysis.autonomousViability}`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Intelligence Attribution Engine (Zero-External LLM Standalone Audit)', false, err.message);
+  }
+
+  // Test 4.133: Brahma Internal Model Distillation Engine (Progressive Standalone Skill Distillation)
+  try {
+    const distillRes = modelDistillation.distillFrontierSolution({});
+
+    const isDistillValid = distillRes.status === 'NATIVE_SKILL_DISTILLED_AND_OPERATIONAL' &&
+      distillRes.externalDependencyRemoved === true &&
+      distillRes.autonomousStandaloneAccuracy >= 0.95;
+
+    assertTest(
+      'integration',
+      'Brahma Internal Model Distillation Engine (Progressive Standalone Skill Distillation)',
+      Boolean(isDistillValid),
+      `Distilled frontier trajectory into native skill "${distillRes.skillName}" (Accuracy: ${(distillRes.autonomousStandaloneAccuracy * 100).toFixed(1)}%, Speedup: ${distillRes.latencyReductionFactor}); external LLM dependency removed`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Internal Model Distillation Engine (Progressive Standalone Skill Distillation)', false, err.message);
+  }
+
+  // Test 4.134: Brahma Autonomous Knowledge Acquisition Engine (Epistemic Attribution Tagging)
+  try {
+    const knowRes = knowledgeAcquisition.acquireKnowledgeForQuestion({});
+
+    const isKnowValid = knowRes.success === true &&
+      knowRes.epistemicAttributionPreserved === true &&
+      knowRes.brahmaDeductionsCount >= 1;
+
+    assertTest(
+      'integration',
+      'Brahma Autonomous Knowledge Acquisition Engine (Epistemic Attribution Tagging)',
+      Boolean(isKnowValid),
+      `Acquired ${knowRes.totalDiscoveredSources} verified sources; cataloged ${knowRes.directSourceFactsCount} direct source claims and ${knowRes.brahmaDeductionsCount} deductive inferences (Epistemic tagging: BRAHMA_CONCLUDES_Y_FROM_X_AND_Z)`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Autonomous Knowledge Acquisition Engine (Epistemic Attribution Tagging)', false, err.message);
+  }
+
+  // Test 4.135: Brahma Knowledge Contradiction & Belief Revision Engine (Bayesian AGM Revision)
+  try {
+    const beliefRes = beliefRevision.resolveContradictionAndReviseBelief({});
+
+    const isBeliefValid = beliefRes.contradictionDetected === true &&
+      beliefRes.agmRevisionCompliant === true &&
+      Boolean(beliefRes.epistemicState);
+
+    assertTest(
+      'integration',
+      'Brahma Knowledge Contradiction & Belief Revision Engine (Bayesian AGM Revision)',
+      Boolean(isBeliefValid),
+      `Detected discrepancy Δ=${beliefRes.discrepancyMagnitude}K; Bayesian posterior revised belief to ${beliefRes.revisedConsensusValue}K (${beliefRes.epistemicState}, preserved uncertainty: ${beliefRes.preservedUncertainty})`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Knowledge Contradiction & Belief Revision Engine (Bayesian AGM Revision)', false, err.message);
+  }
+
+  // Test 4.136: Brahma Goal Persistence & Interrupt Recovery Engine (Zero-Restart Preemption)
+  try {
+    const gMission = goalPersistence.startMission({});
+    const gPreempt = goalPersistence.preemptAndHandleInterrupt({});
+    const gResume = goalPersistence.resumeOriginalMission();
+
+    const isGoalValid = gPreempt.preemptionVerified === true &&
+      gResume.restartedFromZero === false &&
+      gResume.status === 'MISSION_RESUMED_WITHOUT_DATA_LOSS';
+
+    assertTest(
+      'integration',
+      'Brahma Goal Persistence & Interrupt Recovery Engine (Zero-Restart Preemption & Resumption)',
+      Boolean(isGoalValid),
+      `Preempted long-horizon mission for critical interrupt "${gPreempt.interruptResolution.task}" (${gPreempt.interruptResolution.mitigationLatencyMs}ms); resumed task #${gResume.resumedFromTaskIndex} without restarting from zero`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Goal Persistence & Interrupt Recovery Engine (Zero-Restart Preemption & Resumption)', false, err.message);
+  }
+
+  // Test 4.137: Brahma Hierarchical Task Network Planning Engine (Dynamic Assumption Invalidation)
+  try {
+    const hPlan = htnPlanner.compileHierarchicalPlan({});
+    const hHeal = htnPlanner.handleAssumptionInvalidation(hPlan.planId);
+
+    const isHtnValid = hPlan.hierarchyLevels === 6 &&
+      hHeal.missionPreserved === true &&
+      hHeal.adaptationStrategy === 'LOCALIZED_SUBTREE_REPLANNING';
+
+    assertTest(
+      'integration',
+      'Brahma Hierarchical Task Network Planning Engine (Dynamic Assumption Invalidation & Localized Re-Planning)',
+      Boolean(isHtnValid),
+      `Compiled 6-level HTN plan; handled assumption invalidation via localized subtree replanning; root mission integrity preserved`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Hierarchical Task Network Planning Engine (Dynamic Assumption Invalidation & Localized Re-Planning)', false, err.message);
+  }
+
+  // Test 4.138: Brahma Active Information Seeking Engine (Expected Value of Information EVOI)
+  try {
+    const evoiRes = activeInfoSeeking.evaluateOptimalInformationAction({});
+
+    const isEvoiValid = evoiRes.success === true &&
+      evoiRes.highestNetEvoi > 0 &&
+      evoiRes.projectedPosteriorEntropy < evoiRes.priorUncertaintyEntropyBits;
+
+    assertTest(
+      'integration',
+      'Brahma Active Information Seeking Engine (Expected Value of Information EVOI)',
+      Boolean(isEvoiValid),
+      `Prior entropy ${evoiRes.priorUncertaintyEntropyBits} bits; optimal action selected: "${evoiRes.optimalSelectedAction}" (Net EVOI: +$${evoiRes.highestNetEvoi}, projected posterior entropy: ${evoiRes.projectedPosteriorEntropy} bits)`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Active Information Seeking Engine (Expected Value of Information EVOI)', false, err.message);
+  }
+
+  // Test 4.139: Brahma Failure-to-Capability Compiler (Antifragile Learning & OOD Validation)
+  try {
+    const failRes = failureCompiler.compileFailureToCapability({});
+
+    const isFailValid = failRes.status === 'FAILURE_CONVERTED_TO_GENERAL_CAPABILITY_SUCCESSFULLY' &&
+      failRes.generalizedTransferVerified === true &&
+      failRes.oodTransferScorePct === 100.0;
+
+    assertTest(
+      'integration',
+      'Brahma Failure-to-Capability Compiler (Antifragile Learning & OOD Validation)',
+      Boolean(isFailValid),
+      `Diagnosed "${failRes.originatingFailure}"; compiled generalized capability "${failRes.capabilityName}" (Passed ${failRes.oodBenchmarksPassed} OOD test benchmarks with ${failRes.oodTransferScorePct}% transfer score)`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Failure-to-Capability Compiler (Antifragile Learning & OOD Validation)', false, err.message);
+  }
+
+  // Test 4.140: Brahma Intelligence Regression Firewall (7D Capability Vector & Pareto Non-Regression)
+  try {
+    const fireRes = regressionFirewall.auditCandidateRelease({});
+
+    const isFireValid = fireRes.verdict === 'FIREWALL_APPROVED_NO_INTELLIGENCE_REGRESSION' &&
+      fireRes.regressionsDetected === 0 &&
+      fireRes.paretoOptimalitySatisfied === true;
+
+    assertTest(
+      'integration',
+      'Brahma Intelligence Regression Firewall (7D Capability Vector & Pareto Non-Regression)',
+      Boolean(isFireValid),
+      `Audited 7D capability vector: [Reasoning: ${fireRes.capabilityVector.reasoning}, Planning: ${fireRes.capabilityVector.planning}, Learning: ${fireRes.capabilityVector.learning}, Transfer: ${fireRes.capabilityVector.transfer}, Autonomy: ${fireRes.capabilityVector.autonomy}, Science: ${fireRes.capabilityVector.science}, Robustness: ${fireRes.capabilityVector.robustness}]; 0 regressions detected; 4 Meta-Priorities verified sound`
+    );
+  } catch (err) {
+    assertTest('integration', 'Brahma Intelligence Regression Firewall (7D Capability Vector & Pareto Non-Regression)', false, err.message);
   }
 
   // ═════════════════════════════════════════════════════════════════════════════

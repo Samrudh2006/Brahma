@@ -1643,6 +1643,111 @@ router.post('/experiments/nisq-circuit-optimize', (req, res) => {
   }
 });
 
+// ─── 41. Brahma Advanced Concept & Epistemic Non-Regression Engines ───────────
+const conceptLearning = require('../services/brahmaPersistentConceptLearningEngine');
+const intelligenceAttribution = require('../services/brahmaIntelligenceAttributionEngine');
+const modelDistillation = require('../services/brahmaInternalModelDistillationEngine');
+const knowledgeAcquisition = require('../services/brahmaAutonomousKnowledgeAcquisitionEngine');
+const beliefRevision = require('../services/brahmaBeliefRevisionEngine');
+const goalPersistence = require('../services/brahmaGoalPersistenceInterruptEngine');
+const htnPlanner = require('../services/brahmaHierarchicalTaskNetworkEngine');
+const activeInfoSeeking = require('../services/brahmaActiveInformationSeekingEngine');
+const failureCompiler = require('../services/brahmaFailureToCapabilityCompiler');
+const regressionFirewall = require('../services/brahmaIntelligenceRegressionFirewall');
+
+router.post('/experiments/concept-learn', (req, res) => {
+  try {
+    const result = conceptLearning.induceConceptFromExperience(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/experiments/intelligence-attribution', (req, res) => {
+  try {
+    const result = intelligenceAttribution.evaluateAttributionAndAblation(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/experiments/model-distill', (req, res) => {
+  try {
+    const result = modelDistillation.distillFrontierSolution(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/experiments/knowledge-acquire', (req, res) => {
+  try {
+    const result = knowledgeAcquisition.acquireKnowledgeForQuestion(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/experiments/belief-revise', (req, res) => {
+  try {
+    const result = beliefRevision.resolveContradictionAndReviseBelief(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/experiments/goal-persistence', (req, res) => {
+  try {
+    const mission = goalPersistence.startMission(req.body || {});
+    const interrupt = goalPersistence.preemptAndHandleInterrupt({});
+    const resume = goalPersistence.resumeOriginalMission();
+    res.json({ mission, interrupt, resume });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/experiments/htn-plan', (req, res) => {
+  try {
+    const plan = htnPlanner.compileHierarchicalPlan(req.body || {});
+    const healed = htnPlanner.handleAssumptionInvalidation(plan.planId);
+    res.json({ plan, healed });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/experiments/active-info-seek', (req, res) => {
+  try {
+    const result = activeInfoSeeking.evaluateOptimalInformationAction(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/experiments/failure-to-capability', (req, res) => {
+  try {
+    const result = failureCompiler.compileFailureToCapability(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.post('/experiments/regression-firewall', (req, res) => {
+  try {
+    const result = regressionFirewall.auditCandidateRelease(req.body || {});
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 module.exports = router;
 
 
