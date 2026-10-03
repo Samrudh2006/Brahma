@@ -37,14 +37,20 @@ export function speakText(text, langCode = 'en-US', onStart, onEnd) {
     .replace(/\$\$[\s\S]*?\$\$/g, 'Mathematical equation verified.')
     .trim();
 
-  const utterance = new SpeechSynthesisUtterance(cleanText);
-  utterance.lang = langCode;
-  utterance.rate = 1.0;
-  utterance.pitch = 1.0;
+  // Smart Indic & Telugu detection
+  const isTeluguContent = /[\u0C00-\u0C7F]|(mawa|mowa|cheppu|ela unnav|enti|bhayya|manam|thaggipoye)/i.test(text);
+  const effectiveLang = isTeluguContent ? 'te-IN' : langCode;
 
-  // Try to pick a matching voice
+  const utterance = new SpeechSynthesisUtterance(cleanText);
+  utterance.lang = effectiveLang;
+  utterance.rate = isTeluguContent ? 0.95 : 1.0;
+  utterance.pitch = 1.05;
+
+  // Try to pick a matching voice (preferring Indic/Telugu voice if available)
   const voices = window.speechSynthesis.getVoices();
-  const matchedVoice = voices.find(v => v.lang.startsWith(langCode.split('-')[0])) || voices[0];
+  const matchedVoice = voices.find(v => v.lang === effectiveLang || v.lang.startsWith(effectiveLang.split('-')[0])) ||
+                       voices.find(v => v.lang === 'en-IN') ||
+                       voices[0];
   if (matchedVoice) {
     utterance.voice = matchedVoice;
   }

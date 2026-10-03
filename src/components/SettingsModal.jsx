@@ -1,5 +1,5 @@
-import React from 'react';
-import { X, Play, Moon, Sun, Key, ShieldCheck, Command } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, Play, Moon, Sun, Key, ShieldCheck, Command, Cpu, Check, Eye, EyeOff } from 'lucide-react';
 
 export default function SettingsModal({ 
   onClose, 
@@ -7,6 +7,35 @@ export default function SettingsModal({
   theme, 
   setTheme 
 }) {
+  const [apiKey, setApiKey] = useState('');
+  const [showKey, setShowKey] = useState(false);
+  const [preferredModel, setPreferredModel] = useState('deepseek-r1');
+  const [savedSuccess, setSavedSuccess] = useState(false);
+
+  useEffect(() => {
+    const storedKey = localStorage.getItem('brahma-user-api-key') || '';
+    const storedModel = localStorage.getItem('brahma-preferred-model') || 'deepseek-r1';
+    setApiKey(storedKey);
+    setPreferredModel(storedModel);
+  }, []);
+
+  const handleSaveApiSettings = () => {
+    if (apiKey.trim()) {
+      localStorage.setItem('brahma-user-api-key', apiKey.trim());
+    } else {
+      localStorage.removeItem('brahma-user-api-key');
+    }
+    localStorage.setItem('brahma-preferred-model', preferredModel);
+    setSavedSuccess(true);
+    setTimeout(() => setSavedSuccess(false), 2500);
+  };
+
+  const handleClearApiKey = () => {
+    localStorage.removeItem('brahma-user-api-key');
+    setApiKey('');
+    setSavedSuccess(true);
+    setTimeout(() => setSavedSuccess(false), 2500);
+  };
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="identity-modal" style={{ maxWidth: '580px', padding: '24px' }} onClick={e => e.stopPropagation()}>
@@ -76,6 +105,148 @@ export default function SettingsModal({
                   <span style={{ fontSize: '0.64rem', color: '#94a3b8' }}>{t.desc}</span>
                 </button>
               ))}
+            </div>
+          </div>
+
+          {/* Deep Frontier Engine & API Key Manager (Plan 4) */}
+          <div style={{ background: 'rgba(14,20,32,0.85)', border: '1px solid rgba(212,175,55,0.3)', borderRadius: '14px', padding: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <Key size={16} color="var(--accent-gold)" />
+                <h4 style={{ fontFamily: 'var(--font-display)', color: 'var(--text-primary)', margin: 0, fontSize: '0.95rem' }}>
+                  Deep Frontier Engine & Inference Keys
+                </h4>
+              </div>
+              <span style={{
+                fontSize: '0.68rem',
+                padding: '3px 8px',
+                borderRadius: '12px',
+                background: apiKey ? 'rgba(16, 185, 129, 0.15)' : 'rgba(212, 175, 55, 0.15)',
+                color: apiKey ? '#34d399' : '#fbbf24',
+                border: apiKey ? '1px solid #10b981' : '1px solid var(--accent-gold)',
+                fontWeight: 700
+              }}>
+                {apiKey ? '⚡ Custom BYOK Active' : '🏛️ Sovereign Auto-Cascade'}
+              </span>
+            </div>
+
+            <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: 12 }}>
+              Provide a Groq API Key (<code style={{ color: '#fbbf24' }}>gsk_...</code>) or OpenRouter key for ultra-fast, uncapped neural inference across 13 Councils. Keys are strictly kept locally in browser storage.
+            </p>
+
+            {/* Input & Action */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <div style={{ position: 'relative' }}>
+                <input
+                  type={showKey ? 'text' : 'password'}
+                  placeholder="Enter Groq / OpenRouter API Key (e.g. gsk_...)"
+                  value={apiKey}
+                  onChange={(e) => setApiKey(e.target.value)}
+                  style={{
+                    width: '100%',
+                    background: '#090d16',
+                    border: '1px solid rgba(212, 175, 55, 0.3)',
+                    borderRadius: 8,
+                    padding: '8px 36px 8px 12px',
+                    fontSize: '0.8rem',
+                    color: '#f8fafc',
+                    fontFamily: 'monospace',
+                    outline: 'none',
+                    boxSizing: 'border-box'
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowKey(!showKey)}
+                  style={{
+                    position: 'absolute',
+                    right: 8,
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'transparent',
+                    border: 'none',
+                    color: '#94a3b8',
+                    cursor: 'pointer',
+                    padding: 4
+                  }}
+                  title={showKey ? 'Hide key' : 'Show key'}
+                >
+                  {showKey ? <EyeOff size={14} /> : <Eye size={14} />}
+                </button>
+              </div>
+
+              {/* Model Selection Row */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <Cpu size={14} color="#94a3b8" />
+                  <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Preferred Engine:</span>
+                </div>
+                <select
+                  value={preferredModel}
+                  onChange={(e) => setPreferredModel(e.target.value)}
+                  style={{
+                    background: '#090d16',
+                    border: '1px solid rgba(255, 255, 255, 0.15)',
+                    borderRadius: 6,
+                    padding: '4px 8px',
+                    fontSize: '0.75rem',
+                    color: '#fbbf24',
+                    outline: 'none',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <option value="deepseek-r1">DeepSeek R1 (Sovereign Reasoner)</option>
+                  <option value="llama-3.3-70b-versatile">Llama 3.3 70B Versatile (Groq Fast)</option>
+                  <option value="mixtral-8x7b-32768">Mixtral 8x7B (32k Context)</option>
+                  <option value="sovereign-matrix">Sovereign Matrix Synthesizer</option>
+                </select>
+              </div>
+
+              {/* Action Buttons */}
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 4 }}>
+                {apiKey && (
+                  <button
+                    onClick={handleClearApiKey}
+                    style={{
+                      background: 'rgba(239, 68, 68, 0.1)',
+                      border: '1px solid rgba(239, 68, 68, 0.3)',
+                      color: '#f87171',
+                      borderRadius: 6,
+                      padding: '6px 12px',
+                      fontSize: '0.76rem',
+                      fontWeight: 600,
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Clear Key
+                  </button>
+                )}
+                <button
+                  onClick={handleSaveApiSettings}
+                  style={{
+                    background: savedSuccess ? '#10b981' : 'linear-gradient(135deg, #fbbf24, #d97706)',
+                    border: 'none',
+                    color: savedSuccess ? '#fff' : '#000',
+                    borderRadius: 6,
+                    padding: '6px 16px',
+                    fontSize: '0.76rem',
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  {savedSuccess ? (
+                    <>
+                      <Check size={14} /> Saved & Active!
+                    </>
+                  ) : (
+                    'Save Settings'
+                  )}
+                </button>
+              </div>
             </div>
           </div>
 

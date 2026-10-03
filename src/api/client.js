@@ -35,13 +35,23 @@ export const getAvailableModels = () => request('/models');
  * @param {Function} onError - called on error
  * @returns {Function} abort function to cancel the stream
  */
-export function sendChatStream({ messages, identity, pills, modelSource }, onChunk, onDone, onError) {
+export function sendChatStream({ messages, identity, pills, modelSource, userApiKey, model }, onChunk, onDone, onError) {
   const controller = new AbortController();
+
+  const storedApiKey = typeof window !== 'undefined' ? localStorage.getItem('brahma-user-api-key') : null;
+  const storedModel = typeof window !== 'undefined' ? localStorage.getItem('brahma-preferred-model') : null;
 
   fetch(`${BASE_URL}/chat`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ messages, identity, pills, modelSource }),
+    body: JSON.stringify({
+      messages,
+      identity,
+      pills,
+      modelSource: modelSource || 'auto',
+      userApiKey: userApiKey || storedApiKey || null,
+      model: model || storedModel || 'deepseek-r1'
+    }),
     signal: controller.signal,
   })
     .then(async (res) => {

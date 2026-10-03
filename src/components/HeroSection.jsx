@@ -13,6 +13,14 @@ const ACTION_MENU_ITEMS = [
   { id: 'genesis',  icon: Zap,       label: 'Genesis OS Swarm',       hint: 'Autonomous multi-agent kernel' },
 ];
 
+const QUICK_INDIC_PROMPTS = [
+  { id: 'mawa', label: '🔥 ఏం ప్లాన్ చేద్దాం మవా?', prompt: 'ఏం ప్లాన్ చేద్దాం మవా? Tell me what frontier ideas we can build today in full high-energy Telugu punch!', lang: 'te-IN' },
+  { id: 'sristi', label: '⚡ Sṛṣṭi Web Synthesis', prompt: 'Synthesize a high-performance reactive web application using Sṛṣṭi architecture', action: 'studio' },
+  { id: 'councils', label: '🏛️ 13 Supreme Councils', prompt: 'Summon all 13 Supreme Intelligence Councils to audit system architecture and provide multidimensional synthesis' },
+  { id: 'panini', label: '🧬 Panini Generative Rules', prompt: 'Explain the generative grammar rules of Pāṇini and how they map to modern context-free grammars and AI tokens' },
+  { id: 'telugu-voice', label: '🎙️ తెలుగు వాయిస్ (Speak Telugu)', isVoice: true, lang: 'te-IN' }
+];
+
 export default function HeroSection({ currentIdentity, onSendPrompt, onOpenStudio, onSelectIdentity }) {
   const [inputText, setInputText] = useState('');
   const [activePills, setActivePills] = useState({ attach: false, search: false, code: false, think: false });
@@ -164,6 +172,44 @@ export default function HeroSection({ currentIdentity, onSendPrompt, onOpenStudi
   };
 
   const removeFile = (idx) => setAttachedFiles((f) => f.filter((_, i) => i !== idx));
+
+  const handleChipClick = (chip) => {
+    if (chip.isVoice) {
+      setSelectedVoiceLang('te-IN');
+      if (!isListening) {
+        const recognizer = createSpeechRecognizer(
+          'te-IN',
+          (res) => {
+            if (res.text) {
+              setInputText(prev => {
+                const cleaned = prev.replace(/\(Listening\.\.\.\)/g, '').trim();
+                return cleaned ? `${cleaned} ${res.text}` : res.text;
+              });
+            }
+          },
+          (listeningState) => setIsListening(listeningState),
+          (err) => console.warn('Telugu STT Error:', err)
+        );
+        if (recognizer) {
+          recognizerRef.current = recognizer;
+          recognizer.start();
+          setIsListening(true);
+        }
+      }
+      return;
+    }
+
+    if (chip.action === 'studio') {
+      if (onOpenStudio) onOpenStudio('genesis');
+      return;
+    }
+
+    if (chip.lang) {
+      setSelectedVoiceLang(chip.lang);
+    }
+    setInputText(chip.prompt);
+    textareaRef.current?.focus();
+  };
 
   return (
     <div className="hero-container" onClick={() => { setShowActionMenu(false); setShowMentionPopover(false); }}>
@@ -437,6 +483,45 @@ export default function HeroSection({ currentIdentity, onSendPrompt, onOpenStudi
             </button>
           </div>
         </div>
+      </div>
+
+      {/* Indic & Frontier Quick-Prompt Chips */}
+      <div className="indic-chips-row" style={{
+        display: 'flex',
+        gap: '8px',
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+        margin: '12px 0 18px 0',
+        padding: '0 8px'
+      }}>
+        {QUICK_INDIC_PROMPTS.map((chip) => (
+          <button
+            key={chip.id}
+            onClick={() => handleChipClick(chip)}
+            style={{
+              background: chip.id === 'mawa'
+                ? 'linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(239, 68, 68, 0.15))'
+                : 'rgba(255, 255, 255, 0.04)',
+              border: chip.id === 'mawa'
+                ? '1px solid rgba(245, 158, 11, 0.6)'
+                : '1px solid rgba(212, 175, 55, 0.25)',
+              borderRadius: '20px',
+              padding: '6px 14px',
+              fontSize: '0.78rem',
+              fontWeight: 600,
+              color: chip.id === 'mawa' ? '#fbbf24' : 'var(--text-secondary)',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              transition: 'all 0.2s ease',
+              backdropFilter: 'blur(8px)',
+              boxShadow: chip.id === 'mawa' ? '0 0 12px rgba(245, 158, 11, 0.2)' : 'none'
+            }}
+          >
+            <span>{chip.label}</span>
+          </button>
+        ))}
       </div>
 
       {/* 4. Action Cards Grid */}
