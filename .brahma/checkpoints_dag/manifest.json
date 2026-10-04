@@ -146,7 +146,84 @@
       "headMerkleRoot": "04f5727300f5a7fc89f8e2ed6d44144bb1a4c05c2807ffb8758e64e22c02e25c",
       "checkpointCount": 6,
       "lastUpdated": "2026-10-03T17:12:37.516Z"
+    },
+    "horizon_1791088449009": {
+      "sessionId": "horizon_1791088449009",
+      "currentStep": 10000,
+      "headMerkleRoot": "e1e72ec6b898ad8cef47c9333ca660dd3959ae293b1bae8b833bd24876758a98",
+      "checkpointCount": 6,
+      "lastUpdated": "2026-10-04T04:34:09.027Z"
+    },
+    "horizon_1791088473093": {
+      "sessionId": "horizon_1791088473093",
+      "currentStep": 10000,
+      "headMerkleRoot": "88e32dc62398999917b4a30265e8c31998e1c2e206b538b696a8e31ea7e84a90",
+      "checkpointCount": 6,
+      "lastUpdated": "2026-10-04T04:34:33.112Z"
+    },
+    "horizon_1791088476516": {
+      "sessionId": "horizon_1791088476516",
+      "currentStep": 10000,
+      "headMerkleRoot": "7571119a07c507ddfaa39338a23c573dc9c6d7704d2390d2a4d67c293cd9d7c9",
+      "checkpointCount": 6,
+      "lastUpdated": "2026-10-04T04:34:36.537Z"
+    },
+    "horizon_1791088933699": {
+      "sessionId": "horizon_1791088933699",
+      "currentStep": 10000,
+      "headMerkleRoot": "e62c55bac46d52fcf70c87d925cc54d1c5d89079c7dd7f512526c7f6d8e1958b",
+      "checkpointCount": 6,
+      "lastUpdated": "2026-10-04T04:42:13.720Z"
+    },
+    "horizon_1791089431617": {
+      "sessionId": "horizon_1791089431617",
+      "currentStep": 10000,
+      "headMerkleRoot": "9b3586f42e77c1d6c0874bfa3019ccacf9f196b256f785a10e73079749575bd6",
+      "checkpointCount": 6,
+      "lastUpdated": "2026-10-04T04:50:31.636Z"
+    },
+    "horizon_1791091164885": {
+      "sessionId": "horizon_1791091164885",
+      "currentStep": 10000,
+      "headMerkleRoot": "fc733a68f4ae8227f9fc2b7f7d030b24fc589cd827edb7cf6b362ccf3df1e3dd",
+      "checkpointCount": 6,
+      "lastUpdated": "2026-10-04T05:19:24.922Z"
+    },
+    "horizon_1791091370848": {
+      "sessionId": "horizon_1791091370848",
+      "currentStep": 10000,
+      "headMerkleRoot": "5b2d5ddf9815fc02f9ea8525b948cdb20c8bbe3c5ac18fa928607abcb9d996a0",
+      "checkpointCount": 6,
+      "lastUpdated": "2026-10-04T05:22:50.869Z"
+    },
+    "horizon_1791092554600": {
+      "sessionId": "horizon_1791092554600",
+      "currentStep": 10000,
+      "headMerkleRoot": "b7d5b7410d287d5f70898df72349b5b33551a116b736cc0de9268b3d3521580e",
+      "checkpointCount": 6,
+      "lastUpdated": "2026-10-04T05:42:34.624Z"
+    },
+    "horizon_1791092738430": {
+      "sessionId": "horizon_1791092738430",
+      "currentStep": 10000,
+      "headMerkleRoot": "1fe3853551e059f371ab3df17056323eb532c67b9cf27c8e9b813e82530927f4",
+      "checkpointCount": 6,
+      "lastUpdated": "2026-10-04T05:45:38.462Z"
+    },
+    "horizon_1791093075995": {
+      "sessionId": "horizon_1791093075995",
+      "currentStep": 10000,
+      "headMerkleRoot": "1e371bd4e3be6704e3a6f3738c877028ca5818ff2d0b9bba2cc7339921b574f2",
+      "checkpointCount": 6,
+      "lastUpdated": "2026-10-04T05:51:16.039Z"
+    },
+    "horizon_1791096065765": {
+      "sessionId": "horizon_1791096065765",
+      "currentStep": 10000,
+      "headMerkleRoot": "14cb1fb290d96fb977fece6e923eca876e635a69890acb7229bd234fcc58a067",
+      "checkpointCount": 6,
+      "lastUpdated": "2026-10-04T06:41:05.788Z"
     }
   },
-  "totalCheckpoints": 126
+  "totalCheckpoints": 192
 }

@@ -44,13 +44,36 @@ export default function Header({
   const moreMenuRef = useRef(null);
 
   useEffect(() => {
-    // Listen for PWA installation event
+    // 1. Check if global prompt was already captured
+    if (window.__brahmaPwaPrompt) {
+      setInstallPrompt(window.__brahmaPwaPrompt);
+    }
+
+    // 2. Listen for PWA installation events
     const handleBeforeInstall = (e) => {
       e.preventDefault();
+      window.__brahmaPwaPrompt = e;
       setInstallPrompt(e);
     };
+
+    const handlePwaReady = (e) => {
+      if (e?.detail) setInstallPrompt(e.detail);
+    };
+
+    const handlePwaInstalled = () => {
+      setInstallPrompt(null);
+      window.__brahmaPwaPrompt = null;
+    };
+
     window.addEventListener('beforeinstallprompt', handleBeforeInstall);
-    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+    window.addEventListener('brahma:pwa-ready', handlePwaReady);
+    window.addEventListener('brahma:pwa-installed', handlePwaInstalled);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+      window.removeEventListener('brahma:pwa-ready', handlePwaReady);
+      window.removeEventListener('brahma:pwa-installed', handlePwaInstalled);
+    };
   }, []);
 
   // Close menus when clicking outside

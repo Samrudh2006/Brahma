@@ -12,8 +12,10 @@
     <meta name="keywords" content="BRAHMA, Frontier AI, AGI Operating System, DeepSeek R1, Claude 3.7, o3-mini, BitNet 1.58-bit, Lean 4 Formal Verification, Multi-Agent Swarm, Vector RAG, HuggingFace Hub, Kaggle Datasets, Web Speech STT, Text to Speech Telugu" />
     <meta name="author" content="BRAHMA Supreme Intelligence Labs" />
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https: wss: ws: http://localhost:* http://127.0.0.1:*; media-src 'self' data: blob: https:; object-src 'none'; frame-src 'self'; upgrade-insecure-requests;" />
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta http-equiv="X-Frame-Options" content="SAMEORIGIN" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
     <link rel="canonical" href="https://brahma.ai/" />
     <link rel="icon" type="image/png" sizes="32x32" href="/icons/srsti.png" />
     <link rel="apple-touch-icon" href="/icons/srsti.png" />
@@ -192,8 +194,22 @@
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
 
-    <!-- Hide boot loader after React mounts -->
+    <!-- Hide boot loader after React mounts and handle PWA Lifecycle -->
     <script>
+      // 1. Capture beforeinstallprompt globally as early as possible
+      window.__brahmaPwaPrompt = null;
+      window.addEventListener('beforeinstallprompt', function (e) {
+        e.preventDefault();
+        window.__brahmaPwaPrompt = e;
+        window.dispatchEvent(new CustomEvent('brahma:pwa-ready', { detail: e }));
+      });
+
+      window.addEventListener('appinstalled', function () {
+        window.__brahmaPwaPrompt = null;
+        window.dispatchEvent(new CustomEvent('brahma:pwa-installed'));
+        console.log('🔱 [BRAHMA] App installed successfully to device!');
+      });
+
       document.addEventListener('DOMContentLoaded', function () {
         const check = setInterval(function () {
           if (window.__brahmaMounted) {
@@ -206,28 +222,17 @@
           }
         }, 60);
 
-        // PWA Service Worker & Dev Cache-Busting (Fixes stale cached headers in Edge/Chrome)
-        if ('serviceWorker' in navigator) {
-          if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-            navigator.serviceWorker.getRegistrations().then(function (registrations) {
-              for (let reg of registrations) {
-                reg.unregister();
-              }
-            });
-            if ('caches' in window) {
-              caches.keys().then(function (names) {
-                for (let name of names) {
-                  caches.delete(name);
-                }
+        // 2. Register PWA Service Worker
+        if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+          window.addEventListener('load', function () {
+            navigator.serviceWorker.register('/sw.js', { scope: '/' })
+              .then(function (reg) {
+                console.log('🔱 [BRAHMA SW] Registered with scope:', reg.scope);
+              })
+              .catch(function (err) {
+                console.log('🔱 [BRAHMA SW] Note:', err);
               });
-            }
-          } else if (window.location.protocol.startsWith('http')) {
-            window.addEventListener('load', function () {
-              navigator.serviceWorker.register('/sw.js').catch(function (err) {
-                console.log('SW registration note:', err);
-              });
-            });
-          }
+          });
         }
       });
     </script>

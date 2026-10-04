@@ -24,7 +24,35 @@ const allowedOrigins = (rawCors && rawCors !== '*')
   : defaultOrigins;
 
 // ─── Middleware ────────────────────────────────────────────────────────────────
-app.use(helmet({ crossOriginEmbedderPolicy: false }));
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://cdn.jsdelivr.net", "https://cdnjs.cloudflare.com", "https://fonts.googleapis.com"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
+      imgSrc: ["'self'", "data:", "blob:", "https:", "http:"],
+      connectSrc: ["'self'", "https:", "wss:", "ws:", "http://localhost:*", "http://127.0.0.1:*"],
+      mediaSrc: ["'self'", "data:", "blob:", "https:"],
+      frameSrc: ["'self'"],
+      objectSrc: ["'none'"],
+      upgradeInsecureRequests: [],
+    },
+  },
+  crossOriginEmbedderPolicy: false,
+  hsts: {
+    maxAge: 63072000,
+    includeSubDomains: true,
+    preload: true,
+  },
+  frameguard: {
+    action: 'sameorigin',
+  },
+  noSniff: true,
+  referrerPolicy: {
+    policy: 'strict-origin-when-cross-origin',
+  },
+}));
 app.use(cors({
   origin: (origin, callback) => {
     // Allow non-browser requests (mobile apps, server-to-server, curl)
@@ -92,10 +120,21 @@ app.use('/api/cloudflare',     require('./routes/cloudflare'));
 const fs = require('fs');
 const distPath = path.join(__dirname, '../dist');
 if (fs.existsSync(distPath)) {
-  app.use(express.static(distPath));
+  app.use(express.static(distPath, {
+    setHeaders: (res) => {
+      res.setHeader('X-Content-Type-Options', 'nosniff');
+      res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+      res.setHeader('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
+      res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+      res.setHeader('Permissions-Policy', 'camera=(), microphone=(self), geolocation=()');
+    }
+  }));
   app.use((req, res, next) => {
     if (req.method !== 'GET') return next();
     if (req.path.startsWith('/api') || req.path.startsWith('/auth') || req.path.startsWith('/ws')) return next();
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+    res.setHeader('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
     res.sendFile(path.join(distPath, 'index.html'));
   });
 }

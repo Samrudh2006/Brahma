@@ -4,7 +4,7 @@ import {
   CheckCircle, AlertCircle, X, Lock, Eye, EyeOff, Zap
 } from 'lucide-react';
 import { authLogin, authRegister, authGuest } from '@api/client';
-import { useAuthStore } from '@store/index';
+import { useAuthStore, useAppStore } from '@store/index';
 import { playDivineChime, playTactileClick } from '@utils/soundEffects';
 
 export default function AuthModal({ isOpen, onClose }) {

@@ -22,11 +22,58 @@ export default function Sidebar({
 }) {
   const [collapsed, setCollapsed] = useState(false);
   const [chatHistory, setChatHistory] = useState([]);
+  const [pwaPrompt, setPwaPrompt] = useState(null);
+  const [isStandalone, setIsStandalone] = useState(false);
 
   useEffect(() => {
     const sessions = getChatSessions().slice(0, 6);
     setChatHistory(sessions);
+
+    // Check if running inside installed PWA
+    const isInstalled = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone || document.referrer.includes('android-app://');
+    setIsStandalone(Boolean(isInstalled));
+
+    if (window.__brahmaPwaPrompt) {
+      setPwaPrompt(window.__brahmaPwaPrompt);
+    }
+
+    const handlePwaReady = (e) => {
+      if (e?.detail) setPwaPrompt(e.detail);
+    };
+    const handleBeforeInstall = (e) => {
+      e.preventDefault();
+      window.__brahmaPwaPrompt = e;
+      setPwaPrompt(e);
+    };
+    const handlePwaInstalled = () => {
+      setIsStandalone(true);
+      setPwaPrompt(null);
+      window.__brahmaPwaPrompt = null;
+    };
+
+    window.addEventListener('brahma:pwa-ready', handlePwaReady);
+    window.addEventListener('beforeinstallprompt', handleBeforeInstall);
+    window.addEventListener('brahma:pwa-installed', handlePwaInstalled);
+
+    return () => {
+      window.removeEventListener('brahma:pwa-ready', handlePwaReady);
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+      window.removeEventListener('brahma:pwa-installed', handlePwaInstalled);
+    };
   }, [activePage]);
+
+  const handleTriggerPwaInstall = async () => {
+    if (pwaPrompt) {
+      pwaPrompt.prompt();
+      const choice = await pwaPrompt.userChoice;
+      if (choice.outcome === 'accepted') {
+        setPwaPrompt(null);
+        setIsStandalone(true);
+      }
+    } else {
+      alert('To install BRAHMA on your phone or desktop: open browser menu (⋮ or Share) and tap "Install App" or "Add to Home Screen"!');
+    }
+  };
 
   // Lock body scroll when mobile sidebar is open (prevents iOS/Android scroll-through)
   useEffect(() => {
@@ -278,59 +325,80 @@ export default function Sidebar({
         </nav>
       </div>
 
-      {/* 3. Bottom User Profile (Dynamic Sovereign Profile + Settings) */}
+      {/* 3. Bottom User Profile & PWA Install (Dynamic Sovereign Profile + Settings) */}
       <div className="sidebar-footer" style={{
         padding: '12px 14px',
         borderTop: '1px solid rgba(255,255,255,0.06)',
         background: '#040711'
       }}>
-        {(() => {
-          const { user, openAuthModal } = useAuthStore();
-          const userName = user?.name || 'Samrudh';
-          const userInitial = userName.charAt(0).toUpperCase();
-          const userStatus = user?.isGuest ? 'Guest Explorer' : 'Online';
-
-          return (
-            <div className="user-profile-widget" onClick={() => { onOpenSettings(); if (onMobileClose) onMobileClose(); }} title="User Profile & Settings" style={{
+        {/* PWA Install Button when not in standalone mode */}
+        {!isStandalone && !collapsed && (
+          <button
+            onClick={handleTriggerPwaInstall}
+            style={{
+              width: '100%',
+              padding: '7px 10px',
+              marginBottom: '10px',
+              borderRadius: '7px',
+              background: 'linear-gradient(135deg, rgba(251,191,36,0.12), rgba(217,119,6,0.06))',
+              border: '1px solid rgba(251,191,36,0.3)',
+              color: '#fbbf24',
+              fontSize: '0.74rem',
+              fontWeight: 700,
               display: 'flex',
               alignItems: 'center',
-              justifyContent: collapsed ? 'center' : 'space-between',
-              cursor: 'pointer'
+              justifyContent: 'center',
+              gap: '6px',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease'
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'linear-gradient(135deg, rgba(251,191,36,0.22), rgba(217,119,6,0.14))'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'linear-gradient(135deg, rgba(251,191,36,0.12), rgba(217,119,6,0.06))'; }}
+            title="Install BRAHMA natively on your Desktop, Android or iOS Device"
+          >
+            <Smartphone size={13} />
+            <span>Install BRAHMA App</span>
+          </button>
+        )}
+
+        <div className="user-profile-widget" onClick={() => { onOpenSettings(); if (onMobileClose) onMobileClose(); }} title="User Profile & Settings" style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: collapsed ? 'center' : 'space-between',
+          cursor: 'pointer'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div className="user-avatar-circle" style={{
+              width: 32,
+              height: 32,
+              borderRadius: '50%',
+              background: 'linear-gradient(135deg, #fbbf24, #d97706)',
+              color: '#000',
+              fontWeight: 900,
+              fontSize: 14,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <div className="user-avatar-circle" style={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: '50%',
-                  background: 'linear-gradient(135deg, #fbbf24, #d97706)',
-                  color: '#000',
-                  fontWeight: 900,
-                  fontSize: 14,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}>
-                  <span>{userInitial}</span>
-                </div>
-                {!collapsed && (
-                  <div className="user-text-info">
-                    <span className="user-name" style={{ fontWeight: 800, fontSize: '0.84rem', color: '#f8fafc' }}>
-                      {userName}
-                    </span>
-                    <span className="user-status-online" style={{ fontSize: '0.68rem', color: '#10b981', display: 'flex', alignItems: 'center', gap: 4 }}>
-                      <span className="online-dot" /> {userStatus}
-                    </span>
-                  </div>
-                )}
+              <span>{(user?.name || 'Samrudh').charAt(0).toUpperCase()}</span>
+            </div>
+            {!collapsed && (
+              <div className="user-text-info">
+                <span className="user-name" style={{ fontWeight: 800, fontSize: '0.84rem', color: '#f8fafc' }}>
+                  {user?.name || 'Samrudh'}
+                </span>
+                <span className="user-status-online" style={{ fontSize: '0.68rem', color: '#10b981', display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <span className="online-dot" /> {user?.isGuest ? 'Guest Explorer' : 'Online'}
+                </span>
               </div>
+            )}
+          </div>
               {!collapsed && (
                 <button className="user-settings-gear" onClick={(e) => { e.stopPropagation(); onOpenSettings(); }} title="Settings" style={{ background: 'transparent', border: 'none', color: '#64748b', cursor: 'pointer' }}>
                   <Settings size={15} />
                 </button>
               )}
-            </div>
-          );
-        })()}
+        </div>
         {!collapsed && (
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', fontSize: '0.68rem', color: '#64748b', marginTop: '10px', justifyContent: 'center', alignItems: 'center' }}>
             <button

@@ -1,25 +1,72 @@
 {
-  "name": "BRAHMA — Supreme Sovereign AI Ecosystem",
+  "id": "/",
+  "name": "BRAHMA — Supreme Sovereign AI Operating System",
   "short_name": "BRAHMA",
-  "description": "50+ Global Frontier AI models, 13 Divine Intelligence Councils, and ✦ SṚṢṬI Full-Stack Synthesizer",
+  "description": "50+ Global Frontier AI models, 13 Divine Intelligence Councils, and SṚṢṬI Full-Stack Synthesizer",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui", "browser"],
   "orientation": "any",
   "background_color": "#040711",
   "theme_color": "#06080c",
+  "lang": "en-US",
+  "dir": "ltr",
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "/brahma-icon.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "/brahma-icon.png",
       "sizes": "512x512",
       "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/srsti.png",
+      "sizes": "512x512",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ],
-  "categories": ["productivity", "developer-tools", "utilities"]
+  "shortcuts": [
+    {
+      "name": "AI Workspace",
+      "short_name": "Chat",
+      "description": "Open Brahma Multi-Agent Chat Matrix",
+      "url": "/?view=chat",
+      "icons": [{ "src": "/brahma-icon.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "13 Divine Councils",
+      "short_name": "Councils",
+      "description": "Access 13 Specialized Deity Councils",
+      "url": "/?view=councils",
+      "icons": [{ "src": "/brahma-icon.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Admin Diagnostics",
+      "short_name": "Diagnostics",
+      "description": "View System Invariants & Health Matrix",
+      "url": "/?view=admin",
+      "icons": [{ "src": "/brahma-icon.png", "sizes": "192x192" }]
+    }
+  ],
+  "categories": ["productivity", "developer-tools", "utilities", "business"]
 }
