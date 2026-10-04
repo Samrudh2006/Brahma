@@ -245,11 +245,11 @@ export default function HeroSection({
         </div>
       </div>
 
-      <h1 className="hero-title">How can I help?</h1>
-      <p className="hero-subtitle">Ask anything — learn, create, research, plan, build, or simply think with me.</p>
+      <h1 className="hero-title" style={{ fontSize: '2.1rem', marginBottom: '4px', minHeight: 'auto' }}>How can I help?</h1>
+      <p className="hero-subtitle" style={{ marginBottom: '12px', fontSize: '0.86rem' }}>Ask anything — learn, create, research, plan, build, or simply think with me.</p>
 
       {/* 3. Prompt Bar with @Mention Support and Plasma BorderBeam */}
-      <div className="prompt-bar-wrapper" onClick={(e) => e.stopPropagation()} style={{ position: 'relative', overflow: 'hidden' }}>
+      <div className="prompt-bar-wrapper" onClick={(e) => e.stopPropagation()} style={{ position: 'relative' }}>
         <BorderBeam size={240} duration={8} colorFrom="#fbbf24" colorTo="#ec4899" borderWidth={1.5} />
 
         
@@ -410,11 +410,12 @@ export default function HeroSection({
           value={inputText}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
-          rows={1}
+          rows={2}
+          style={{ width: '100%', minHeight: '52px', fontSize: '0.95rem', color: '#f8fafc', background: 'transparent', border: 'none', outline: 'none', resize: 'none', lineHeight: 1.5, boxSizing: 'border-box', marginBottom: '8px' }}
         />
 
         {/* Actions Row (Pills & Controls) */}
-        <div className="prompt-actions-row">
+        <div className="prompt-actions-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', width: '100%', flexWrap: 'wrap' }}>
           <div className="prompt-pills-left">
             <button
               className={`action-pill ${showActionMenu ? 'active' : ''}`}

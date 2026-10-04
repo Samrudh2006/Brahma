@@ -803,18 +803,20 @@ body,
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: var(--s-5) var(--s-6) var(--s-10);
-  overflow-y: auto;
+  padding: 10px 20px 20px;
+  overflow: hidden;
+  height: calc(100vh - var(--header-height));
   position: relative;
+  box-sizing: border-box;
   gap: 0;
 }
 
 /* Central Mandala Seal Matching Reference Image */
 .brahma-central-mandala-seal {
   position: relative;
-  width: 146px;
-  height: 146px;
-  margin-bottom: var(--s-5);
+  width: 120px;
+  height: 120px;
+  margin-bottom: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -4085,4 +4087,189 @@ pre.hljs-code {
     transform: scale(1.6);
     opacity: 0;
   }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   GLOBAL VIEW CONTAINER & SCROLL ARCHITECTURE
+   ══════════════════════════════════════════════════════════════════ */
+.main-workspace {
+  flex: 1;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: var(--z-content);
+  overflow: hidden;
+  min-width: 0;
+  min-height: 0;
+}
+
+.view-container {
+  flex: 1;
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 24px 32px 80px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+  height: calc(100vh - var(--header-height));
+  box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
+}
+
+.hero-container {
+  flex: 1;
+  width: 100%;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 10px 20px 20px;
+  overflow: hidden;
+  min-height: 0;
+  height: calc(100vh - var(--header-height));
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-height: 700px) {
+  .hero-container {
+    overflow-y: auto;
+    justify-content: flex-start;
+  }
+}
+
+.chat-view-container {
+  flex: 1;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  height: calc(100vh - var(--header-height));
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+  box-sizing: border-box;
+}
+
+.view-header-banner {
+  background: linear-gradient(135deg, rgba(20, 26, 42, 0.7) 0%, rgba(10, 14, 24, 0.9) 100%);
+  border: 1px solid rgba(251, 191, 36, 0.2);
+  border-radius: 16px;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.view-header-title-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.view-header-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.view-page-title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #f8fafc;
+  margin: 0 0 4px 0;
+  letter-spacing: 0.02em;
+}
+
+.view-page-subtitle {
+  font-size: 0.82rem;
+  color: #94a3b8;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.tools-controls-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.tools-search-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 260px;
+}
+
+.tools-search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #fbbf24;
+}
+
+.tools-search-input {
+  width: 100%;
+  padding: 10px 14px 10px 40px;
+  background: rgba(14, 20, 32, 0.7);
+  border: 1px solid rgba(251, 191, 36, 0.25);
+  border-radius: 10px;
+  color: #f8fafc;
+  font-size: 0.84rem;
+  outline: none;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.tools-search-input:focus {
+  border-color: #fbbf24;
+  box-shadow: 0 0 15px rgba(251, 191, 36, 0.25);
+}
+
+.tools-category-chips {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tool-filter-chip {
+  padding: 7px 14px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #94a3b8;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.tool-filter-chip:hover {
+  background: rgba(251, 191, 36, 0.1);
+  color: #fbbf24;
+  border-color: rgba(251, 191, 36, 0.3);
+}
+
+.tool-filter-chip.active {
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.25), rgba(217, 119, 6, 0.15));
+  border-color: #fbbf24;
+  color: #fbbf24;
+  box-shadow: 0 0 12px rgba(251, 191, 36, 0.2);
+}
+
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
 }

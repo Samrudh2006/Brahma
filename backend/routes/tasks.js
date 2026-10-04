@@ -134,6 +134,8 @@ router.get('/evidence/:taskId', (req, res) => {
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
+});
+
 // ─── AI-DLC Sovereign Task DAG Endpoints ─────────────────────────────────────
 // POST /api/tasks/dag — Compile, topologically sort, and validate Task DAG
 router.post('/dag', (req, res) => {

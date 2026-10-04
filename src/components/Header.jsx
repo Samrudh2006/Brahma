@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { toggleAmbientDrone, updateAmbientTheme, getDroneState, playTactileClick } from '@utils/soundEffects';
 import { useAppStore, useAuthStore } from '@store/index';
+import PwaInstallModal, { PwaInstallBadgeSvg } from '@components/PwaInstallModal';
 
 const LUXURY_THEMES = [
   { id: 'surya', name: '🌅 Sūrya Solarized', color: '#f59e0b', desc: 'Solar Om & Sacred Tanpura', soundLabel: '🌅 Sūrya 136.1 Hz Tanpura' },
@@ -39,6 +40,7 @@ export default function Header({
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [isDroneActive, setIsDroneActive] = useState(false);
   const [installPrompt, setInstallPrompt] = useState(null);
+  const [isPwaModalOpen, setIsPwaModalOpen] = useState(false);
 
   const themeMenuRef = useRef(null);
   const moreMenuRef = useRef(null);
@@ -102,14 +104,16 @@ export default function Header({
     playTactileClick();
     setShowMoreMenu(false);
     if (installPrompt) {
-      installPrompt.prompt();
-      const choiceResult = await installPrompt.userChoice;
-      if (choiceResult.outcome === 'accepted') {
-        setInstallPrompt(null);
-      }
-    } else {
-      alert('To install BRAHMA on your device: open your browser menu (⋮ or Share) and tap "Install App" or "Add to Home Screen"!');
+      try {
+        installPrompt.prompt();
+        const choiceResult = await installPrompt.userChoice;
+        if (choiceResult.outcome === 'accepted') {
+          setInstallPrompt(null);
+          return;
+        }
+      } catch (_) {}
     }
+    setIsPwaModalOpen(true);
   };
 
   const handleSelectTheme = (e, themeId) => {
@@ -431,7 +435,7 @@ export default function Header({
                   width: '100%'
                 }}
               >
-                <Smartphone size={15} color="#38bdf8" />
+                <PwaInstallBadgeSvg size={16} glow={false} />
                 <span>Install Native App</span>
               </button>
 
@@ -469,6 +473,11 @@ export default function Header({
         </div>
 
       </div>
+
+      <PwaInstallModal
+        isOpen={isPwaModalOpen}
+        onClose={() => setIsPwaModalOpen(false)}
+      />
     </header>
   );
 }

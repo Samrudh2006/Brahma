@@ -646,15 +646,15 @@ export default function ChatView({ currentIdentity, messages, onSendMessage, isT
           </div>
         )}
 
-        <div className="prompt-bar-wrapper" style={{ marginBottom: 0 }}>
+        <div className="prompt-bar-wrapper" style={{ marginBottom: 0, position: 'relative' }}>
           <textarea
             className="prompt-input"
             placeholder={`Message ${currentIdentity.name}... (Type @ to summon councils, or speak in Telugu/Hindi/English)`}
             value={inputText}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
-            rows={1}
-            style={{ maxHeight: 160, overflowY: 'auto' }}
+            rows={2}
+            style={{ width: '100%', minHeight: 48, maxHeight: 160, overflowY: 'auto', fontSize: '0.95rem', color: '#f8fafc', background: 'transparent', border: 'none', outline: 'none', resize: 'none', lineHeight: 1.5, boxSizing: 'border-box', marginBottom: 8 }}
           />
           <div className="prompt-actions-row">
             <div className="prompt-pills-left" style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>

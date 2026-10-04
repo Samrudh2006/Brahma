@@ -279,7 +279,63 @@
       "headMerkleRoot": "cc19970d0263c5a67941b9e2e66a280213a786d4bef2f41b4dedbae6f1ca5eb7",
       "checkpointCount": 6,
       "lastUpdated": "2026-10-04T07:47:32.072Z"
+    },
+    "horizon_1791101559081": {
+      "sessionId": "horizon_1791101559081",
+      "currentStep": 10000,
+      "headMerkleRoot": "822930b0e671e971f1741d23677e3eb5b7974e700f6a4a71d02ef7865191151b",
+      "checkpointCount": 6,
+      "lastUpdated": "2026-10-04T08:12:39.102Z"
+    },
+    "horizon_1791102534374": {
+      "sessionId": "horizon_1791102534374",
+      "currentStep": 10000,
+      "headMerkleRoot": "0ca5fa71c927dc857438d0ea485814b37c54b788a3fc020c553ef19bc77038bd",
+      "checkpointCount": 6,
+      "lastUpdated": "2026-10-04T08:28:54.646Z"
+    },
+    "horizon_1791102960452": {
+      "sessionId": "horizon_1791102960452",
+      "currentStep": 10000,
+      "headMerkleRoot": "ba1131cad2885ac1dc96bbfc49da3d77b4efcb4009a9e8922eed742060df89e2",
+      "checkpointCount": 6,
+      "lastUpdated": "2026-10-04T08:36:00.499Z"
+    },
+    "horizon_1791103268330": {
+      "sessionId": "horizon_1791103268330",
+      "currentStep": 10000,
+      "headMerkleRoot": "f40a968872b61e8345b37691473acb26eccc58f36d581d9c68e608635aca45e3",
+      "checkpointCount": 6,
+      "lastUpdated": "2026-10-04T08:41:08.576Z"
+    },
+    "horizon_1791103543652": {
+      "sessionId": "horizon_1791103543652",
+      "currentStep": 10000,
+      "headMerkleRoot": "9bb0ae7bb98301175419d0f17f37c138eec5df11f4bf9d2c8b3d5a2db755a196",
+      "checkpointCount": 6,
+      "lastUpdated": "2026-10-04T08:45:43.908Z"
+    },
+    "horizon_1791103824160": {
+      "sessionId": "horizon_1791103824160",
+      "currentStep": 10000,
+      "headMerkleRoot": "f3ce5f88f647d1eb31875f4ced330f1f0ec6b2354903a2025189d1c174b3c5d7",
+      "checkpointCount": 6,
+      "lastUpdated": "2026-10-04T08:50:24.209Z"
+    },
+    "horizon_1791104152063": {
+      "sessionId": "horizon_1791104152063",
+      "currentStep": 10000,
+      "headMerkleRoot": "e74e18c9a35f3faeafe18ddfb0cc6dbf49a96899b0b298befe1737f6eb28654a",
+      "checkpointCount": 6,
+      "lastUpdated": "2026-10-04T08:55:52.106Z"
+    },
+    "horizon_1791104401174": {
+      "sessionId": "horizon_1791104401174",
+      "currentStep": 10000,
+      "headMerkleRoot": "0bfebc0995c93b735aa0b74a7dd3df0ad0c36790c5d0b3c44ee11026a34903b3",
+      "checkpointCount": 6,
+      "lastUpdated": "2026-10-04T09:00:01.228Z"
     }
   },
-  "totalCheckpoints": 240
+  "totalCheckpoints": 288
 }

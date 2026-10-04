@@ -7,6 +7,8 @@ import {
 import { getChatSessions } from '@utils/index';
 import { useAuthStore } from '@store/index';
 
+import PwaInstallModal, { PwaInstallBadgeSvg } from '@components/PwaInstallModal';
+
 export default function Sidebar({
   activePage,
   setActivePage,
@@ -24,6 +26,7 @@ export default function Sidebar({
   const [chatHistory, setChatHistory] = useState([]);
   const [pwaPrompt, setPwaPrompt] = useState(null);
   const [isStandalone, setIsStandalone] = useState(false);
+  const [isPwaModalOpen, setIsPwaModalOpen] = useState(false);
 
   useEffect(() => {
     const sessions = getChatSessions().slice(0, 6);
@@ -64,15 +67,17 @@ export default function Sidebar({
 
   const handleTriggerPwaInstall = async () => {
     if (pwaPrompt) {
-      pwaPrompt.prompt();
-      const choice = await pwaPrompt.userChoice;
-      if (choice.outcome === 'accepted') {
-        setPwaPrompt(null);
-        setIsStandalone(true);
-      }
-    } else {
-      alert('To install BRAHMA on your phone or desktop: open browser menu (⋮ or Share) and tap "Install App" or "Add to Home Screen"!');
+      try {
+        pwaPrompt.prompt();
+        const choice = await pwaPrompt.userChoice;
+        if (choice.outcome === 'accepted') {
+          setPwaPrompt(null);
+          setIsStandalone(true);
+          return;
+        }
+      } catch (_) {}
     }
+    setIsPwaModalOpen(true);
   };
 
   // Lock body scroll when mobile sidebar is open (prevents iOS/Android scroll-through)
@@ -337,29 +342,35 @@ export default function Sidebar({
             onClick={handleTriggerPwaInstall}
             style={{
               width: '100%',
-              padding: '7px 10px',
+              padding: '8px 12px',
               marginBottom: '10px',
-              borderRadius: '7px',
-              background: 'linear-gradient(135deg, rgba(251,191,36,0.12), rgba(217,119,6,0.06))',
-              border: '1px solid rgba(251,191,36,0.3)',
+              borderRadius: '8px',
+              background: 'linear-gradient(135deg, rgba(251,191,36,0.16), rgba(217,119,6,0.08))',
+              border: '1px solid rgba(251,191,36,0.4)',
               color: '#fbbf24',
-              fontSize: '0.74rem',
-              fontWeight: 700,
+              fontSize: '0.76rem',
+              fontWeight: 800,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '6px',
+              gap: '8px',
               cursor: 'pointer',
-              transition: 'all 0.2s ease'
+              transition: 'all 0.2s ease',
+              boxShadow: '0 2px 10px rgba(0,0,0,0.3)'
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'linear-gradient(135deg, rgba(251,191,36,0.22), rgba(217,119,6,0.14))'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'linear-gradient(135deg, rgba(251,191,36,0.12), rgba(217,119,6,0.06))'; }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'linear-gradient(135deg, rgba(251,191,36,0.28), rgba(217,119,6,0.18))'; e.currentTarget.style.borderColor = '#fbbf24'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'linear-gradient(135deg, rgba(251,191,36,0.16), rgba(217,119,6,0.08))'; e.currentTarget.style.borderColor = 'rgba(251,191,36,0.4)'; }}
             title="Install BRAHMA natively on your Desktop, Android or iOS Device"
           >
-            <Smartphone size={13} />
+            <PwaInstallBadgeSvg size={17} />
             <span>Install BRAHMA App</span>
           </button>
         )}
+
+        <PwaInstallModal
+          isOpen={isPwaModalOpen}
+          onClose={() => setIsPwaModalOpen(false)}
+        />
 
         <div className="user-profile-widget" onClick={() => { onOpenSettings(); if (onMobileClose) onMobileClose(); }} title="User Profile & Settings" style={{
           display: 'flex',
