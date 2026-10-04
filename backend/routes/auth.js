@@ -321,7 +321,7 @@ router.post('/guest', (req, res) => {
 router.get('/github', (req, res) => {
   const params = new URLSearchParams({
     client_id: process.env.GITHUB_CLIENT_ID || 'YOUR_GITHUB_CLIENT_ID',
-    redirect_uri: 'http://localhost:4000/auth/github/callback',
+    redirect_uri: process.env.GITHUB_REDIRECT_URI || 'http://localhost:4000/auth/github/callback',
     scope: 'repo read:user',
   });
   res.redirect(`https://github.com/login/oauth/authorize?${params}`);
@@ -338,6 +338,13 @@ router.get('/github/callback', async (req, res) => {
       { client_id: process.env.GITHUB_CLIENT_ID, client_secret: process.env.GITHUB_CLIENT_SECRET, code },
       { headers: { Accept: 'application/json' } }
     );
+    const token = response.data.access_token;
+    return res.redirect(`http://localhost:3001?github_token=${encodeURIComponent(token || '')}`);
+  } catch (err) {
+    console.error('[GITHUB AUTH ERROR]', err);
+    return res.redirect('http://localhost:3001?auth=error');
+  }
+});
 // ─── GET /auth/admin/stats (Supreme Architect Only) ───────────────────────────
 router.get('/admin/stats', (req, res) => {
   const authHeader = req.headers.authorization || '';

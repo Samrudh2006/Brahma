@@ -3577,6 +3577,10 @@ async function runAllTests() {
   console.log('═══════════════════════════════════════════════════════════════════\n');
 
   console.log(JSON.stringify(testResults, null, 2));
+  process.exit(testResults.failed > 0 ? 1 : 0);
 }
 
-runAllTests().catch(console.error);
+runAllTests().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

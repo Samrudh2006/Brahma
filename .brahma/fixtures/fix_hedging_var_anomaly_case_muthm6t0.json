@@ -1,0 +1,49 @@
+{
+  "fixtureId": "fix_hedging_var_anomaly_case_muthm6t0",
+  "caseName": "hedging_var_anomaly_case",
+  "agentId": "kuvera_quant_agent",
+  "createdAt": "2026-10-04T07:16:28.020Z",
+  "failureReason": "Production failure intercepted",
+  "inputs": {
+    "prompt": "Calculate portfolio VaR for 1000 shares of TCS",
+    "contextSnapshot": {
+      "timestamp": 1791098188020
+    }
+  },
+  "frozenSpans": [
+    {
+      "index": 0,
+      "tool": "fetch_telemetry",
+      "args": {
+        "symbol": "TCS"
+      },
+      "mockResponse": {
+        "price": 3450.5,
+        "volatility": 0.018
+      },
+      "recordedLatencyMs": 25
+    },
+    {
+      "index": 1,
+      "tool": "calculate_var",
+      "args": {
+        "notional": 3450500
+      },
+      "mockResponse": {
+        "var95": 78500
+      },
+      "recordedLatencyMs": 25
+    }
+  ],
+  "expectedAssertions": [
+    {
+      "type": "STATUS_CODE_EQUALS",
+      "expected": 200
+    },
+    {
+      "type": "NO_NAN_OUTPUT",
+      "expected": true
+    }
+  ],
+  "fixtureChecksum": "49f652b4db4e08e8572491d1a960433038311abe7217d20cd24b8721217b8f8b"
+}
