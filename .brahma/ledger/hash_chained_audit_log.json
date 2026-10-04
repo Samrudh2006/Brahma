@@ -1984,5 +1984,30 @@
     },
     "prevHash": "d88f84e03e0b8fb2c14af06adb1160c8f8e22062646a349e08fa40f2f5cc5bfd",
     "entryHash": "5e883c5f98fe3fb40d3ee850900ce6015191b9752a028f4530929fdfe03e4376"
+  },
+  {
+    "index": 159,
+    "timestamp": "2026-10-04T07:34:05.049Z",
+    "councilId": "chanakya_legal",
+    "action": "CONTRACT_REDLINE_COMMITTED",
+    "payload": {
+      "contractId": "ctr_771",
+      "redlines": 3
+    },
+    "prevHash": "5e883c5f98fe3fb40d3ee850900ce6015191b9752a028f4530929fdfe03e4376",
+    "entryHash": "4c511dfe80d06b446780981f01a11d27a160c349e0f41106df057b52e9abe830"
+  },
+  {
+    "index": 160,
+    "timestamp": "2026-10-04T07:34:05.051Z",
+    "councilId": "kuvera_quant",
+    "action": "PAPER_TRADE_EXECUTED",
+    "payload": {
+      "symbol": "NVDA",
+      "quantity": 10,
+      "notional": 1250
+    },
+    "prevHash": "4c511dfe80d06b446780981f01a11d27a160c349e0f41106df057b52e9abe830",
+    "entryHash": "63d40477dae805c3e7a7d49884129d5f3321ba110e3848d133ee9573731048c0"
   }
 ]

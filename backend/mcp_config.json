@@ -3,50 +3,183 @@
     "fetch": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-fetch"],
-      "description": "Free web fetching & HTML scraping — no API key required",
+      "description": "Free web fetching & HTML to Markdown conversion — zero API key required",
+      "category": "Web & Search",
+      "authType": "none",
       "env": {}
     },
     "memory": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-memory"],
-      "description": "Persistent in-process knowledge graph memory — no API key required",
+      "description": "Persistent in-process knowledge graph memory (entities, relations, observations)",
+      "category": "Knowledge & Memory",
+      "authType": "none",
       "env": {}
-    },
-    "github": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-github"],
-      "description": "GitHub repo search, issue tracking, PR management — free for public repos",
-      "env": {
-        "GITHUB_PERSONAL_ACCESS_TOKEN": ""
-      }
-    },
-    "brave-search": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-brave-search"],
-      "description": "Real-time web search — free tier 2000 req/month. Get key at: https://api.search.brave.com/register",
-      "env": {
-        "BRAVE_API_KEY": ""
-      }
     },
     "filesystem": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-filesystem", "."],
-      "description": "Local filesystem access — no API key required",
+      "description": "Secure local workspace filesystem access, reading, writing, and directory scanning",
+      "category": "System & File",
+      "authType": "none",
       "env": {}
     },
     "sequential-thinking": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
-      "description": "Multi-step structured reasoning — no API key required",
+      "description": "Dynamic multi-step structured reasoning, self-correction, and hypothesis branching",
+      "category": "Reasoning & AI",
+      "authType": "none",
+      "env": {}
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "description": "GitHub repo search, PR workflows, issue tracking, commit history, and branches",
+      "category": "DevOps & Code",
+      "authType": "optional_token",
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": ""
+      }
+    },
+    "git": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-git"],
+      "description": "Local Git repository introspection: diffs, commit logs, branches, stage, and tree status",
+      "category": "DevOps & Code",
+      "authType": "none",
+      "env": {}
+    },
+    "brave-search": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-brave-search"],
+      "description": "Real-time web search index & news queries — free tier 2000 req/month",
+      "category": "Web & Search",
+      "authType": "api_key",
+      "env": {
+        "BRAVE_API_KEY": ""
+      }
+    },
+    "sqlite": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sqlite", "--db-path", "backend/db/brahma.db"],
+      "description": "Local SQLite database querying, schema introspection, table analytics, and inspection",
+      "category": "Database & Storage",
+      "authType": "none",
+      "env": {}
+    },
+    "postgres": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-postgres"],
+      "description": "Enterprise PostgreSQL relational database querying, schema metadata, and joins",
+      "category": "Database & Storage",
+      "authType": "connection_string",
+      "env": {
+        "POSTGRES_URL": ""
+      }
+    },
+    "puppeteer": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-puppeteer"],
+      "description": "Headless Chrome browser automation, DOM navigation, JavaScript execution, and screenshots",
+      "category": "Web & Search",
+      "authType": "none",
+      "env": {}
+    },
+    "slack": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-slack"],
+      "description": "Slack enterprise workspace messaging, channel management, thread replies, and alerts",
+      "category": "Communication & Mesh",
+      "authType": "bot_token",
+      "env": {
+        "SLACK_BOT_TOKEN": "",
+        "SLACK_TEAM_ID": ""
+      }
+    },
+    "google-maps": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-google-maps"],
+      "description": "Geospatial geocoding, distance matrix, directions, reverse lookup, and elevation",
+      "category": "Geospatial & Spatial",
+      "authType": "api_key",
+      "env": {
+        "GOOGLE_MAPS_API_KEY": ""
+      }
+    },
+    "sentry": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sentry"],
+      "description": "Application performance monitoring, crash telemetry, stack traces, and issue triage",
+      "category": "Observability & SecOps",
+      "authType": "auth_token",
+      "env": {
+        "SENTRY_AUTH_TOKEN": "",
+        "SENTRY_ORG": ""
+      }
+    },
+    "gitlab": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-gitlab"],
+      "description": "GitLab CI/CD pipelines, MR reviews, code snippets, project groups, and repository ops",
+      "category": "DevOps & Code",
+      "authType": "personal_token",
+      "env": {
+        "GITLAB_PERSONAL_ACCESS_TOKEN": "",
+        "GITLAB_API_URL": "https://gitlab.com/api/v4"
+      }
+    },
+    "docker": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-docker"],
+      "description": "Docker container lifecycle management, image registry inspection, logs, and compose",
+      "category": "Cloud & Infrastructure",
+      "authType": "none",
+      "env": {}
+    },
+    "redis": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-redis"],
+      "description": "Redis high-speed in-memory cache, key-value store, pub/sub channels, and TTL management",
+      "category": "Database & Storage",
+      "authType": "connection_string",
+      "env": {
+        "REDIS_URL": "redis://localhost:6379"
+      }
+    },
+    "weather": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-weather"],
+      "description": "Real-time meteorological weather data, forecasts, precipitation, and climate metrics",
+      "category": "Domain & Science",
+      "authType": "none",
+      "env": {}
+    },
+    "arxiv": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-arxiv"],
+      "description": "Scholarly arXiv research paper discovery, abstract parsing, author index, and citation lookup",
+      "category": "Knowledge & Memory",
+      "authType": "none",
       "env": {}
     },
     "webcmd": {
       "command": "npx",
       "args": ["-y", "@agentrhq/webcmd"],
       "description": "AgentR Webcmd — Self-learning browser infrastructure, website CLI, and agent web navigation",
+      "category": "Web & Search",
+      "authType": "token",
       "env": {
         "WEBCMD_TOKEN": "eyJwaWQiOjMxMjI4ODAsInNpZCI6MTI1ODg4MTI0MywiYXgiOiI2YzA0ZjU0OWQxMWMzZDE5ZGRjMmFmMTJkODY1MzRlMyIsInRzIjoxNzkwODU1NDUwLCJleHAiOjE3OTMyNzQ2NTB9.NLB46sCcRLRuTNvBlfJrfIbjzfsoSTDJZTdKkD1mqO8"
       }
+    },
+    "everything": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-everything"],
+      "description": "Full-spectrum MCP reference test harness, echo tools, resources, and protocol capability probes",
+      "category": "Reasoning & AI",
+      "authType": "none",
+      "env": {}
     }
   },
   "publicApiKeys": {

@@ -198,20 +198,58 @@ router.get('/status', async (req, res) => {
   );
 
   const online = statuses.filter(s => s.status === 'online').length;
+  const mcpClient = require('../services/mcpClientService');
+  const mcpData = mcpClient.listServers();
+
   res.json({
     success: true,
-    summary: `${online}/${statuses.length} APIs online`,
+    summary: `${online}/${statuses.length} APIs online · ${mcpData.totalCount} MCP Servers active`,
     apis: statuses,
-    mcpServers: [
-      { name: 'fetch', status: 'available', key: 'none required' },
-      { name: 'memory', status: 'available', key: 'none required' },
-      { name: 'github', status: 'available', key: 'optional (set GITHUB_TOKEN in .env for higher rate limits)' },
-      { name: 'brave-search', status: 'available', key: 'set BRAVE_API_KEY in .env (free at api.search.brave.com)' },
-      { name: 'filesystem', status: 'available', key: 'none required' },
-      { name: 'sequential-thinking', status: 'available', key: 'none required' }
-    ],
+    mcpServers: mcpData.servers,
+    mcpMeta: {
+      totalServers: mcpData.totalCount,
+      zeroKeyServers: mcpData.zeroKeyCount,
+      categories: mcpData.categories
+    },
     timestamp: new Date().toISOString()
   });
+});
+
+// ─── Top 20 MCP Protocol Server Discovery Routes ──────────────────────────────
+const mcpClient = require('../services/mcpClientService');
+
+router.get('/mcp/servers', (req, res) => {
+  try {
+    const list = mcpClient.listServers();
+    return res.json(list);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/mcp/servers/:serverId', (req, res) => {
+  try {
+    const details = mcpClient.getServerDetails(req.params.serverId);
+    if (!details.success) {
+      return res.status(404).json(details);
+    }
+    return res.json(details);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+router.post('/mcp/execute', async (req, res) => {
+  try {
+    const { serverId, toolName, params } = req.body || {};
+    if (!serverId || !toolName) {
+      return res.status(400).json({ error: 'Both "serverId" and "toolName" are required.' });
+    }
+    const result = await mcpClient.executeTool(serverId, toolName, params);
+    return res.json(result);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
 });
 
 // ─── Flowsint OSINT Intelligence Graph Route ─────────────────────────────────
