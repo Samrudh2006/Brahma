@@ -1,5 +1,5 @@
 /**
- * BRAHMA — Frontend Laya & Jev System-1 Client Engine
+ * BRAHMA — Frontend System-1 Fast Client Routing Engine
  * Provides <10ms client-side pre-flight intent prediction, latency tracking,
  * and council auto-suggestion.
  */
@@ -14,7 +14,7 @@ export const LAYA_COUNCIL_ROUTING_MAP = {
 };
 
 /**
- * Instant <5ms Client-Side Laya Heuristic Classifier
+ * Instant <5ms Client-Side System-1 Heuristic Classifier
  */
 export function predictLayaIntent(prompt = '') {
   const start = performance.now();
@@ -37,7 +37,7 @@ export function predictLayaIntent(prompt = '') {
   const latencyMs = Number((performance.now() - start).toFixed(1));
 
   return {
-    engine: 'Laya-v1-Client',
+    engine: 'Brahma-System1-Client',
     intent: detected,
     council,
     latencyMs: Math.max(latencyMs, 0.4),

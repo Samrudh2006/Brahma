@@ -2,9 +2,9 @@
   "taskId": "oracle_invariant_test_evidence",
   "taskTitle": "Full Matrix Integration Check",
   "executedBy": "Brahma-Oracle-Judge",
-  "timestamp": "2026-10-04T06:41:04.999Z",
+  "timestamp": "2026-10-04T06:51:59.780Z",
   "allPassed": true,
-  "evidenceHashSha256": "7e8f97fec6194254e467435219ab85f28d1dfddd347f7ac11d96ec23292186e1",
+  "evidenceHashSha256": "721a6a5675c9e120afebc1ae17986cbae9e6c55bf33374a28bd6fa295e198a7d",
   "artifacts": [],
   "assertions": [
     {

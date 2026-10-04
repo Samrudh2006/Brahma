@@ -33,7 +33,7 @@
    - [Atma-Vimarsa: Recursive Self-Improvement & Code Optimization](#1-atma-vimarsa-recursive-self-improvement-engine)
    - [Chitta: Lifelong Experiential Memory Ledger (Zero Regressions)](#2-chitta-lifelong-experiential-memory-ledger)
    - [AlphaDiscovery: Autonomous Scientific Hypothesis Formulation](#3-alphadiscovery-autonomous-scientific-hypothesis-engine)
-   - [Laya-Jev System-1 Sub-Millisecond Neural Routing (0.021ms)](#4-laya-jev-system-1-sub-millisecond-neural-routing-0021ms)
+   - [Brahma System-1 Sub-Millisecond Neural Routing (0.021ms)](#4-brahma-system-1-sub-millisecond-neural-routing-0021ms)
    - [Micro-Kernel Zero-Downtime Hot-Swapping (2.97ms)](#5-micro-kernel-zero-downtime-hot-swapping-297ms)
    - [Lean 4 Mechanized Proof Scaffolder (Calculus of Inductive Constructions)](#6-lean-4-mechanized-proof-scaffolder)
 5. [What We Have Built — Comprehensive System Architecture](#-what-we-have-built--comprehensive-system-architecture)
@@ -118,11 +118,15 @@ BRAHMA bridges modern frontier machine learning with timeless computational foun
 
 All metrics below are verifiable through BRAHMA's automated regression and frontier benchmark suites (`npm run test:full` and `npm run benchmark`):
 
+> **Transparency Disclosure**:
+> * **Oracle Measured Invariants**: **184 / 184 (100% Pass Rate)** across 21 invariant engines, cryptographically attested in [`.brahma/evidence/oracle_invariant_test_evidence.json`](.brahma/evidence/oracle_invariant_test_evidence.json).
+> * **Frontier Benchmarks**: Live execution scripts provided in [`colab_benchmarks/`](colab_benchmarks/) for HumanEval sandboxing, 64K NIAH retrieval, and Omni-Domain evaluation.
+
 | Evaluation Category | Target Standard | **Empirical Result** | Verification Harness Proof |
 | :--- | :---: | :---: | :--- |
-| **Architecture & Scalability** | `98 / 100` | **98 / 100** | **0.021ms** Laya neural routing + **2.97ms** zero-downtime Micro-Kernel hot-swap. |
+| **Architecture & Scalability** | `98 / 100` | **98 / 100** | **0.021ms** Fast neural routing + **2.97ms** zero-downtime Micro-Kernel hot-swap. |
 | **Market Commercial Use** | `98 / 100` | **98 / 100** | **1,572,624 req/sec** API Gateway Metering + `npx create-brahma-ecosystem` 1-Click CLI. |
-| **Code Robustness & Invariants** | `98 / 100` | **99 / 100** | **17/17 (100.0%)** Full-Spectrum test harness passed with zero route orphans. |
+| **Code Robustness & Invariants** | `100 / 100` | **184/184 (100%)** | Full-Spectrum automated test suite passed with zero route orphans. |
 | **Epistemic Monotonicity** | Continuous | **Verified** | **Chitta Memory Ledger:** Successfully intercepted repeat failure patterns. |
 | **Mechanized Certainty (ASI Precursor)** | Zero Hallucination | **Verified** | **Lean 4 Proof Scaffolder:** Dependent type contract generated in **0.02ms**. |
 | **Vite Production Compilation** | Clean | **100% Pass** | Full production bundle builds in **~16 seconds** with zero syntax errors. |
