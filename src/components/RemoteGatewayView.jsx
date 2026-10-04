@@ -4,11 +4,13 @@ import {
   Shield, CheckCircle2, AlertTriangle, RefreshCw, Globe,
   Activity, Play, Lock, Key, Copy, Check, QrCode, Zap,
   Server, HardDrive, Cpu, Clock, CheckCheck, Compass, Eye,
-  Calendar, Layers, Download, CheckSquare, ExternalLink
+  Calendar, Layers, Download, CheckSquare, ExternalLink, Cloud
 } from 'lucide-react';
 import { API_BASE } from '../api/client';
+import CloudComputerView from './CloudComputerView';
 
 export default function RemoteGatewayView() {
+  const [activeTab, setActiveTab] = useState('cloud'); // 'cloud', 'browser', 'mobile'
   const [telemetry, setTelemetry] = useState(null);
   const [loading, setLoading] = useState(true);
   const [remoteCommand, setRemoteCommand] = useState('Get-Process | Select-Object -First 5 Name, CPU');
@@ -243,21 +245,21 @@ export default function RemoteGatewayView() {
   return (
     <div style={{ padding: '24px 32px', maxWidth: 1300, margin: '0 auto', color: '#e2e8f0' }}>
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24, borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: 16 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: 16 }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <span style={{ fontSize: '1.4rem', fontWeight: 900, color: '#f8fafc' }}>
-              ⌁ YANTRA 2.0 — Sovereign Computer-Use & Autonomous Browser Swarm
+              ⌁ BRAHMA REMOTE COMMAND & 24/7 CLOUD MATRIX
             </span>
             <span style={{ background: '#10b981', color: '#000', fontSize: '0.72rem', fontWeight: 800, padding: '2px 8px', borderRadius: 10 }}>
               24/7 ALWAYS-ON
             </span>
             <span style={{ background: '#3b82f6', color: '#fff', fontSize: '0.72rem', fontWeight: 800, padding: '2px 8px', borderRadius: 10 }}>
-              CDP + PUPPETEER CORE
+              HEADLESS & DETACHED
             </span>
           </div>
           <p style={{ color: '#94a3b8', fontSize: '0.85rem', marginTop: 4 }}>
-            Zero-Trust Local Computer-Use · Headless Browser Swarms · 24/7 Recurring Routines · OpenAI Dots & MausBot Sovereign Alternative
+            24/7 Free Cloud Computer (Hugging Face / GitHub Actions) · Yantra Browser Swarm · Remote Mobile Gateway & Bastion Command
           </p>
         </div>
 
@@ -281,9 +283,49 @@ export default function RemoteGatewayView() {
         </button>
       </div>
 
-      {/* ─── YANTRA 2.0 BROWSER SWARM SPOTLIGHT ─── */}
-      <div style={{ background: 'linear-gradient(180deg, rgba(15, 23, 42, 0.85) 0%, rgba(10, 15, 30, 0.95) 100%)', border: '1px solid rgba(59, 130, 246, 0.3)', borderRadius: 16, padding: 22, marginBottom: 24, boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: 12 }}>
+      {/* Main Tab Navigation */}
+      <div style={{ display: 'flex', gap: 10, marginBottom: 24, background: 'rgba(15, 23, 42, 0.6)', padding: 6, borderRadius: 12, border: '1px solid rgba(255,255,255,0.08)' }}>
+        {[
+          { id: 'cloud', label: '☁️ 24/7 Cloud Computer (Antariksha Node)', desc: 'Runs when laptop is off' },
+          { id: 'browser', label: '⌁ Yantra 2.0 Browser Swarm', desc: 'Headless browser automation' },
+          { id: 'mobile', label: '📱 Mobile Node & Shell Gateway', desc: 'Remote shell & email alerts' }
+        ].map(tab => {
+          const isSel = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              style={{
+                flex: 1,
+                background: isSel ? 'linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(30, 58, 138, 0.4))' : 'transparent',
+                border: `1px solid ${isSel ? '#3b82f6' : 'transparent'}`,
+                borderRadius: 8,
+                padding: '10px 14px',
+                textAlign: 'left',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease'
+              }}
+            >
+              <div style={{ fontSize: '0.85rem', fontWeight: 800, color: isSel ? '#93c5fd' : '#cbd5e1' }}>
+                {tab.label}
+              </div>
+              <div style={{ fontSize: '0.72rem', color: isSel ? '#bfdbfe' : '#64748b', marginTop: 2 }}>
+                {tab.desc}
+              </div>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* ─── TAB 1: 24/7 CLOUD COMPUTER ─── */}
+      {activeTab === 'cloud' && (
+        <CloudComputerView />
+      )}
+
+      {/* ─── TAB 2: YANTRA 2.0 BROWSER SWARM SPOTLIGHT ─── */}
+      {activeTab === 'browser' && (
+        <div style={{ background: 'linear-gradient(180deg, rgba(15, 23, 42, 0.85) 0%, rgba(10, 15, 30, 0.95) 100%)', border: '1px solid rgba(59, 130, 246, 0.3)', borderRadius: 16, padding: 22, marginBottom: 24, boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: 12 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{ background: 'rgba(59, 130, 246, 0.15)', color: '#60a5fa', padding: 8, borderRadius: 10 }}>
               <Compass size={20} />
@@ -518,9 +560,11 @@ export default function RemoteGatewayView() {
           </div>
         </div>
       </div>
+      )}
 
-      {/* Grid: 3 Main Telemetry & IPC Columns */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 1fr', gap: 20 }}>
+      {/* ─── TAB 3: MOBILE NODE & TELEMETRY IPC ─── */}
+      {activeTab === 'mobile' && (
+        <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 1fr', gap: 20 }}>
         {/* Col 1: System Telemetry & Mobile QR Pairing */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {/* Telemetry Card */}
@@ -755,6 +799,7 @@ export default function RemoteGatewayView() {
           </div>
         </div>
       </div>
+      )}
     </div>
   );
 }

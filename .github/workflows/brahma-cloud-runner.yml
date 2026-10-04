@@ -1,0 +1,68 @@
+name: BRAHMA Sovereign 24/7 Cloud Computer & Autonomous Runner
+
+on:
+  schedule:
+    # Runs every 6 hours continuously in the cloud (even when laptop is off)
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+    inputs:
+      task_type:
+        description: 'Autonomous Task to Execute'
+        required: true
+        default: 'FULL_AUTONOMOUS_RUN'
+        type: choice
+        options:
+          - 'FULL_AUTONOMOUS_RUN'
+          - 'INVARIANT_TESTS'
+          - 'PROJECT_BUILD'
+          - 'RESEARCH_DIGEST'
+  push:
+    branches: [ master ]
+
+jobs:
+  cloud-autonomous-runner:
+    name: 🔱 Brahma Cloud Node (24/7 Free VM)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: 📥 Checkout Sovereign Codebase
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Node.js 22 Runtime
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: 📦 Install Dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: 🧪 Execute Full Invariant Verification Suite (184 Invariants)
+        run: node tests/comprehensive_test_suite.cjs
+        env:
+          NODE_ENV: test
+          BRAHMA_GATE_SECRET: ${{ secrets.BRAHMA_GATE_SECRET || 'brahma_github_actions_cloud_runner_key_2026' }}
+          HF_API_TOKEN: ${{ secrets.HF_API_TOKEN }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
+      - name: 🏗️ Verify Production Bundle Compilation
+        run: npm run build
+
+      - name: 🤖 Execute Autonomous Background Engine Dispatch
+        run: |
+          echo "Executing Autonomous Cloud Tasks..."
+          node -e "
+            const cloud = require('./backend/services/cloudComputerService');
+            console.log('Cloud Telemetry:', JSON.stringify(cloud.getTelemetry(), null, 2));
+          "
+
+      - name: 📊 Upload Cloud Execution Artifacts & Evidence
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: brahma-cloud-run-report-${{ github.run_id }}
+          path: |
+            dist/
+            .brahma/
+          retention-days: 14
