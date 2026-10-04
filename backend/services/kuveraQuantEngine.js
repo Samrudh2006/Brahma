@@ -150,7 +150,9 @@ class KuveraQuantEngine {
       timestamp: new Date().toISOString(),
       feed,
       debateLog,
-      consensus: portfolioSummary
+      consensus: portfolioSummary,
+      disclaimer: 'Informational quantitative research simulation only. Not financial, trading, or investment advice.',
+      isSimulation: true
     };
   }
 

@@ -27,12 +27,14 @@ const timeout = (ms = CIRCUIT_BREAKER_TIMEOUT_MS) => ({ signal: AbortSignal.time
 async function withResilientSnapshotCache(cacheKey, fetchFn) {
   try {
     const data = await fetchFn();
-    STALE_SNAPSHOT_CACHE.set(cacheKey, data);
-    return data;
+    const liveData = { ...data, isCached: false, fetchedAt: new Date().toISOString() };
+    STALE_SNAPSHOT_CACHE.set(cacheKey, liveData);
+    return liveData;
   } catch (err) {
     if (STALE_SNAPSHOT_CACHE.has(cacheKey)) {
       console.warn(`[Resilience Cache] Flaky network for "${cacheKey}". Serving verified snapshot cache.`);
-      return STALE_SNAPSHOT_CACHE.get(cacheKey);
+      const cached = STALE_SNAPSHOT_CACHE.get(cacheKey);
+      return { ...cached, isCached: true, isStaleFallback: true, servedAt: new Date().toISOString() };
     }
     throw err;
   }
